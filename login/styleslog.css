@@ -1,0 +1,40 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #faf3f3;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+}
+
+.scroll-horizontal {
+    display: flex;
+    overflow-x: auto;  
+    gap: 10px;
+    padding: 20px;
+    margin-top: 50px;  
+    overflow-x: hidden;
+}
+.scroll-horizontal:hover {
+    overflow-x: auto; /* Muestra el scroll horizontal solo al pasar el ratón */
+}
+.scroll-horizontal::-webkit-scrollbar {
+    display: none;
+}
+
+.scroll-horizontal img {
+    width: 600px;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
