@@ -48,28 +48,5 @@ main {
   border-radius: 10px;
 }
 
-.menu-inferior {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  background-color: #1e1e1e;
-  display: flex;
-  justify-content: space-around;
-  border-top: 1px solid #444;
-}
 
-.nav-btn {
-  flex: 1;
-  background: none;
-  border: none;
-  padding: 10px;
-  color: white;
-  text-align: center;
-  font-size: 14px;
-}
 
-.nav-btn i {
-  display: block;
-  font-size: 20px;
-  margin-bottom: 5px;
-}

@@ -3,6 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  {%load static%}
+  
+  <link rel="stylesheet" href="{% static 'menu_principal/menu_inferior.css'%}">
   <title>Agregar Transacción - EcoSmart</title>
 
   <!-- Font Awesome para los íconos -->
@@ -54,30 +57,7 @@
       cursor: pointer;
     }
 
-    .menu-inferior {
-      position: fixed;
-      bottom: 0;
-      width: 100%;
-      background-color: #1e1e1e;
-      display: flex;
-      justify-content: space-around;
-      border-top: 1px solid #444;
-      padding: 10px 0;
-    }
 
-    .menu-inferior a {
-      color: white;
-      text-align: center;
-      text-decoration: none;
-      flex: 1;
-      font-size: 12px;
-    }
-
-    .menu-inferior i {
-      display: block;
-      font-size: 18px;
-      margin-bottom: 5px;
-    }
   </style>
 </head>
 <body>
@@ -109,12 +89,7 @@
     <button type="submit">Guardar</button>
   </form>
 
-  <nav class="menu-inferior">
-    <a href="index.html"><i class="fas fa-book"></i><span>Inicio</span></a>
-    <a href="transacciones.html"><i class="fas fa-plus-circle"></i><span>Agregar</span></a>
-    <a href="estadisticas.html"><i class="fas fa-chart-pie"></i><span>Estad.</span></a>
-    <a href="configuracion.html"><i class="fas fa-cog"></i><span>Ajustes</span></a>
-  </nav>
+{% include 'menu_principal/menu_inferior.html'%}
 
 </body>
 </html>
