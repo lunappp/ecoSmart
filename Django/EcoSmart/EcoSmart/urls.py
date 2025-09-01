@@ -20,7 +20,14 @@ import App.views
 
 urlpatterns = [
     path('admin/', admin.site.urls), 
-    #----------------- menu rpincipal -----------------#
+    #------------------ Landing page ------------------#
+    path('',App.views.Landing, name= 'Landing'),
+    
+    #---------------------- Auth ----------------------#
+    path('Register/',App.views.Register, name= 'Register'),
+    path('Login/',App.views.Login, name= 'Login'),
+    
+    #----------------- menu principal -----------------#
     path('Inicio/',App.views.Inicio, name= 'Inicio'),
     path('transacciones/',App.views.transacciones, name= 'transacciones'),
     path('Estadisticas/',App.views.Estadisticas, name= 'Estadisticas'),
