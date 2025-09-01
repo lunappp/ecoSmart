@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  {%load static%}
+  <link rel="stylesheet" href="{% static 'menu_principal/style.css'%}">
+  <link rel="stylesheet" href="{% static 'menu_principal/menu_inferior.css'%}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">  
+  <title>EcoSmart</title>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <h1>EcoSmart</h1>
+  </header>
+
+  <!-- Pantalla Principal -->
+  <main id="pantalla-principal">
+    <section class="resumen">
+      <div class="resumen-box">
+        <p>Capital</p>
+        <h2>$100,000.00</h2>
+      </div>
+      <div class="resumen-box">
+        <p>A Deber</p>
+        <h2>$0.00</h2>
+      </div>
+      <div class="resumen-box">
+        <p>Balance</p>
+        <h2>$100,000.00</h2>
+      </div>
+    </section>
+
+    <section class="cuentas">
+      <h3>Cuentas</h3>
+      <ul>
+        <li>Efectivo: $0.00</li>
+        <li>Cuenta Banco: $0.00</li>
+        <li>MasterCard: $100,000.00</li>
+      </ul>
+    </section>
+  </main>
+
+  {% include 'menu_principal/menu_inferior.html'%}
+
+</body>
+</html>

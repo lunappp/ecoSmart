@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  {%load static%}
+  
+  <link rel="stylesheet" href="{% static 'menu_principal/menu_inferior.css'%}">
+  <title>Agregar Transacción - EcoSmart</title>
+
+  <!-- Font Awesome para los íconos -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background-color: #121212;
+      color: white;
+      padding-bottom: 60px;
+    }
+
+    header {
+      padding: 20px;
+      background-color: #1f1f1f;
+      text-align: center;
+      font-size: 1.5rem;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      gap: 15px;
+    }
+
+    form label {
+      font-weight: bold;
+    }
+
+    form input,
+    form select {
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      background-color: #2a2a2a;
+      color: white;
+    }
+
+    form button {
+      padding: 12px;
+      background-color: #4caf50;
+      color: white;
+      font-weight: bold;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+
+  </style>
+</head>
+<body>
+
+  <header>Agregar Transacción</header>
+
+  <form>
+    <label for="tipo">Tipo:</label>
+    <select id="tipo" name="tipo">
+      <option value="ingreso">Ingreso</option>
+      <option value="gasto">Gasto</option>
+    </select>
+
+    <label for="categoria">Categoría:</label>
+    <select id="categoria" name="categoria">
+      <option value="comida">Comida</option>
+      <option value="transporte">Transporte</option>
+      <option value="salud">Salud</option>
+      <option value="entretenimiento">Entretenimiento</option>
+      <option value="otros">Otros</option>
+    </select>
+
+    <label for="monto">Monto:</label>
+    <input type="number" id="monto" name="monto" placeholder="$0.00">
+
+    <label for="fecha">Fecha:</label>
+    <input type="date" id="fecha" name="fecha">
+
+    <button type="submit">Guardar</button>
+  </form>
+
+{% include 'menu_principal/menu_inferior.html'%}
+
+</body>
+</html>
