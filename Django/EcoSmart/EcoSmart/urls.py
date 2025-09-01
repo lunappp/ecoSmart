@@ -18,18 +18,11 @@ from django.contrib import admin
 from django.urls import path
 import App.views
 
+
 urlpatterns = [
-    path('admin/', admin.site.urls), 
-    #------------------ Landing page ------------------#
-    path('',App.views.Landing, name= 'Landing'),
-    
-    #---------------------- Auth ----------------------#
-    path('Register/',App.views.Register, name= 'Register'),
-    path('Login/',App.views.Login, name= 'Login'),
-    
-    #----------------- menu principal -----------------#
-    path('Inicio/',App.views.Inicio, name= 'Inicio'),
-    path('transacciones/',App.views.transacciones, name= 'transacciones'),
-    path('Estadisticas/',App.views.Estadisticas, name= 'Estadisticas'),
-    
+    path('admin/', admin.site.urls),
+    path('',App.views.home, name='home'),
+    path('login/',App.views.login, name='login'),
+    path('register/',App.views.register, name='register'),
+    path('header/',App.views.header, name='header'),
 ]

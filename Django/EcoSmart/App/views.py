@@ -1,61 +1,56 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import login, authenticate, logout
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from django.contrib import messages
+from django.contrib.auth import authenticate,login,logout
+from django.contrib.auth.models import User
 
 
-#------------------ Landing page ------------------#
-#                        |                         #
-#                        v                         #
+from App.forms import RegisterForm
 
-def Landing(request):
-    return render(request,'landing_page/index.html')
+# Create your views here.
+def home(request):
+    if request.user.is_authenticated:
+        return render('auth/register.html')
+    return render(request, 'home.html')
 
-#---------------------- Auth ----------------------#
-#                        |                         #
-#                        v                         #
-
-def Register(request):
+def login(request):
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            login(request, user)
-            messages.success(request, "Registro exitoso. ¡Bienvenido!")
-            return redirect('Inicio')  # Redirige a la página principal
-        messages.error(request, "Error en el registro. Verifique la información.")
+        print('hola')
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        
+        user = authenticate(request, username = username, password = password)
+        if user is not None:
+            return redirect('register')
     else:
-        form = UserCreationForm()
-    return render(request, 'auth/registro/registro.html', {'form': form})
+        print('hola')
+    
+    return render(request, 'auth/login.html')
 
+def registerPage(request):
+    return render(request, 'auth/register.html')
 
-def Login(request):
+def register(request):
     if request.method == 'POST':
-        form = AuthenticationForm(request, data=request.POST)
-        if form.is_valid():
-            username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password')
-            user = authenticate(username=username, password=password)
-            if user is not None:
-                login(request, user)
-                messages.info(request, f"¡Hola, {username}! Has iniciado sesión con éxito.")
-                return redirect('Inicio')  # Redirige a la página principal
-            else:
-                messages.error(request, "Usuario o contraseña inválidos.")
+        register_form = RegisterForm(request.POST)
+        if register_form.is_valid():
+            register_form.save()
+            return redirect('home')
         else:
-            messages.error(request, "Usuario o contraseña inválidos.")
-    form = AuthenticationForm()
-    return render(request, 'auth/login/login.html', {'form': form})
+            errores = register_form.errors
+        
+            return render(request, 'auth/register.html', {
+                'registerForm': register_form,
+                'errores': errores
+                
+            })
+    else:
+        
+        register_form = RegisterForm()
+        return render(request, 'auth/register.html', {
+            'registerForm': register_form
+        })
 
-#----------------- menu principal -----------------#
-#                        |                         #
-#                        v                         #
+    
+        
 
-def Inicio(request):
-    return render(request, 'menu_principal/index.html')
-
-def transacciones(request):
-    return render(request, 'menu_principal/transacciones.html')
-
-def Estadisticas(request):
-    return render(request, 'menu_principal/Estadisticas.html')
+def header(request):
+    return render(request, 'header.html')

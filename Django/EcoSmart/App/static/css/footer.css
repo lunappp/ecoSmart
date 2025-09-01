@@ -1,0 +1,7 @@
+footer{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    border-top: solid 1px #ffffff;
+    color: white;
+}
