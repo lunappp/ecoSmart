@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>EcoSmart - Organización familiar y financiera</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
+    rel="stylesheet"
+  />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+  />
+    {%load static%}
+  <link rel="stylesheet" href="{% static 'Landing_page/styleslog.css'%}">
+  <link rel="stylesheet" href="" />
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="logo">EcoSmart</div>
+      
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+    <div class="container hero-content">
+    <h1>Organizá tu hogar y finanzas en un solo lugar</h1>
+    <p>
+      Asigná tareas, compartí gastos y controlá tu economía familiar
+      fácil y seguro con EcoSmart.
+    </p>
+    <a href="{% url 'Register'%}" class="btn-registro">Registrate!!</a>
+    <a href="{% url 'Login'%}" class="btn-registro">Iniciar sesion</a>
+    </div>
+  </section>
+
+
+    <section id="funciones" class="funciones section-padding">
+      <div class="container">
+        <h2 class="section-title">¿Qué podés hacer con EcoSmart?</h2>
+        <div class="funciones-grid">
+          <div class="funcion-card">
+            <i class="fa-solid fa-hand-holding-dollar fa-3x"></i>
+            <h3>Control de gastos</h3>
+            <p>Registrá y categorizá tus ingresos y egresos para un mejor control.</p>
+          </div>
+          <div class="funcion-card">
+            <i class="fa-solid fa-calendar-check fa-3x"></i>
+            <h3>Recordatorios y alertas</h3>
+            <p>Recibí notificaciones para pagos y tareas pendientes.</p>
+          </div>
+          <div class="funcion-card">
+            <i class="fa-solid fa-users fa-3x"></i>
+            <h3>Gestión familiar</h3>
+            <p>Compartí responsabilidades y gastos con los miembros de tu familia.</p>
+          </div>
+          <div class="funcion-card">
+            <i class="fa-solid fa-chart-line fa-3x"></i>
+            <h3>Reportes y análisis</h3>
+            <p>Visualizá gráficos y reportes para tomar mejores decisiones.</p>
+          </div>
+          <div class="funcion-card">
+            <i class="fa-solid fa-mobile-screen-button fa-3x"></i>
+            <h3>App móvil</h3>
+            <p>Accedé desde cualquier dispositivo, estés donde estés.</p>
+          </div>
+          <div class="funcion-card">
+            <i class="fa-solid fa-lock fa-3x"></i>
+            <h3>Seguridad y privacidad</h3>
+            <p>Protegemos tus datos con los mejores estándares de seguridad.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="imagenes" class="galeria section-padding">
+      <div class="container">
+        <h2 class="section-title">Visualizá cómo funciona</h2>
+        <div class="scroll-horizontal">
+          <img
+            src="https://static.vecteezy.com/system/resources/previews/054/705/871/non_2x/budget-management-concept-personal-financial-control-cash-flow-personal-budget-planning-budget-plan-modern-flat-cartoon-style-flat-design-illustration-vector.jpg"
+            alt="Gestión financiera ilustración"
+          />
+          <img
+            src="https://www.shutterstock.com/image-vector/people-reducing-energy-consumption-vector-600nw-2337467283.jpg"
+            alt="Planificación familiar ilustración"
+          />
+          <img
+            src="https://ultimatefinancialservices.ca/wp-content/uploads/2022/12/20943665-scaled.jpg"
+            alt="Control de gastos ilustración"
+          />
+          <img
+            src="https://img.freepik.com/vector-premium/calcular-gastos-ilustraciones-vectores-dibujos-animados-aislados_107173-21705.jpg?w=1060"
+            alt="Presupuesto mensual ilustración"
+          />
+          <img
+            src="https://thumbs.dreamstime.com/b/calculadora-de-lista-comprobaci%C3%B3n-planificaci%C3%B3n-gastos-mensuales-presupuesto-e-ilustraci%C3%B3n-icono-vector-econom%C3%ADa-compras-207457206.jpg"
+            alt="Análisis financiero ilustración"
+          />
+        </div>
+      </div>
+    </section>
+
+    <section id="contacto" class="contacto section-padding">
+      <div class="container">
+        <h2 class="section-title">Contacto</h2>
+        <p>
+          Tenés preguntas o sugerencias? Escribinos a
+          <a href="mailto:contacto@ecosmart.com">contacto@ecosmart.com</a>
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-content">
+      © 2025 EcoSmart - Todos los derechos reservados
+    </div>
+  </footer>
+</body>
+</html>
