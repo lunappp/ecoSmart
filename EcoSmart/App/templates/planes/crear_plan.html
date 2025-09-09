@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+        {% load static %}
+    <link rel="stylesheet" href="{% static 'planes/crear_plan.css' %}">
+    <title>Crear Plan Individual</title>
+</head>
+<body>
+    <h2>Crea tu Plan Individual</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Crear Plan</button>
+    </form>
+</body>
+</html>

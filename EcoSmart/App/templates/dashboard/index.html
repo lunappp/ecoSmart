@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard | EcoSmart</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .dashboard-container {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            width: 90%;
+            max-width: 800px;
+            text-align: center;
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        p {
+            color: #7f8c8d;
+            margin-bottom: 30px;
+        }
+        .plan-options {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        .plan-options a {
+            padding: 15px 30px;
+            background-color: #1abc9c;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: background-color 0.3s;
+        }
+        .plan-options a:hover {
+            background-color: #16a085;
+        }
+        .plans-list {
+            text-align: left;
+            margin-top: 20px;
+        }
+        .plan-card {
+            background-color: #ecf0f1;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.3s;
+            text-decoration: none;
+            color: inherit;
+        }
+        .plan-card:hover {
+            background-color: #bdc3c7;
+        }
+        .plan-card h3 {
+            margin: 0;
+            color: #2c3e50;
+        }
+        .plan-card p {
+            margin: 0;
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+        .plan-card a {
+            text-decoration: none;
+            color: #2980b9;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <h1>¡Hola, {{ request.user.username }}!</h1>
+        <p>Selecciona un plan para gestionar tus finanzas y tareas, o crea uno nuevo.</p>
+
+        <div class="plan-options">
+            <a href="{% url 'crear_plan_individual' %}">Crear un Nuevo Plan</a>
+            <a href="">Unirse a un Plan Grupal</a>
+        </div>
+        
+        <div class="plans-list">
+            <h2>Mis Planes</h2>
+            
+            {% if planes_del_usuario %}
+                {% for plan in planes_del_usuario %}
+                    <a href="" class="plan-card">
+                        <div>
+                            <h3>{{ plan.nombre }}</h3>
+                            <p>Tipo: {{ plan.tipo_plan|capfirst }}</p>
+                        </div>
+                        <div>
+                            <span>Gestionar</span>
+                        </div>
+                    </a>
+                {% endfor %}
+            {% else %}
+                <p>Todavía no tienes planes. ¡Crea uno para comenzar a organizarte!</p>
+            {% endif %}
+
+        </div>
+    </div>
+</body>
+</html>

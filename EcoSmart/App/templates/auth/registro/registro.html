@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Registro - EcoSmart</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap"
+    rel="stylesheet"
+  />
+      {%load static%}
+  <link rel="stylesheet" href="{% static 'Auth/registro.css'%}">
+  
+</head>
+<body>
+  <main class="registro">
+    <h2>Registro</h2>
+    <form method="POST">
+            {% csrf_token %}
+                {% for campo in registerForm %}
+                    <div>
+                        <!-- Mostrar la etiqueta del campo -->
+                        <label for="{{ campo.id_for_label }}">{{ campo.label }}</label> <br>
+                        <!-- Mostrar el campo de formulario -->
+                        {{ campo }} <br>
+                    </div>
+            {% endfor %}            {%for field,error in errores.items%}
+              {{field}}:{{error}} 
+            {% endfor %}
+        <button type="submit">Registrarse</button>
+    </form>
+  </main>
+</body>
+</html>

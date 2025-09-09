@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Estadísticas - EcoSmart</title>
+  {%load static%}
+  <link rel="stylesheet" href="{% static 'menu_principal/menu_inferior.css'%}">
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <header>
+    <h1>Estadísticas</h1>
+  </header>
+
+  <main class="estadisticas">
+    <canvas id="graficoGastos"></canvas>
+  </main>
+
+  <script>
+    const ctx = document.getElementById('graficoGastos');
+
+    new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Comida', 'Transporte', 'Salud', 'Entretenimiento', 'Otros'],
+        datasets: [{
+          label: 'Gastos',
+          data: [500, 200, 150, 300, 100],
+          backgroundColor: [
+            '#ff6384',
+            '#36a2eb',
+            '#ffcd56',
+            '#4bc0c0',
+            '#9966ff'
+          ],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        plugins: {
+          legend: {
+            labels: { color: "white" }
+          }
+        }
+      }
+    });
+  </script>
+  {% include 'menu_principal/menu_inferior.html'%}
+
+</body>
+</html>

@@ -1,0 +1,24 @@
+    .menu-inferior {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background-color: #1e1e1e;
+      display: flex;
+      justify-content: space-around;
+      border-top: 1px solid #444;
+      padding: 10px 0;
+    }
+
+    .menu-inferior a {
+      color: white;
+      text-align: center;
+      text-decoration: none;
+      flex: 1;
+      font-size: 12px;
+    }
+
+    .menu-inferior i {
+      display: block;
+      font-size: 18px;
+      margin-bottom: 5px;
+    }
