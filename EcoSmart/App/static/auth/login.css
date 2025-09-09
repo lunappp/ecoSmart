@@ -1,98 +1,110 @@
-/* styleslog.css */
-
+/* RESET Y BASICOS (Opcional, si no lo tienes en otro archivo) */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f0f0f0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+  font-family: 'Inter', Arial, sans-serif;
+  background: linear-gradient(135deg, #d4b3ff, #7a0ee6);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  color: #3e005f;
 }
 
-main.login {
-    background-color: #fff;
-    border-radius: 8px;
-    padding: 40px;
-    width: 100%;
-    max-width: 400px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+/* ESTILOS DEL FORMULARIO DE LOGIN (COPIA EXACTA DEL REGISTRO) */
+.login {
+  background: #fff;
+  padding: 40px 35px;
+  border-radius: 20px;
+  box-shadow: 0 15px 40px rgba(122, 14, 230, 0.6);
+  width: 350px;
+  max-width: 100%;
+  text-align: center;
+  transition: transform 0.3s ease;
 }
 
-h2 {
-    text-align: center;
-    font-size: 1.8em;
-    color: #333;
-    margin-bottom: 20px;
+.login:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 25px 50px rgba(122, 14, 230, 0.8);
 }
 
-form {
-    display: flex;
-    flex-direction: column;
+.login h2 {
+  font-weight: 700;
+  font-size: 2.4rem;
+  margin-bottom: 30px;
+  color: #6a1b9a;
+  text-shadow: 1px 1px 3px rgba(122, 14, 230, 0.8);
 }
 
-label {
-    font-size: 1em;
-    margin-bottom: 5px;
-    color: #555;
+.login form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
-input[type="text"], input[type="password"] {
-    font-size: 1em;
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    background-color: #f9f9f9;
-    transition: border-color 0.3s ease;
+.login input {
+  padding: 14px 18px;
+  font-size: 1.1rem;
+  border: 2px solid #9c4dcc;
+  border-radius: 12px;
+  outline: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-input[type="text"]:focus, input[type="password"]:focus {
-    border-color: #4CAF50;
-    outline: none;
+.login input::placeholder {
+  color: #a17ecc;
+  font-weight: 500;
 }
 
-button[type="submit"] {
-    background-color: #4CAF50;
-    color: #fff;
-    font-size: 1.1em;
-    padding: 12px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+.login input:focus {
+  border-color: #4a00e0;
+  box-shadow: 0 0 8px #6a1b9a;
 }
 
-button[type="submit"]:hover {
-    background-color: #45a049;
+.login button {
+  background: linear-gradient(135deg, #8e2de2, #4a00e0);
+  color: white;
+  font-weight: 700;
+  font-size: 1.2rem;
+  padding: 16px 0;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: 0 12px 25px rgba(74, 0, 224, 0.7);
+  transition: background 0.4s ease, box-shadow 0.4s ease, transform 0.3s ease;
 }
 
-ul {
-    margin-top: 20px;
-    padding-left: 20px;
-    list-style-type: none;
+.login button:hover {
+  background: linear-gradient(135deg, #4a00e0, #8e2de2);
+  box-shadow: 0 15px 40px rgba(122, 14, 230, 0.9);
+  transform: translateY(-3px);
 }
 
-ul li {
-    color: #ff6347;
-    font-size: 0.9em;
+.login button:active {
+  transform: translateY(0);
+  box-shadow: 0 10px 30px rgba(74, 0, 224, 0.6);
 }
 
-@media (max-width: 480px) {
-    main.login {
-        padding: 20px;
-    }
-
-    h2 {
-        font-size: 1.5em;
-    }
-
-    button[type="submit"] {
-        font-size: 1em;
-    }
+/* Responsive */
+@media (max-width: 400px) {
+  .login {
+    padding: 30px 25px;
+    width: 90vw;
+  }
+  .login h2 {
+    font-size: 2rem;
+  }
+  .login input {
+    font-size: 1rem;
+    padding: 12px 15px;
+  }
+  .login button {
+    font-size: 1.1rem;
+    padding: 14px 0;
+  }
 }
