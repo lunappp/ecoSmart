@@ -152,30 +152,39 @@
         <p>Selecciona un plan para gestionar tus finanzas y tareas, o crea uno nuevo.</p>
 
         <div class="plan-options">
-            <a href="{% url 'crear_plan_individual' %}">Crear un Nuevo Plan</a>
+            <a href="{% url 'crear_plan_view' %}">Crear un Nuevo Plan</a>
             <a href="">Unirse a un Plan Grupal</a>
         </div>
         
         <div class="plans-list">
-            <h2>Mis Planes</h2>
-            
-            {% if planes_del_usuario %}
-                {% for plan in planes_del_usuario %}
-                    <a href="" class="plan-card">
-                        <div>
-                            <h3>{{ plan.nombre }}</h3>
-                            <p>Tipo: {{ plan.tipo_plan|capfirst }}</p>
-                        </div>
-                        <div>
-                            <span>Gestionar</span>
-                        </div>
-                    </a>
-                {% endfor %}
+    <h2>Mis Planes</h2>
+    
+    {% if planes_del_usuario %}
+        {% for plan in planes_del_usuario %}
+            {% if plan.tipo_plan == 'individual' %}
+                <a href="{% url 'plan_individual'  %}" class="plan-card">
+            {% elif plan.tipo_plan == 'grupal' %}
+                <a href="{% url 'plan_grupal'%}" class="plan-card">
             {% else %}
-                <p>Todavía no tienes planes. ¡Crea uno para comenzar a organizarte!</p>
+                {% url 'dashboard' as gestionar_url %}
             {% endif %}
 
-        </div>
+            
+                <div>
+                    <h3>{{ plan.nombre }}</h3>
+                    <p>Tipo: {{ plan.tipo_plan|capfirst }}</p>
+                </div>
+                <div>
+                    <span>Gestionar</span>
+                </div>
+            </a>
+        {% endfor %}
+    {% else %}
+        <p>Todavía no tienes planes. ¡Crea uno para comenzar a organizarte!</p>
+    {% endif %}
+
+</div>
+
     </div>
 </body>
 </html>

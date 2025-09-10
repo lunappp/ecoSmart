@@ -5,7 +5,7 @@ from django.contrib import messages
 
 from django.contrib.auth.decorators import login_required
 
-from .forms import PlanIndividualForm
+from .forms import PlanForm
 from .models import Plan
 
 from App.forms import RegisterForm
@@ -78,31 +78,44 @@ def Estadisticas(request):
 #                        |                         #
 #                        v                         #
 
+
+
+
 def Dashboard(request):
-    return render(request, 'Dashboard/index.html')
+    """
+    Vista que muestra el dashboard del usuario con sus planes.
+    """
+    # Filtra la base de datos para obtener todos los planes donde el usuario 
+    # actual sea el creador. Esto obtiene los planes individuales.
+    planes_del_usuario = Plan.objects.filter(usuario=request.user)
 
+    # El siguiente paso (para planes grupales) requiere un modelo de membresía
+    # o una relación ManyToManyField, lo cual ya discutimos. 
+    # Si tienes esa tabla implementada, la lógica sería un poco más compleja
+    # para incluir los planes grupales también. Por ahora, nos enfocamos en 
+    # los planes individuales que ya creaste.
 
-def Dashboard_view(request):
-    # Obtiene todos los planes (individuales y grupales) a los que pertenece el usuario actual.
-    planes_del_usuario = Plan.objects.filter(usuario=request.user).order_by('-fecha_creacion')
-
-    # Pasa la lista de planes a la plantilla HTML.
+    # Pasa la lista de planes a la plantilla para que el bucle `{% for %}` los muestre.
     return render(request, 'dashboard/index.html', {'planes_del_usuario': planes_del_usuario})
 
 
 #--------------------- planes ---------------------#
 #                        |                         #
 #                        v                         #
-def crear_plan_individual_view(request):
+def crear_plan_view(request):
     if request.method == 'POST':
-        form = PlanIndividualForm(request.POST)
+        form = PlanForm(request.POST)
         if form.is_valid():
-
-            # El formulario se encarga de asignar el usuario y el tipo de plan.
             form.save(user=request.user)
-            messages.success(request, "¡Tu plan individual se ha creado con éxito!")
-            return redirect('Dashboard') # Redirige al dashboard
+            messages.success(request, "¡Tu plan se ha creado con éxito!")
+            return redirect('Dashboard')
     else:
-        form = PlanIndividualForm()
+        form = PlanForm()
     
     return render(request, 'planes/crear_plan.html', {'form': form})
+
+def plan_individual(request):
+    return render(request, 'planes/plan_individual.html')
+
+def plan_grupal(request):
+  return render(request, 'planes/plan_grupal.html')

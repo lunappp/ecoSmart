@@ -29,7 +29,6 @@ urlpatterns = [
 
     #------------------- daashboard -------------------#
     path('Dashboard/',App.views.Dashboard, name= 'Dashboard'),
-    path('Dashboard_view/',App.views.Dashboard_view, name= 'Dashboard_view'),
     
     #----------------- menu principal -----------------#
     path('Inicio/',App.views.Inicio, name= 'Inicio'),
@@ -37,5 +36,7 @@ urlpatterns = [
     path('Estadisticas/',App.views.Estadisticas, name= 'Estadisticas'),
     
     #----------------------planes-----------------------#
-    path('planes/crear_individual/', App.views.crear_plan_individual_view, name='crear_plan_individual'),
+    path('planes/crear_plan_view/', App.views.crear_plan_view, name='crear_plan_view'),
+    path('planes/plan_individual/', App.views.plan_individual, name='plan_individual'),
+    path('planes/plan_grupal/', App.views.plan_grupal, name='plan_grupal'),
 ]
