@@ -1,10 +1,13 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.models import User
 from django.contrib import messages
 
 from django.contrib.auth.decorators import login_required
 
+
+from Planes_app.models import Plan, Suscripcion # Asume estos modelos
+from Planes_app.forms import CrearPlanForm, UnirseAForm # Asume estos formularios
 from .forms import PlanForm
 from .models import Plan
 
@@ -12,22 +15,16 @@ from App.forms import RegisterForm
 
 
 #------------------ Landing page ------------------#
-#                        |                         #
-#                        v                         #
-
 def Landing(request):
     return render(request,'landing_page/index.html')
 
 #---------------------- Auth ----------------------#
-#                        |                         #
-#                        v                         #
-
 def Register(request):
     if request.method == 'POST':
         register_form = RegisterForm(request.POST)
         if register_form.is_valid():
             register_form.save()
-            return redirect('Inicio')
+            return redirect('Dashboard')
         else:
             errores = register_form.errors
         
@@ -42,7 +39,6 @@ def Register(request):
         return render(request, 'auth/registro/registro.html', {
             'registerForm': register_form
         })
-
 
 def Login(request):
     if request.method == "POST":
@@ -61,47 +57,60 @@ def Login(request):
     return render(request, "auth/login/login.html")
 
 #----------------- menu principal -----------------#
-#                        |                         #
-#                        v                         #
-
 def Inicio(request):
     return render(request, 'menu_principal/index.html')
-
 def transacciones(request):
     return render(request, 'menu_principal/transacciones.html')
-
 def Estadisticas(request):
     return render(request, 'menu_principal/Estadisticas.html')
 
-
-#--------------------dashboard---------------------#
-#                        |                         #
-#                        v                         #
-
-
-
+#--------------------Dashboard---------------------#
+from Planes_app.models import Plan
 
 def Dashboard(request):
-    """
-    Vista que muestra el dashboard del usuario con sus planes.
-    """
-    # Filtra la base de datos para obtener todos los planes donde el usuario 
-    # actual sea el creador. Esto obtiene los planes individuales.
-    planes_del_usuario = Plan.objects.filter(usuario=request.user)
+    if not request.user.is_authenticated:
+        return redirect('login') 
 
-    # El siguiente paso (para planes grupales) requiere un modelo de membresía
-    # o una relación ManyToManyField, lo cual ya discutimos. 
-    # Si tienes esa tabla implementada, la lógica sería un poco más compleja
-    # para incluir los planes grupales también. Por ahora, nos enfocamos en 
-    # los planes individuales que ya creaste.
+    if request.method == 'POST' and 'crear_plan' in request.POST:
+        crear_form = CrearPlanForm(request.POST)
+        if crear_form.is_valid():
+            # Create the plan instance but don't save to the database yet
+            nuevo_plan = crear_form.save(commit=False)
+            
+            # Assign the current user as the plan's creator
+            nuevo_plan.creador = request.user
+            
+            # Now, save the instance to the database
+            nuevo_plan.save()
 
-    # Pasa la lista de planes a la plantilla para que el bucle `{% for %}` los muestre.
-    return render(request, 'dashboard/index.html', {'planes_del_usuario': planes_del_usuario})
+            # Create the subscription linking the user to the plan
+            Suscripcion.objects.create(usuario=request.user, plan=nuevo_plan)
+            
+            return redirect('Dashboard')
+            
+    elif request.method == 'POST' and 'unirse_a_plan' in request.POST:
+        unirse_form = UnirseAForm(request.POST)
+        if unirse_form.is_valid():
+            plan_id = unirse_form.cleaned_data['plan_id']
+            plan_a_unirse = Plan.objects.get(id=plan_id)
+            Suscripcion.objects.create(usuario=request.user, plan=plan_a_unirse)
+            return redirect('Dashboard')
+    
+    else:
+        crear_form = CrearPlanForm()
+        unirse_form = UnirseAForm()
 
+    mis_planes = request.user.suscripciones.all()
+    
+    context = {
+        'mis_planes': mis_planes,
+        'crear_form': crear_form,
+        'unirse_form': unirse_form
+    }
+
+    return render(request, 'dashboard/index.html', context)
 
 #--------------------- planes ---------------------#
-#                        |                         #
-#                        v                         #
 def crear_plan_view(request):
     if request.method == 'POST':
         form = PlanForm(request.POST)
