@@ -74,20 +74,16 @@ def Dashboard(request):
     if request.method == 'POST' and 'crear_plan' in request.POST:
         crear_form = CrearPlanForm(request.POST)
         if crear_form.is_valid():
-            # Create the plan instance but don't save to the database yet
             nuevo_plan = crear_form.save(commit=False)
-            
-            # Assign the current user as the plan's creator
             nuevo_plan.creador = request.user
-            
-            # Now, save the instance to the database
-            nuevo_plan.save()
+            # Obtener el tipo de plan desde el formulario y asignarlo
+            tipo_plan = request.POST.get('tipo_plan')
+            if tipo_plan in ['individual', 'grupal']:
+                nuevo_plan.tipo_plan = tipo_plan
+                nuevo_plan.save()
+                Suscripcion.objects.create(usuario=request.user, plan=nuevo_plan)
+                return redirect('Dashboard')
 
-            # Create the subscription linking the user to the plan
-            Suscripcion.objects.create(usuario=request.user, plan=nuevo_plan)
-            
-            return redirect('Dashboard')
-            
     elif request.method == 'POST' and 'unirse_a_plan' in request.POST:
         unirse_form = UnirseAForm(request.POST)
         if unirse_form.is_valid():
@@ -109,7 +105,6 @@ def Dashboard(request):
     }
 
     return render(request, 'dashboard/index.html', context)
-
 #--------------------- planes ---------------------#
 def crear_plan_view(request):
     if request.method == 'POST':

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gastos - {{ plan.nombre }}</title>
+<script src="https://www.google.com/search?q=https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-8">
+<div class="max-w-4xl mx-auto bg-white rounded-xl shadow-lg p-6">
+<h1 class="text-3xl font-bold mb-4 text-center">Gastos de {{ plan.nombre }}</h1>
+<p class="text-center text-gray-500 mb-6">Añade y gestiona tus gastos.</p>
+
+    <!-- Formulario para añadir un nuevo gasto -->
+    <div class="mb-8">
+        <h2 class="text-2xl font-semibold mb-4">Añadir Nuevo Gasto</h2>
+        <form method="post" action="{% url 'gastos' plan.id %}">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="w-full bg-red-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-red-600 transition-colors">
+                Guardar Gasto
+            </button>
+        </form>
+    </div>
+
+    <!-- Lista de gastos existentes -->
+    <div>
+        <h2 class="text-2xl font-semibold mb-4">Lista de Gastos</h2>
+        <ul class="space-y-2">
+            {% for gasto in gastos_del_plan %}
+                <li class="bg-gray-100 p-4 rounded-lg flex justify-between items-center">
+                    <div>
+                        <p class="font-bold">{{ gasto.nombre }}</p>
+                        <p class="text-sm text-gray-500">{{ gasto.get_tipo_gasto_display }}</p>
+                    </div>
+                    <span class="text-red-600 font-semibold">${{ gasto.cantidad }}</span>
+                </li>
+            {% empty %}
+                <li class="text-center text-gray-500">No hay gastos registrados para este plan.</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+<div class="mt-8 text-center">
+    <a href="{% url 'Menu_plan' plan.id %}" class="text-indigo-600 hover:underline">← Volver al Menú</a>
+</div>
+
+</body>
+</html>

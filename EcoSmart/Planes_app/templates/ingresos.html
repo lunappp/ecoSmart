@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ingresos - {{ plan.nombre }}</title>
+<script src="https://www.google.com/search?q=https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-8">
+<div class="max-w-4xl mx-auto bg-white rounded-xl shadow-lg p-6">
+<h1 class="text-3xl font-bold mb-4 text-center">Ingresos de {{ plan.nombre }}</h1>
+<p class="text-center text-gray-500 mb-6">Añade y gestiona tus ingresos.</p>
+
+    <!-- Formulario para añadir un nuevo ingreso -->
+    <div class="mb-8">
+        <h2 class="text-2xl font-semibold mb-4">Añadir Nuevo Ingreso</h2>
+        <form method="post" action="{% url 'ingresos' plan.id %}">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="w-full bg-green-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-600 transition-colors">
+                Guardar Ingreso
+            </button>
+        </form>
+    </div>
+
+    <!-- Lista de ingresos existentes -->
+    <div>
+        <h2 class="text-2xl font-semibold mb-4">Lista de Ingresos</h2>
+        <ul class="space-y-2">
+            {% for ingreso in ingresos_del_plan %}
+                <li class="bg-gray-100 p-4 rounded-lg flex justify-between items-center">
+                    <div>
+                        <p class="font-bold">{{ ingreso.nombre }}</p>
+                        <p class="text-sm text-gray-500">{{ ingreso.get_tipo_ingreso_display }}</p>
+                    </div>
+                    <span class="text-green-600 font-semibold">${{ ingreso.cantidad }}</span>
+                </li>
+            {% empty %}
+                <li class="text-center text-gray-500">No hay ingresos registrados para este plan.</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+<div class="mt-8 text-center">
+    <a href="{% url 'Menu_plan' plan.id %}" class="text-indigo-600 hover:underline">← Volver al Menú</a>
+</div>
+
+</body>
+</html>

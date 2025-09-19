@@ -1,13 +1,15 @@
-<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Menú del Plan - {{ plan.nombre }}</title>
+    
+    <!-- Enlace a la hoja de estilos de forma dinámica -->
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'menu_plan.css' %}">
 </head>
 <body>
-
-    <h1>{{ plan.nombre }}</h1>
+    <h1>{{ plan.nombre }}</h1> 
     <p>Bienvenido al menú principal de tu plan.</p>
     <a href="{% url 'Dashboard' %}">Volver al Dashboard</a>
 
@@ -15,10 +17,11 @@
 
     <h2>Opciones del Plan</h2>
     <ul>
-        <li><a href="#">Ir a Tareas</a></li>
-        <li><a href="#">Ir a Finanzas</a></li>
-        <li><a href="#">Ver Miembros</a></li>
-    </ul>
+        <li><a href="{% url 'ingresos' plan.id %}">Ingresos</a></li>
+        <li><a href="{% url 'gastos' plan.id %}">Deudas</a></li>
+       {% if plan.tipo_plan == 'grupal' %} <li><a href="#">Miembros</a></li> {%endif%}
+        <li><a href="{% url 'estadisticas' plan.id %}">Estadisticas</a></li>
 
+    </ul>
 </body>
 </html>
