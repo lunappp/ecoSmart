@@ -1,27 +1,122 @@
-<html lang="es">
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menú del Plan - {{ plan.nombre }}</title>
-    
-    <!-- Enlace a la hoja de estilos de forma dinámica -->
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'menu_plan.css' %}">
+    <title>Document</title>
 </head>
 <body>
-    <h1>{{ plan.nombre }}</h1> 
-    <p>Bienvenido al menú principal de tu plan.</p>
-    <a href="{% url 'Dashboard' %}">Volver al Dashboard</a>
+    
+    {% load static %}
 
-    <hr>
+{% block title %}Menú del Plan - {{ plan.nombre }}{% endblock %}
 
-    <h2>Opciones del Plan</h2>
-    <ul>
-        <li><a href="{% url 'ingresos' plan.id %}">Ingresos</a></li>
-        <li><a href="{% url 'gastos' plan.id %}">Deudas</a></li>
-       {% if plan.tipo_plan == 'grupal' %} <li><a href="#">Miembros</a></li> {%endif%}
-        <li><a href="{% url 'estadisticas' plan.id %}">Estadisticas</a></li>
+{% block content %}
+<div >
+    <div>
+        <h1 >{{ plan.nombre }}</h1>
+        <p >{{ plan.descripcion }}</p>
 
-    </ul>
+        <!-- Botón para volver al Dashboard (Asumiendo que la ruta se llama 'dashboard' globalmente) -->
+        <a href="{% url 'Dashboard' %}" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-lg shadow-sm text-gray-700 bg-white hover:bg-gray-50 transition duration-150 ease-in-out">
+            <!-- Icono de flecha izquierda de Lucide -->
+
+            Volver al Dashboard
+        </a>
+    </div>
+
+    <h2 >Módulos de Gestión</h2>
+    
+    <div >
+        
+        <!-- Tarjeta de Ingresos -->
+        <a href="{% url 'ingresos' plan_id=plan.id %}" >
+            <div>
+       
+                <div>
+                    <h3>Ingresos</h3>
+                    <p>Registra y administra tus fuentes de dinero.</p>
+                </div>
+            </div>
+        </a>
+
+        <!-- Tarjeta de Gastos -->
+        <a href="{% url 'gastos' plan_id=plan.id %}">
+            <div>
+            
+                <div>
+                    <h3>Gastos</h3>
+                    <p>Controla y clasifica cada salida de dinero.</p>
+                </div>
+            </div>
+        </a>
+
+        <!-- Tarjeta de Objetivos -->
+        <a href="{% url 'objetivos' plan_id=plan.id %}" >
+            <div>
+
+                <div>
+                    <h3>Objetivos</h3>
+                    <p>Visualiza el progreso de tus metas de ahorro.</p>
+                </div>
+            </div>
+        </a>
+
+        <!-- Tarjeta de Tareas -->
+        <a href="{% url 'tareas' plan_id=plan.id %}" >
+            <div>
+                <div >
+                </div>
+                <div>
+                    <h3>Tareas</h3>
+                    <p>Gestiona recordatorios, pagos y pendientes.</p>
+                </div>
+            </div>
+        </a>
+
+        <!-- Tarjeta de Estadísticas/Reportes -->
+        <a href="{% url 'estadisticas' plan_id=plan.id %}">
+            <div>
+                <div >
+                </div>
+                <div>
+                    <h3>Estadísticas</h3>
+                    <p>Visualiza reportes y análisis de tu plan.</p>
+                </div>
+            </div>
+        </a> 
+
+        <!-- Tarjeta de Miembros (Solo si es grupal) -->
+        {% if plan.tipo_plan == 'grupal' %}
+        <a href="#" >
+            <div>
+                <div >
+            
+                </div>
+                <div>
+                    <h3>Miembros</h3>
+                    <p>Gestiona la colaboración en el plan grupal.</p>
+                </div>
+            </div>
+        </a>
+        {% endif %}
+
+    </div>
+</div>
+{% endblock %}
+<!-- 
+<style>
+/* Estilos Tailwind CSS */
+@import url('https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css');
+
+body {
+    background-color: #f7f9fc;
+    font-family: 'Inter', sans-serif;
+}
+</style>-->
+
+
 </body>
 </html>
+
+
