@@ -69,7 +69,7 @@ from Planes_app.models import Plan
 
 def Dashboard(request):
     if not request.user.is_authenticated:
-        return redirect('login') 
+        return redirect('Login') 
 
     if request.method == 'POST' and 'crear_plan' in request.POST:
         crear_form = CrearPlanForm(request.POST)

@@ -8,95 +8,80 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body class="bg-gray-100 p-8">
-    <div class="max-w-5xl mx-auto bg-white rounded-xl shadow-lg p-6 md:p-10">
-
-        <h1 class="text-3xl md:text-4xl font-bold mb-6 text-center text-gray-800">Estadísticas de {{ plan.nombre }}</h1>
-
-        <div class="grid md:grid-cols-3 gap-6 mb-8">
-            <!-- Tarjeta de Ingresos Totales -->
-            <div class="bg-green-100 p-6 rounded-xl text-center">
-                <h2 class="text-xl font-semibold text-green-700">Ingresos Totales</h2>
-                <p class="text-4xl font-bold text-green-600 mt-2">${{ ingresos_totales|default:"0" }}</p>
+    <div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+        <h1 class="text-3xl font-extrabold text-gray-900 mb-6 border-b pb-2">
+            📊 Estadísticas del Plan: {{ plan.nombre }}
+        </h1>
+    
+        <!-- Resumen Financiero -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <!-- Saldo Total -->
+            <div class="bg-indigo-50 p-6 rounded-xl shadow-lg border border-indigo-200">
+                <p class="text-sm font-medium text-indigo-700">Saldo Actual</p>
+                <p class="text-4xl font-extrabold text-indigo-900 mt-1">${{ dinero_info.total_dinero|floatformat:2 }}</p>
             </div>
-
-            <!-- Tarjeta de Gastos Totales -->
-            <div class="bg-red-100 p-6 rounded-xl text-center">
-                <h2 class="text-xl font-semibold text-red-700">Gastos Totales</h2>
-                <p class="text-4xl font-bold text-red-600 mt-2">${{ gastos_totales|default:"0" }}</p>
+            <!-- Total Ingresos -->
+            <div class="bg-green-50 p-6 rounded-xl shadow-lg border border-green-200">
+                <p class="text-sm font-medium text-green-700">Total Ingresos</p>
+                <p class="text-4xl font-extrabold text-green-900 mt-1">${{ dinero_info.ingreso_total|floatformat:2 }}</p>
             </div>
-
-            <!-- Tarjeta de Capital/Ganancia Neta -->
-            <div class="p-6 rounded-xl text-center {% if ganancia_neta >= 0 %}bg-blue-100{% else %}bg-red-100{% endif %}">
-                <h2 class="text-xl font-semibold {% if ganancia_neta >= 0 %}text-blue-700{% else %}text-red-700{% endif %}">Capital</h2>
-                <p class="text-4xl font-bold {% if ganancia_neta >= 0 %}text-blue-600{% else %}text-red-600{% endif %} mt-2">${{ ganancia_neta|default:"0" }}</p>
-            </div>
-        </div>
-
-        <div class="bg-gray-50 p-6 rounded-xl shadow-inner">
-            <h2 class="text-2xl font-semibold mb-4 text-gray-700 text-center">Distribución de Gastos</h2>
-            <div class="mx-auto w-full md:w-3/4 lg:w-2/3">
-                <canvas id="gastosChart"></canvas>
+            <!-- Total Gastos -->
+            <div class="bg-red-50 p-6 rounded-xl shadow-lg border border-red-200">
+                <p class="text-sm font-medium text-red-700">Total Gastos</p>
+                <p class="text-4xl font-extrabold text-red-900 mt-1">${{ dinero_info.gasto_total|floatformat:2 }}</p>
             </div>
         </div>
         
-        <div class="mt-8 text-center">
-            <a href="{% url 'Menu_plan' plan.id %}" class="text-indigo-600 hover:underline font-medium">← Volver al Menú</a>
-        </div>
-    </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Datos pasados desde la vista de Django
-            const gastosPorTipo = JSON.parse('{{ gastos_por_tipo|safe|escape }}');
+        <!-- Gráficos y Desglose por Categoría -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
             
-            // Extraer las etiquetas (tipos de gasto) y los datos (cantidades)
-            const labels = Object.keys(gastosPorTipo);
-            const data = Object.values(gastosPorTipo);
-
-            const ctx = document.getElementById('gastosChart').getContext('2d');
-            const gastosChart = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Gastos por Tipo',
-                        data: data,
-                        backgroundColor: [
-                            'rgba(255, 99, 132, 0.7)',
-                            'rgba(54, 162, 235, 0.7)',
-                            'rgba(255, 206, 86, 0.7)',
-                            'rgba(75, 192, 192, 0.7)',
-                            'rgba(153, 102, 255, 0.7)',
-                            'rgba(255, 159, 64, 0.7)'
-                        ],
-                        borderColor: [
-                            'rgba(255, 99, 132, 1)',
-                            'rgba(54, 162, 235, 1)',
-                            'rgba(255, 206, 86, 1)',
-                            'rgba(75, 192, 192, 1)',
-                            'rgba(153, 102, 255, 1)',
-                            'rgba(255, 159, 64, 1)'
-                        ],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            position: 'top',
-                        },
-                        title: {
-                            display: true,
-                            text: 'Distribución de Gastos',
-                            font: {
-                                size: 18
-                            }
-                        }
-                    }
-                }
-            });
-        });
-    </script>
+            <!-- Desglose de Ingresos por Tipo -->
+            <div class="bg-white p-6 rounded-xl shadow-2xl">
+                <h2 class="text-2xl font-bold mb-4 text-green-700 border-b pb-2">Desglose de Ingresos por Tipo</h2>
+                
+                {% if ingresos_por_tipo %}
+                <ul class="space-y-3">
+                    {% for item in ingresos_por_tipo %}
+                    <li class="flex justify-between items-center p-3 rounded-lg bg-green-50">
+                        <span class="font-semibold text-gray-800">{{ item.tipo_ingreso }}</span>
+                        <span class="text-lg font-bold text-green-600">${{ item.total|floatformat:2 }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                    <p class="text-gray-500 p-8 bg-gray-50 rounded-lg text-center">No hay ingresos para analizar categorías.</p>
+                {% endif %}
+            </div>
+            
+            <!-- Desglose de Gastos por Tipo -->
+            <div class="bg-white p-6 rounded-xl shadow-2xl">
+                <h2 class="text-2xl font-bold mb-4 text-red-700 border-b pb-2">Desglose de Gastos por Tipo</h2>
+                
+                {% if gastos_por_tipo %}
+                <ul class="space-y-3">
+                    {% for item in gastos_por_tipo %}
+                    <li class="flex justify-between items-center p-3 rounded-lg bg-red-50">
+                        <span class="font-semibold text-gray-800">{{ item.tipo_gasto }}</span>
+                        <span class="text-lg font-bold text-red-600">${{ item.total|floatformat:2 }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                    <p class="text-gray-500 p-8 bg-gray-50 rounded-lg text-center">No hay gastos para analizar categorías.</p>
+                {% endif %}
+            </div>
+    
+        </div>
+        
+        <div class="mt-10 text-center">
+            <a href="{% url 'Menu_plan' plan_id=plan.id %}" class="inline-flex items-center text-indigo-600 hover:text-indigo-800 font-medium">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-1">
+                    <path d="m15 18-6-6 6-6"/>
+                </svg>
+                Volver al Menú del Plan
+            </a>
+        </div>
+    
+    </div>
 </body>
 </html>

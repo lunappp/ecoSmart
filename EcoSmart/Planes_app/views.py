@@ -35,7 +35,7 @@ def menu_plan(request, plan_id):
         'plan': plan,
         'dinero_info': dinero_info,
     }
-    return render(request, 'planes_app/menu_plan.html', context)
+    return render(request, 'menu_plan.html', context)
 
 
 @login_required
@@ -58,7 +58,7 @@ def ingresos(request, plan_id):
             dinero_obj.save()
             
             messages.success(request, 'Ingreso registrado con éxito.')
-            return redirect('Planes_app:ingresos', plan_id=plan.id)
+            return redirect('ingresos', plan_id=plan.id)
     else:
         form = IngresoForm()
 
@@ -70,7 +70,7 @@ def ingresos(request, plan_id):
         'ingresos_list': ingresos_list,
         'dinero_info': dinero_obj,
     }
-    return render(request, 'planes_app/ingresos.html', context)
+    return render(request, 'ingresos.html', context)
 
 
 @login_required
@@ -93,7 +93,7 @@ def gastos(request, plan_id):
             dinero_obj.save()
             
             messages.success(request, 'Gasto registrado con éxito.')
-            return redirect('Planes_app:gastos', plan_id=plan.id)
+            return redirect('gastos', plan_id=plan.id)
     else:
         form = GastoForm()
 
@@ -105,7 +105,7 @@ def gastos(request, plan_id):
         'gastos_list': gastos_list,
         'dinero_info': dinero_obj,
     }
-    return render(request, 'planes_app/gastos.html', context)
+    return render(request, 'gastos.html', context)
 
 
 @login_required
@@ -132,7 +132,7 @@ def objetivos(request, plan_id):
         'objetivos_list': objetivos_list,
         'form': form,
     }
-    return render(request, 'planes_app/objetivos.html', context)
+    return render(request, 'objetivos.html', context)
 
 
 @login_required
@@ -148,7 +148,7 @@ def tareas(request, plan_id):
             tarea.plan = plan
             tarea.save()
             messages.success(request, 'Tarea agregada correctamente.')
-            return redirect('Planes_app:tareas', plan_id=plan.id)
+            return redirect('tareas', plan_id=plan.id)
     else:
         form = TareaForm()
 
@@ -161,7 +161,7 @@ def tareas(request, plan_id):
         'pendientes': tareas_pendientes,
         'completadas': tareas_completadas,
     }
-    return render(request, 'planes_app/tareas.html', context)
+    return render(request, 'tareas.html', context)
 
 
 @login_required
@@ -181,4 +181,4 @@ def estadisticas(request, plan_id):
         'ingresos_por_tipo': ingresos_por_tipo,
         'gastos_por_tipo': gastos_por_tipo,
     }
-    return render(request, 'planes_app/estadisticas.html', context)
+    return render(request, 'estadisticas.html', context)

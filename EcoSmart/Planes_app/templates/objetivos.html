@@ -7,6 +7,107 @@
 </head>
 <body>
     
-    <h1>hola</h1>
+    <div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+        <h1 class="text-3xl font-extrabold text-gray-900 mb-6 border-b pb-2">
+            🎯 Objetivos de Ahorro: {{ plan.nombre }}
+        </h1>
+    
+        {% if messages %}
+            <div class="mb-4">
+                {% for message in messages %}
+                <div class="p-3 rounded-lg text-sm {% if message.tags == 'success' %}bg-green-100 text-green-700{% else %}bg-blue-100 text-blue-700{% endif %}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Columna de Creación de Objetivos -->
+            <div class="lg:col-span-1 bg-white p-6 rounded-xl shadow-2xl h-fit">
+                <h2 class="text-xl font-bold mb-4 text-gray-800 border-b pb-2">Crear Nuevo Objetivo</h2>
+                
+                <form method="POST" action="{% url 'objetivos' plan_id=plan.id %}" class="space-y-4">
+                    {% csrf_token %}
+                    
+                    {% for field in form %}
+                        <div class="field-wrapper">
+                            <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.errors %}
+                                <p class="text-red-500 text-xs mt-1">{{ field.errors }}</p>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                    
+                    <button type="submit" class="w-full bg-indigo-600 text-white py-3 px-4 rounded-xl font-semibold hover:bg-indigo-700 transition duration-150 shadow-lg">
+                        Crear Objetivo
+                    </button>
+                </form>
+            </div>
+    
+            <!-- Columna de Lista de Objetivos -->
+            <div class="lg:col-span-2">
+                <h2 class="text-2xl font-bold mb-4 text-gray-800">Objetivos Pendientes ({{ objetivos_list|length }})</h2>
+    
+                {% if objetivos_list %}
+                    <div class="space-y-6">
+                        {% for objetivo in objetivos_list %}
+                        
+                            {% with progreso=objetivo.monto_actual|divideby:objetivo.monto_necesario|multiply:100|floatformat:0 %}
+                            <div class="bg-white p-5 rounded-xl shadow-lg border-l-4 {% if objetivo.estado == 'completado' %}border-green-500{% else %}border-indigo-500{% endif %} transition duration-150 hover:shadow-xl">
+                                
+                                <div class="flex justify-between items-start mb-2">
+                                    <div>
+                                        <h3 class="text-xl font-bold text-gray-900">{{ objetivo.nombre }}</h3>
+                                        <p class="text-sm text-gray-500 mt-1">{{ objetivo.detalles|default:"Sin detalles." }}</p>
+                                    </div>
+                                    <span class="px-3 py-1 rounded-full text-xs font-semibold uppercase 
+                                        {% if objetivo.estado == 'completado' %}bg-green-100 text-green-700{% else %}bg-indigo-100 text-indigo-700{% endif %}">
+                                        {{ objetivo.get_estado_display }}
+                                    </span>
+                                </div>
+    
+                                <!-- Barra de Progreso -->
+                                <div class="mt-4">
+                                    <div class="flex justify-between mb-1 text-sm font-medium">
+                                        <span class="text-indigo-600">Actual: ${{ objetivo.monto_actual|floatformat:2 }}</span>
+                                        <span class="text-gray-600">Meta: ${{ objetivo.monto_necesario|floatformat:2 }}</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                        <div class="bg-indigo-600 h-2.5 rounded-full" style="width: {{ progreso }}%"></div>
+                                    </div>
+                                    <p class="text-center text-xs text-gray-500 mt-1">{{ progreso }}% completado</p>
+                                </div>
+    
+                                <!-- Botones de Acción (Simulación de Aporte) -->
+                                <!-- Aquí podrías incluir un formulario pequeño para 'Aportar' -->
+                                {% if objetivo.estado != 'completado' %}
+                                <div class="mt-4 pt-4 border-t border-gray-100 flex justify-end">
+                                    <button type="button" class="bg-green-500 text-white text-sm py-2 px-4 rounded-lg hover:bg-green-600 transition duration-150 shadow-md">
+                                        Aportar Dinero (Lógica Pendiente)
+                                    </button>
+                                </div>
+                                {% endif %}
+                            </div>
+                            {% endwith %}
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-gray-500 p-8 bg-gray-50 rounded-lg text-center">¡Sé ambicioso! Crea tu primer objetivo de ahorro.</p>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="mt-8 text-center">
+            <a href="{% url 'menu_plan' plan_id=plan.id %}" class="inline-flex items-center text-indigo-600 hover:text-indigo-800 font-medium">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-1">
+                    <path d="m15 18-6-6 6-6"/>
+                </svg>
+                Volver al Menú del Plan
+            </a>
+        </div>
+    
+    </div>
 </body>
 </html>
