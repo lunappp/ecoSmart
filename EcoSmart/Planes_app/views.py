@@ -2,11 +2,13 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
+from django.db import transaction # Necesario para asegurar que las operaciones se hagan juntas
+
 
 # --- Importaciones de modelos y formularios ---
 # Asegúrate de que estos modelos y formularios estén definidos en sus respectivos archivos.
 from .models import Plan, Suscripcion, Dinero, Ingreso, Gasto, Objetivo, Tarea 
-from .forms import IngresoForm, GastoForm, ObjetivoForm, TareaForm 
+from .forms import IngresoForm, GastoForm, ObjetivoForm, TareaForm ,AportarObjetivoForm
 
 def verificar_membresia(request, plan_id):
     """Función auxiliar para verificar si el usuario pertenece al plan."""
@@ -108,31 +110,6 @@ def gastos(request, plan_id):
     return render(request, 'gastos.html', context)
 
 
-@login_required
-def objetivos(request, plan_id):
-    """Gestión de Objetivos de Ahorro."""
-    plan, es_miembro = verificar_membresia(request, plan_id)
-    if not es_miembro: return redirect('dashboard')
-
-    if request.method == 'POST':
-        form = ObjetivoForm(request.POST)
-        if form.is_valid():
-            objetivo = form.save(commit=False)
-            objetivo.plan = plan
-            objetivo.save()
-            messages.success(request, 'Objetivo creado correctamente.')
-            return redirect('Planes_app:objetivos', plan_id=plan.id)
-    else:
-        form = ObjetivoForm()
-    
-    objetivos_list = Objetivo.objects.filter(plan=plan).order_by('fecha_guardado')
-
-    context = {
-        'plan': plan,
-        'objetivos_list': objetivos_list,
-        'form': form,
-    }
-    return render(request, 'objetivos.html', context)
 
 
 @login_required
@@ -166,6 +143,7 @@ def tareas(request, plan_id):
 
 @login_required
 def estadisticas(request, plan_id):
+    
     """Muestra un resumen de estadísticas financieras."""
     plan, es_miembro = verificar_membresia(request, plan_id)
     if not es_miembro: return redirect('dashboard')
@@ -182,3 +160,117 @@ def estadisticas(request, plan_id):
         'gastos_por_tipo': gastos_por_tipo,
     }
     return render(request, 'estadisticas.html', context)
+
+
+@login_required
+def objetivos(request, plan_id):
+    """
+    Muestra la lista de objetivos del plan y el formulario para agregar uno nuevo.
+    """
+    plan = get_object_or_404(Plan, pk=plan_id)
+    
+    # Obtener todos los objetivos asociados a este plan.
+    objetivos_del_plan = Objetivo.objects.filter(plan=plan)
+    
+    # Formulario para agregar un nuevo objetivo
+    agregar_form = ObjetivoForm()
+    
+    # Formulario para aportar dinero a un objetivo
+    aportar_form = AportarObjetivoForm()
+    
+    context = {
+        'plan': plan,
+        'objetivos_del_plan': objetivos_del_plan,
+        'agregar_form': agregar_form,
+        'aportar_form': aportar_form,
+    }
+    return render(request, 'objetivos.html', context)
+
+def aportar_objetivo(request, plan_id, objetivo_id):
+    """
+    Procesa el aporte de dinero a un Objetivo, registrándolo como Gasto.
+    Se usa transaction.atomic() para asegurar la integridad de datos.
+    """
+    plan = get_object_or_404(Plan, pk=plan_id)
+    objetivo = get_object_or_404(Objetivo, pk=objetivo_id)
+    
+    # Obtener o crear el objeto Dinero
+    dinero_plan, created = Dinero.objects.get_or_create(
+        plan=plan, 
+        # CORRECCIÓN CLAVE: Usar gasto_total e ingreso_total (snake_case)
+        defaults={'total_dinero': 0, 'gasto_total': 0, 'ingreso_total': 0}
+    )
+
+    if request.method == 'POST':
+        form = AportarObjetivoForm(request.POST)
+        
+        if form.is_valid():
+            
+            # ATENCIÓN: Se usa 'monto_aportar' basado en el código que enviaste.
+            try:
+                monto_aporte = form.cleaned_data['monto_aportar']
+            except KeyError:
+                messages.error(request, "Error interno: El campo 'monto_aportar' no fue encontrado.")
+                return redirect('objetivos', plan_id=plan.id)
+
+            
+            # --- Ejecutar Transacción Atómica ---
+            try:
+                with transaction.atomic():
+                    
+                    if dinero_plan.total_dinero >= monto_aporte:
+                        
+                        # A. CREAR EL GASTO 
+                        Gasto.objects.create(
+                            nombre=f"Aporte a Objetivo: {objetivo.nombre}",
+                            tipo_gasto='objetivo', 
+                            cantidad=monto_aporte,
+                            dinero=dinero_plan,
+                            # NOTA: Los campos obligatorios ahora son solo los que existen en tu modelo
+                        )
+                        
+                        # B. ACTUALIZAR EL MODELO DINERO
+                        dinero_plan.total_dinero -= monto_aporte
+                        dinero_plan.gasto_total += monto_aporte # CORRECCIÓN: Usar gasto_total
+                        dinero_plan.save()
+                        
+                        # C. ACTUALIZAR EL OBJETIVO
+                        objetivo.monto_actual += monto_aporte
+                        objetivo.save()
+                        
+                        # Mensajes de éxito
+                        if objetivo.monto_actual >= objetivo.monto_necesario:
+                            messages.success(request, f"¡Objetivo '{objetivo.nombre}' completado! 🎉")
+                        else:
+                            messages.success(request, f"Se han aportado ${monto_aporte} a tu objetivo y se registró como gasto.")
+                    
+                    else:
+                        messages.error(request, f"Capital insuficiente. Solo tienes ${dinero_plan.total_dinero} disponibles para aportar.")
+            
+            except Exception as e:
+                # Si esto falla de nuevo, el error es otro campo obligatorio en Gasto (ej. fecha, descripcion)
+                messages.error(request, f"Ocurrió un error final de la base de datos. Debes revisar los campos obligatorios de Gasto: {e}")
+                
+        else:
+            messages.error(request, 'Error en el formulario. Asegúrate de ingresar una cantidad válida.')
+
+    return redirect('objetivos', plan_id=plan.id)
+
+def agregar_objetivo(request, plan_id):
+    """Maneja el formulario POST para agregar un nuevo objetivo."""
+    plan = get_object_or_404(Plan, pk=plan_id)
+    
+    if request.method == 'POST':
+        form = ObjetivoForm(request.POST)
+        if form.is_valid():
+            objetivo = form.save(commit=False)
+            objetivo.plan = plan
+            # Establecer monto_actual en 0 por defecto al crear
+            if objetivo.monto_actual is None:
+                objetivo.monto_actual = 0
+            objetivo.save()
+            messages.success(request, f"Objetivo '{objetivo.nombre}' agregado con éxito.")
+        else:
+            messages.error(request, 'Error al agregar el objetivo. Verifica los campos.')
+    
+    return redirect('objetivos', plan_id=plan.id)

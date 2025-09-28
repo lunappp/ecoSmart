@@ -11,5 +11,9 @@ urlpatterns = [
     path('<int:plan_id>/objetivos/', views.objetivos, name='objetivos'),
     path('<int:plan_id>/tareas/', views.tareas, name='tareas'),
 
+    path('<int:plan_id>/objetivos/', views.objetivos, name='objetivos'),
+    path('<int:plan_id>/objetivos/agregar/', views.agregar_objetivo, name='agregar_objetivo'),
+    path('<int:plan_id>/objetivos/<int:objetivo_id>/aportar/', views.aportar_objetivo, name='aportar_objetivo'),
+    
 
 ]

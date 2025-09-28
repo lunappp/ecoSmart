@@ -61,7 +61,7 @@
                 <ul class="space-y-3">
                     {% for item in gastos_por_tipo %}
                     <li class="flex justify-between items-center p-3 rounded-lg bg-red-50">
-                        <span class="font-semibold text-gray-800">{{ item.tipo_gasto }}</span>
+                        <span class="font-semibold text-gray-800">{{ item.tipo_gasto }}//{{item.descripcions}}</span>
                         <span class="text-lg font-bold text-red-600">${{ item.total|floatformat:2 }}</span>
                     </li>
                     {% endfor %}
