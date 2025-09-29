@@ -1,14 +1,13 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.db import transaction 
+from django.utils import timezone
 from django.db.models import Sum
-from django.db import transaction # Necesario para asegurar que las operaciones se hagan juntas
 
-
-# --- Importaciones de modelos y formularios ---
-# Asegúrate de que estos modelos y formularios estén definidos en sus respectivos archivos.
-from .models import Plan, Suscripcion, Dinero, Ingreso, Gasto, Objetivo, Tarea 
-from .forms import IngresoForm, GastoForm, ObjetivoForm, TareaForm ,AportarObjetivoForm
+# Asumiendo que estas son las importaciones correctas para tus modelos y formularios
+from .models import Plan, Suscripcion, Objetivo, Dinero, Gasto, Ingreso, Tarea 
+from .forms import ObjetivoForm, AportarObjetivoForm, IngresoForm, GastoForm, TareaForm # Asegúrate que todos estos existen
 
 def verificar_membresia(request, plan_id):
     """Función auxiliar para verificar si el usuario pertenece al plan."""
@@ -112,33 +111,6 @@ def gastos(request, plan_id):
 
 
 
-@login_required
-def tareas(request, plan_id):
-    """Gestión de Tareas y Recordatorios."""
-    plan, es_miembro = verificar_membresia(request, plan_id)
-    if not es_miembro: return redirect('dashboard')
-
-    if request.method == 'POST':
-        form = TareaForm(request.POST)
-        if form.is_valid():
-            tarea = form.save(commit=False)
-            tarea.plan = plan
-            tarea.save()
-            messages.success(request, 'Tarea agregada correctamente.')
-            return redirect('tareas', plan_id=plan.id)
-    else:
-        form = TareaForm()
-
-    tareas_pendientes = Tarea.objects.filter(plan=plan, estado__in=['pendiente', 'en_proceso']).order_by('fecha_a_completar')
-    tareas_completadas = Tarea.objects.filter(plan=plan, estado='completada').order_by('-fecha_guardado')
-
-    context = {
-        'plan': plan,
-        'form': form,
-        'pendientes': tareas_pendientes,
-        'completadas': tareas_completadas,
-    }
-    return render(request, 'tareas.html', context)
 
 
 @login_required
@@ -274,3 +246,109 @@ def agregar_objetivo(request, plan_id):
             messages.error(request, 'Error al agregar el objetivo. Verifica los campos.')
     
     return redirect('objetivos', plan_id=plan.id)
+
+
+# --- VISTAS DE TAREAS (CORREGIDAS) ---
+
+def obtener_estado_tarea(tarea):
+    """
+    Calcula el estado visual de una tarea.
+    - Usa 'estado' para saber si está completada.
+    - Usa 'fecha_a_completar' para chequear vencimiento.
+    - Usa 'fecha_completado' para chequear si fue A TIEMPO o TARDE.
+    """
+    hoy_date = timezone.now().date()
+    esta_completada = (tarea.estado == 'completada')
+
+    # Si la tarea NO está completada
+    if not esta_completada:
+        # Tarea VENCIDA: Solo si tiene fecha límite y esta ya pasó
+        if tarea.fecha_a_completar and tarea.fecha_a_completar < hoy_date:
+            return 'VENCIDA'
+        
+        # Tarea EN PROCESO (si no está vencida)
+        if tarea.estado == 'en_proceso':
+            return 'EN_PROCESO'
+            
+        # Tarea PENDIENTE (el estado por defecto)
+        return 'PENDIENTE'
+
+    # Si la tarea SÍ está completada
+    else:
+        # Si tiene fecha límite, verificamos si fue A TIEMPO o TARDE
+        if tarea.fecha_a_completar:
+            # CORRECCIÓN DE LÓGICA: Usar la fecha de completado si existe
+            fecha_real_completado = tarea.fecha_completado.date() if tarea.fecha_completado else hoy_date
+            
+            # Comparamos la fecha de completado real contra la fecha límite
+            if fecha_real_completado <= tarea.fecha_a_completar:
+                return 'COMPLETADA_A_TIEMPO'
+            else:
+                return 'COMPLETADA_TARDE'
+        
+        # Si se completó pero no tenía fecha límite
+        return 'COMPLETADA_GENERAL'
+
+
+@login_required
+def tareas(request, plan_id):
+    # ... (resto de la función 'tareas' es igual)
+    plan = get_object_or_404(Plan, pk=plan_id)
+    
+    # 1. Obtener todas las tareas del plan
+    tareas_del_plan = Tarea.objects.filter(plan=plan).order_by('estado', 'fecha_a_completar')
+    
+    # 2. Adjuntar el estado calculado a cada objeto Tarea
+    tareas_con_estado = []
+    for tarea in tareas_del_plan:
+        tarea.estado_calculado = obtener_estado_tarea(tarea) # Usamos el estado calculado
+        tareas_con_estado.append(tarea)
+        
+    context = {
+        'plan': plan,
+        'tareas_con_estado': tareas_con_estado,
+        'tarea_form': TareaForm(), 
+    }
+    return render(request, 'tareas.html', context)
+
+
+@login_required
+def agregar_tarea(request, plan_id):
+    """Maneja el POST para crear una nueva tarea."""
+    plan = get_object_or_404(Plan, pk=plan_id)
+    
+    if request.method == 'POST':
+        form = TareaForm(request.POST)
+        if form.is_valid():
+            tarea = form.save(commit=False)
+            tarea.plan = plan
+            # El estado ya se establece por defecto a 'pendiente' en el modelo
+            tarea.save()
+            messages.success(request, f"Tarea '{tarea.nombre}' agregada con éxito.")
+        else:
+            messages.error(request, 'Error al agregar la tarea. Verifica todos los campos.')
+    
+    return redirect('tareas', plan_id=plan.id)
+
+
+@login_required
+def cambiar_estado_tarea(request, plan_id, tarea_id):
+    """Cambia el estado de una tarea entre 'completada' y 'pendiente', registrando la fecha."""
+    tarea = get_object_or_404(Tarea, pk=tarea_id)
+    
+    if request.method == 'POST':
+        
+        # Si la tarea NO está completada, la completamos
+        if tarea.estado != 'completada':
+            tarea.estado = 'completada'
+            tarea.fecha_completado = timezone.now() # Registramos la fecha y hora de completado
+            tarea.save()
+            messages.success(request, f"Tarea '{tarea.nombre}' marcada como completada.")
+        else:
+            # Si ya está completada, la reabrimos (cambiamos a pendiente)
+            tarea.estado = 'pendiente'
+            tarea.fecha_completado = None # Eliminamos la fecha de completado
+            tarea.save()
+            messages.info(request, f"Tarea '{tarea.nombre}' reabierta.")
+            
+    return redirect('tareas', plan_id=plan_id)

@@ -130,6 +130,7 @@ class Tarea(models.Model):
         ('en_proceso', 'En Proceso'),
         ('completada', 'Completada'),
     ]
+
     TIPO_TAREA_CHOICES = [
         ('pago', 'Pago'),
         ('recordatorio', 'Recordatorio'),
@@ -137,17 +138,36 @@ class Tarea(models.Model):
         ('otro', 'Otro'),
     ]
 
-    # id_tareas (INTEGER - PK) -> Django lo crea automáticamente
-    
-    # id_plan (FK a planes_plan)
+    # Relación con el Plan
     plan = models.ForeignKey(Plan, on_delete=models.CASCADE, related_name='tareas')
-    
+
+    # Campos del Formulario
     nombre = models.CharField(max_length=255)
     descripcion = models.TextField(max_length=65535, null=True, blank=True)
     tipo_tarea = models.CharField(max_length=50, choices=TIPO_TAREA_CHOICES)
+    
+    # Fechas
     fecha_guardado = models.DateTimeField(default=timezone.now)
-    fecha_a_completar = models.DateField(null=True, blank=True)
+    fecha_a_completar = models.DateField(null=True, blank=True) # La fecha límite
+
+    # Campo de Estado (Persistente)
     estado = models.CharField(max_length=50, choices=ESTADO_CHOICES, default='pendiente')
+
+    # AÑADIDO: Campo para registrar cuándo se completó (necesario para la lógica de "A Tiempo" / "Tarde")
+    fecha_completado = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return f'Tarea: {self.nombre} ({self.estado})'
+    
+    # Si quieres usar los campos de estado en el admin o en otro lugar de forma más legible
+    def get_estado_display_completo(self):
+        # Esta función usa el estado persistente (completada, pendiente, etc.)
+        if self.estado == 'completada':
+            return "Completada"
+        elif self.estado == 'en_proceso':
+            return "En Proceso"
+        return "Pendiente"
+
+    class Meta:
+        verbose_name = "Tarea y Recordatorio"
+        verbose_name_plural = "Tareas y Recordatorios"

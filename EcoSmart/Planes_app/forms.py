@@ -120,7 +120,7 @@ class TareaForm(forms.ModelForm):
         
         widgets = {
             'nombre': forms.TextInput(attrs={'class': 'form-input w-full rounded-lg border-gray-300 shadow-sm', 'placeholder': 'Ej: Pagar la luz'}),
-            'descripcion': forms.Textarea(attrs={'class': 'form-textarea w-full rounded-lg border-gray-300 shadow-sm', 'rows': 2, 'placeholder': 'Descripción de la tarea (opcional)'}),
+            'descripcion': forms.TextInput(attrs={'class': 'form-textarea w-full rounded-lg border-gray-300 shadow-sm', 'rows': 2, 'placeholder': 'Descripción de la tarea (opcional)'}),
             'tipo_tarea': forms.Select(attrs={'class': 'form-select w-full rounded-lg border-gray-300 shadow-sm'}),
             'fecha_a_completar': forms.DateInput(attrs={'class': 'form-input w-full rounded-lg border-gray-300 shadow-sm', 'type': 'date'}),
         }
