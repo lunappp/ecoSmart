@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard | EcoSmart</title>
+    {%load static%}
+  <link rel="stylesheet" href="{% static 'dashboard/dashboard.css'%}">
+
+</head>    
+
+<body>
+    <div class="dashboard-container">
+        <h1>¡Hola, {{ request.user.username }}!</h1>
+        <p>Selecciona un plan para gestionar tus finanzas y tareas, o crea uno nuevo.</p>
+
+         <div class="plan-options">
+        <h2 class="text-2xl font-bold mb-4">Crear un Nuevo Plan</h2>
+        <form method="post" action="{% url 'Dashboard' %}">
+            {% csrf_token %}
+
+
+            {{ crear_form.as_p }}
+            <button type="submit" name="crear_plan" class="w-full bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-indigo-700 transition-colors">
+                Crear Plan
+            </button>
+        </form>
+
+        <h2 class="text-2xl font-bold mt-8 mb-4">Unirse a un Plan</h2>
+        <form method="post" action="{% url 'Dashboard' %}">
+            {% csrf_token %}
+            {{ unirse_form.as_p }}
+            <button type="submit" name="unirse_a_plan" class="w-full bg-gray-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors">
+                Unirse a un Plan
+            </button>
+        </form>
+    </div>
+
+    <div class="plans-list">
+        <h2 class="text-2xl font-bold mb-4">Mis Planes</h2>
+        {% for suscripcion in mis_planes %}
+            <a href="{% url 'Menu_plan' suscripcion.plan.id %}" class="block">
+                <div class="plan-card">
+                    <h3 class="text-xl font-bold">{{ suscripcion.plan.nombre }}</h3>
+                    <p class="text-gray-500">Tipo: {{ suscripcion.plan.get_tipo_plan_display }}</p>
+                </div>
+            </a>
+        {% empty %}
+            <p class="text-gray-500">Aún no estás en ningún plan.</p>
+        {% endfor %}
+    </div>
+</div>
+    </div>
+</body>
+</html>

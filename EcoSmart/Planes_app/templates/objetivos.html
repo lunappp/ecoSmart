@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    {% load static %}
+
+<link rel="stylesheet" href="{% static 'objetivos/objetivos.css' %}">
+</head>
+<body>
+    
+<div class="objetivos-container">
+    <h2>Objetivos del Plan - {{ plan.nombre }}</h2>
+
+    <div class="formulario-objetivo">
+        <h3>Agregar Nuevo Objetivo</h3>
+        <form method="post" action="{% url 'agregar_objetivo' plan.id %}">
+            {% csrf_token %}
+            {{ agregar_form.as_p }}
+            <button type="submit">Agregar Objetivo</button>
+        </form>
+    </div>
+
+    <div class="lista-objetivos">
+        <h3>Lista de Objetivos</h3>
+        {% if objetivos_del_plan %}
+            <ul>
+                {% for objetivo in objetivos_del_plan %}
+                <li>
+                    <div class="objetivo-info">
+                        <h4>{{ objetivo.nombre }}</h4>
+                        <p>{{ objetivo.detalles }}</p>
+                        <p><strong>Meta:</strong> ${{ objetivo.monto_necesario|floatformat:2 }}</p>
+                        <p><strong>Actual:</strong> ${{ objetivo.monto_actual|floatformat:2 }}</p>
+                        
+                        {% with progreso=objetivo.monto_actual|divisibleby:objetivo.monto_necesario %}
+                            {% if progreso %}
+                                <div class="progress-bar-bg">
+                                   <div class="progress-bar"></div>
+                                </div> 
+                                <p class="porcentaje-progreso">nada % completado</p>
+                            {% else %}
+                                <p class="porcentaje-progreso">casi % completado</p>
+                            {% endif %}
+                        {% endwith %}
+
+                    </div>
+                    <form method="post" action="{% url 'aportar_objetivo' plan.id objetivo.id %}">
+                        {% csrf_token %}
+                        {{ aportar_form.as_p }}
+                        <button type="submit">Aportar</button>
+                    </form>
+                </li>
+                {% endfor %}
+            </ul>
+                    {% if messages %}
+            <div class="mb-4">
+                {% for message in messages %}
+                <div class="p-3 rounded-lg text-sm {% if message.tags == 'success' %}bg-green-100 text-green-700{% elif message.tags == 'error' %}bg-red-100 text-red-700{% else %}bg-blue-100 text-blue-700{% endif %}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% else %}
+            <p>No hay objetivos para este plan. ¡Agrega el primero!</p>
+        {% endif %}
+    </div>
+
+    <a href="{% url 'Menu_plan' plan_id=plan.id %}" >
+                <!-- Icono de flecha de retorno (lucide-react, usamos un SVG simple) -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-1">
+                    <path d="m15 18-6-6 6-6"/>
+                </svg>
+                Volver al Menú del Plan
+            </a>
+</div>
+</body>
+</html>

@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'App',
+    'Planes_app'
 ]
 
 MIDDLEWARE = [
@@ -118,6 +119,7 @@ USE_TZ = True
 STATIC_URL = 'static/'  
 STATICFILES_DIRS = [
     BASE_DIR / "App" / "static",
+    BASE_DIR / "Planes_app" / "static", 
 ]
 
 # Default primary key field type

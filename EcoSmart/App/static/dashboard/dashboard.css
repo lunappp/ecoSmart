@@ -1,0 +1,187 @@
+/* ===================================
+   ECO SMART DASHBOARD CSS PRO
+   Dominante: Violeta #6A0DAD
+   =================================== */
+
+/* Reset & Base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #f8f5fc;
+  color: #333;
+  line-height: 1.6;
+  padding: 2rem;
+}
+
+/* Container */
+.dashboard-container {
+  max-width: 960px;
+  margin: 0 auto;
+  background-color: #fff;
+  border-radius: 16px;
+  padding: 3rem 2rem;
+  box-shadow: 0 15px 30px rgba(106, 13, 173, 0.05);
+  transition: box-shadow 0.3s ease;
+}
+
+/* Headings */
+.dashboard-container h1 {
+  font-size: 2.5rem;
+  color: #6A0DAD;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 0.75rem;
+}
+
+.dashboard-container p {
+  text-align: center;
+  color: #666;
+  font-size: 1.1rem;
+  margin-bottom: 2.5rem;
+}
+
+/* Sections */
+.plan-options h2,
+.plans-list h2 {
+  font-size: 1.5rem;
+  color: #6A0DAD;
+  margin-bottom: 1.25rem;
+  border-left: 4px solid #6A0DAD;
+  padding-left: 0.5rem;
+}
+
+/* Forms */
+form {
+  margin-bottom: 2rem;
+}
+
+form p {
+  margin-bottom: 1rem;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="number"],
+select {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 2px solid #e0d8f3;
+  border-radius: 10px;
+  background-color: #fafafa;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+input:focus,
+select:focus {
+  border-color: #6A0DAD;
+  outline: none;
+  background-color: #fff;
+  box-shadow: 0 0 0 3px rgba(106, 13, 173, 0.1);
+}
+
+/* Buttons */
+button {
+  display: inline-block;
+  width: 100%;
+  padding: 0.75rem 1.25rem;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+/* Crear plan button */
+button[name="crear_plan"] {
+  background-color: #6A0DAD;
+  color: white;
+  margin-top: 0.5rem;
+}
+
+button[name="crear_plan"]:hover {
+  background-color: #4e0d87;
+  transform: translateY(-2px);
+}
+
+/* Unirse a plan button */
+button[name="unirse_a_plan"] {
+  background-color: #888;
+  color: white;
+  margin-top: 0.5rem;
+}
+
+button[name="unirse_a_plan"]:hover {
+  background-color: #666;
+  transform: translateY(-2px);
+}
+
+/* Plans list */
+.plans-list {
+  margin-top: 3rem;
+}
+
+.plans-list p {
+  color: #999;
+  font-style: italic;
+}
+
+/* Cards */
+.plan-card {
+  background-color: #fefefe;
+  border-left: 6px solid #6A0DAD;
+  padding: 1.5rem;
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  transition: all 0.3s ease;
+}
+
+.plan-card:hover {
+  box-shadow: 0 8px 20px rgba(106, 13, 173, 0.15);
+  transform: translateY(-3px);
+}
+
+.plan-card h3 {
+  margin-bottom: 0.5rem;
+  color: #6A0DAD;
+  font-size: 1.25rem;
+}
+
+.plan-card p {
+  color: #666;
+  font-size: 0.95rem;
+}
+
+/* Card Links */
+a.block {
+  text-decoration: none;
+  display: block;
+  transition: all 0.3s ease;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .dashboard-container {
+    padding: 2rem 1rem;
+  }
+
+  .dashboard-container h1 {
+    font-size: 2rem;
+  }
+
+  .plan-card {
+    padding: 1rem;
+}
+
+}

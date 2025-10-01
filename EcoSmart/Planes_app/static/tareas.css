@@ -1,0 +1,253 @@
+/* -------------------------------------------------------------------
+   Estilos Recreados de Tailwind CSS para tareas.html
+   ------------------------------------------------------------------- */
+
+/* Contenedor Principal */
+#tareas-page-container {
+    max-width: 64rem; /* max-w-4xl */
+    margin-left: auto;
+    margin-right: auto;
+    padding: 1.5rem; /* p-6 */
+    background-color: #ffffff;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1); /* shadow-xl */
+    border-radius: 0.75rem; /* rounded-xl */
+}
+
+.page-title {
+    font-size: 1.875rem; /* text-3xl */
+    font-weight: 700; /* font-bold */
+    color: #1f2937; /* text-gray-800 */
+    margin-bottom: 1.5rem; /* mb-6 */
+    border-bottom: 1px solid #e5e7eb; /* border-b */
+    padding-bottom: 0.5rem; /* pb-2 */
+}
+
+/* --- Estilos de Formulario --- */
+#nueva-tarea-form-container {
+    margin-bottom: 2rem; /* mb-8 */
+    padding: 1rem; /* p-4 */
+    border: 1px solid #c7d2fe; /* border-indigo-200 */
+    background-color: #eef2ff; /* bg-indigo-50 */
+    border-radius: 0.5rem; /* rounded-lg */
+}
+
+.form-title {
+    font-size: 1.25rem; /* text-xl */
+    font-weight: 600; /* font-semibold */
+    color: #4338ca; /* text-indigo-700 */
+    margin-bottom: 1rem; /* mb-4 */
+}
+
+.tarea-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem; /* space-y-4 */
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+    gap: 1rem; /* gap-4 */
+}
+
+.form-grid input, .form-grid textarea, .form-grid select {
+    width: 100%;
+    border-radius: 0.5rem;
+    border: 1px solid #d1d5db;
+    padding: 0.5rem 0.75rem;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* shadow-sm */
+}
+
+/* Grid responsivo */
+@media (min-width: 768px) { /* md: */
+    .form-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .grid-item-full {
+        grid-column: span 2 / span 2;
+    }
+}
+
+.submit-button {
+    width: 100%;
+    background-color: #4f46e5; /* bg-indigo-600 */
+    color: #ffffff;
+    font-weight: 700; /* font-bold */
+    padding: 0.625rem 1rem; /* py-2.5 px-4 */
+    border-radius: 0.5rem; /* rounded-lg */
+    transition: background-color 150ms ease-in-out;
+    margin-top: 1rem; /* mt-4 */
+}
+
+.submit-button:hover {
+    background-color: #4338ca; /* hover:bg-indigo-700 */
+}
+
+.form-error {
+    color: #ef4444; /* text-red-500 */
+    font-size: 0.875rem; /* text-sm */
+    margin-top: 0.5rem; /* mt-2 */
+}
+
+/* --- Lista de Tareas --- */
+.lista-tareas {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem; /* space-y-4 */
+}
+
+.tarea-item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 1rem; /* p-4 */
+    border-radius: 0.5rem; /* rounded-lg */
+    border-width: 1px;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* shadow-sm */
+    min-width: 0;
+}
+
+@media (min-width: 640px) { /* sm: */
+    .tarea-item {
+        flex-direction: row;
+        align-items: center;
+    }
+    .tarea-info {
+        margin-bottom: 0;
+    }
+}
+
+.tarea-info {
+    flex: 1 1 0%;
+    margin-bottom: 0.5rem; /* mb-2 */
+}
+
+.tarea-nombre {
+    font-size: 1.125rem; /* text-lg */
+    font-weight: 700; /* font-bold */
+    display: flex;
+    align-items: center;
+}
+
+.tag-estado {
+    padding: 0.125rem 0.5rem; /* px-2 py-0.5 */
+    margin-left: 0.5rem; /* ml-2 */
+    font-size: 0.75rem; /* text-xs */
+    font-weight: 600; /* font-semibold */
+    color: #ffffff;
+    border-radius: 9999px; /* rounded-full */
+    display: inline-block;
+    white-space: nowrap;
+}
+
+.tarea-metadata {
+    font-size: 0.875rem; /* text-sm */
+    color: #374151; /* text-gray-700 */
+    margin-top: 0.25rem; /* mt-1 */
+}
+
+.tarea-descripcion, .tarea-finalizada {
+    font-size: 0.875rem;
+    color: #6b7280; /* text-gray-500 */
+    margin-top: 0.25rem;
+    font-style: italic;
+}
+
+/* Botones de acción */
+.tarea-acciones {
+    flex-shrink: 0;
+}
+
+.tarea-acciones button {
+    padding: 0.625rem; /* p-2.5 */
+    border-radius: 0.5rem; /* rounded-lg */
+    transition: background-color 150ms ease-in-out;
+    font-size: 0.875rem; /* text-sm */
+    font-weight: 600; /* font-semibold */
+    color: #ffffff;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1); /* shadow-md */
+}
+
+.boton-completar {
+    background-color: #10b981; /* bg-green-600 */
+}
+.boton-completar:hover {
+    background-color: #059669; /* hover:bg-green-700 */
+}
+
+.boton-reabrir {
+    background-color: #f87171; /* bg-red-500 */
+}
+.boton-reabrir:hover {
+    background-color: #ef4444; /* hover:bg-red-600 */
+}
+
+.no-tareas-msg {
+    color: #4b5563; /* text-gray-600 */
+    padding: 1rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+}
+
+/* --- ESTADOS DINÁMICOS (Recreando los colores de las clases de utilidad) --- */
+
+/* COMPLETADA_A_TIEMPO */
+.item-completada-a-tiempo {
+    background-color: #d1fae5; /* bg-green-100 */
+    border-color: #34d399; /* border-green-400 */
+}
+.item-completada-a-tiempo .tarea-nombre {
+    color: #065f46; /* text-green-800 */
+}
+.tag-completada-a-tiempo {
+    background-color: #059669; /* bg-green-600 */
+}
+
+/* COMPLETADA_TARDE */
+.item-completada-tarde {
+    background-color: #fffbe6; /* bg-yellow-100 */
+    border-color: #fcd34d; /* border-yellow-400 */
+}
+.item-completada-tarde .tarea-nombre {
+    color: #92400e; /* text-yellow-800 */
+}
+.tag-completada-tarde {
+    background-color: #d97706; /* bg-yellow-600 */
+}
+
+/* VENCIDA */
+.item-vencida {
+    background-color: #fee2e2; /* bg-red-100 */
+    border-color: #f87171; /* border-red-400 */
+}
+.item-vencida .tarea-nombre {
+    color: #991b1b; /* text-red-800 */
+}
+.tag-vencida {
+    background-color: #ef4444; /* bg-red-600 */
+}
+
+/* EN_PROCESO */
+.item-en-proceso {
+    background-color: #eff6ff; /* bg-blue-100 */
+    border-color: #60a5fa; /* border-blue-400 */
+}
+.item-en-proceso .tarea-nombre {
+    color: #1e40af; /* text-blue-800 */
+}
+.tag-en-proceso {
+    background-color: #3b82f6; /* bg-blue-600 */
+}
+
+/* PENDIENTE (Default) */
+.item-pendiente {
+    background-color: #f3f4f6; /* bg-gray-100 */
+    border-color: #d1d5db; /* border-gray-300 */
+}
+.item-pendiente .tarea-nombre {
+    color: #1f2937; /* text-gray-800 */
+}
+.tag-pendiente {
+    background-color: #4f46e5; /* bg-indigo-600 */
+}

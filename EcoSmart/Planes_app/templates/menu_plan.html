@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menú del Plan</title>
+    {% load static %}
+
+    <link rel="stylesheet" href="{% static 'menu_plan.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    
+    {% block title %}Menú del Plan - {{ plan.nombre }}{% endblock %}
+
+    {% block content %}
+    <div class="container">
+        <header class="header">
+            <h1>{{ plan.nombre }}</h1>
+            <p>{{ plan.descripcion }}</p>
+            <a class="btn-back" href="{% url 'Dashboard' %}">← Volver al Dashboard</a>
+        </header>
+
+        <section>
+            <h2 class="section-title">Módulos de Gestión</h2>
+            <div class="card-grid">
+
+                <a href="{% url 'ingresos' plan_id=plan.id %}" class="card">
+                    <h3>Ingresos</h3>
+                    <p>Registra y administra tus fuentes de dinero.</p>
+                </a>
+
+                <a href="{% url 'gastos' plan_id=plan.id %}" class="card">
+                    <h3>Gastos</h3>
+                    <p>Controla y clasifica cada salida de dinero.</p>
+                </a>
+
+                <a href="{% url 'objetivos' plan_id=plan.id %}" class="card">
+                    <h3>Objetivos</h3>
+                    <p>Visualiza el progreso de tus metas de ahorro.</p>
+                </a>
+
+                <a href="{% url 'tareas' plan_id=plan.id %}" class="card">
+                    <h3>Tareas</h3>
+                    <p>Gestiona recordatorios, pagos y pendientes.</p>
+                </a>
+
+                <a href="{% url 'estadisticas' plan_id=plan.id %}" class="card">
+                    <h3>Estadísticas</h3>
+                    <p>Visualiza reportes y análisis de tu plan.</p>
+                </a>
+
+                {% if plan.tipo_plan == 'grupal' %}
+                <a href="#" class="card">
+                    <h3>Miembros</h3>
+                    <p>Gestiona la colaboración en el plan grupal.</p>
+                </a>
+                {% endif %}
+
+            </div>
+        </section>
+
+        <footer class="footer">
+            <p>&copy; 2025 Tu App de Finanzas</p>
+        </footer>
+    </div>
+    {% endblock %}
+
+</body>
+</html>

@@ -1,0 +1,133 @@
+from django import forms
+from .models import Ingreso, Gasto, Objetivo, Tarea, Plan, Suscripcion
+
+# ------------------------------
+# 0. Formularios de CREACIÓN DE PLANES (Usados en App/views.py)
+# ------------------------------
+
+class CrearPlanForm(forms.ModelForm):
+    """Formulario para crear un nuevo Plan."""
+    class Meta:
+        model = Plan
+        # Excluimos 'creador' y 'fecha_creacion' ya que se asignan en la vista.
+        fields = ['nombre', 'descripcion', 'tipo_plan']
+        
+        widgets = {
+            'nombre': forms.TextInput(attrs={'class': 'form-input w-full rounded-lg border-gray-300 shadow-sm', 'placeholder': 'Ej: Viaje a Europa 2025'}),
+            'descripcion': forms.Textarea(attrs={'class': 'form-textarea w-full rounded-lg border-gray-300 shadow-sm', 'rows': 3, 'placeholder': 'Breve descripción del propósito del plan.'}),
+            'tipo_plan': forms.Select(attrs={'class': 'form-select w-full rounded-lg border-gray-300 shadow-sm'}),
+        }
+        labels = {
+            'nombre': 'Nombre del Plan',
+            'descripcion': 'Descripción',
+            'tipo_plan': 'Tipo de Plan',
+        }
+
+class UnirseAForm(forms.Form):
+    """Formulario para unirse a un plan grupal existente (usando ID o Código)."""
+    codigo_plan = forms.IntegerField(
+        label='ID del Plan',
+        widget=forms.NumberInput(attrs={'class': 'form-input w-full rounded-lg border-gray-300 shadow-sm', 'placeholder': 'Ingresa el ID numérico del plan'})
+    )
+
+# ------------------------------
+# 1. Formularios de FINANZAS
+# ------------------------------
+
+class IngresoForm(forms.ModelForm):
+    """Formulario para registrar nuevos ingresos."""
+    class Meta:
+        model = Ingreso
+        # Excluimos 'dinero' ya que se asigna automáticamente en la vista.
+        # Excluimos 'fecha_guardado' ya que se asigna automáticamente en el modelo.
+        fields = ['nombre', 'descripcion', 'tipo_ingreso', 'cantidad'] 
+        
+        widgets = {
+            'nombre': forms.TextInput(attrs={'class': 'form-input w-full rounded-lg border-gray-300 shadow-sm', 'placeholder': 'Ej: Salario de Septiembre'}),
+            'descripcion': forms.Textarea(attrs={'class': 'form-textarea w-full rounded-lg border-gray-300 shadow-sm', 'rows': 3, 'placeholder': 'Detalles adicionales (opcional)'}),
+            'tipo_ingreso': forms.Select(attrs={'class': 'form-select w-full rounded-lg border-gray-300 shadow-sm'}),
+            'cantidad': forms.NumberInput(attrs={'class': 'form-input w-full rounded-lg border-gray-300 shadow-sm', 'placeholder': 'Monto del ingreso', 'step': '0.01'}),
+        }
+        labels = {
+            'nombre': 'Nombre del Ingreso',
+            'descripcion': 'Descripción',
+            'tipo_ingreso': 'Tipo',
+            'cantidad': 'Cantidad ($)',
+        }
+
+class GastoForm(forms.ModelForm):
+    """Formulario para registrar nuevos gastos."""
+    class Meta:
+        model = Gasto
+        # Excluimos 'dinero' ya que se asigna automáticamente en la vista.
+        # Excluimos 'fecha_guardado' ya que se asigna automáticamente en el modelo.
+        fields = ['nombre', 'descripcion', 'tipo_gasto', 'cantidad'] 
+        
+        widgets = {
+            'nombre': forms.TextInput(attrs={'class': 'form-input w-full rounded-lg border-gray-300 shadow-sm', 'placeholder': 'Ej: Pago de alquiler'}),
+            'descripcion': forms.Textarea(attrs={'class': 'form-textarea w-full rounded-lg border-gray-300 shadow-sm', 'rows': 3, 'placeholder': 'Detalles de la transacción'}),
+            'tipo_gasto': forms.Select(attrs={'class': 'form-select w-full rounded-lg border-gray-300 shadow-sm'}),
+            'cantidad': forms.NumberInput(attrs={'class': 'form-input w-full rounded-lg border-gray-300 shadow-sm', 'placeholder': 'Monto del gasto', 'step': '0.01'}),
+        }
+        labels = {
+            'nombre': 'Nombre del Gasto',
+            'descripcion': 'Descripción',
+            'tipo_gasto': 'Tipo',
+            'cantidad': 'Cantidad ($)',
+        }
+
+# ------------------------------
+# 2. Formularios de PLANIFICACIÓN
+# ------------------------------
+
+class ObjetivoForm(forms.ModelForm):
+    """Formulario para crear un nuevo objetivo de ahorro."""
+    class Meta:
+        model = Objetivo
+        # Excluimos 'plan' y 'fecha_guardado' (asignados en la vista/modelo)
+        # Excluimos 'monto_actual' y 'estado' (tienen valores por defecto)
+        fields = ['nombre', 'detalles', 'monto_necesario'] 
+        
+        widgets = {
+            'nombre': forms.TextInput(attrs={'class': 'form-input w-full rounded-lg border-gray-300 shadow-sm', 'placeholder': 'Ej: Fondo de Emergencia'}),
+            'detalles': forms.Textarea(attrs={'class': 'form-textarea w-full rounded-lg border-gray-300 shadow-sm', 'rows': 3, 'placeholder': 'Detalles y propósito del objetivo'}),
+            'monto_necesario': forms.NumberInput(attrs={'class': 'form-input w-full rounded-lg border-gray-300 shadow-sm', 'placeholder': 'Monto total requerido', 'step': '0.01'}),
+        }
+        labels = {
+            'nombre': 'Nombre del Objetivo',
+            'detalles': 'Detalles',
+            'monto_necesario': 'Meta de Ahorro ($)',
+        }
+        
+# Este formulario es un placeholder para cuando el usuario quiera aportar dinero
+class AportarObjetivoForm(forms.Form):
+    """Formulario para aportar dinero a un objetivo existente."""
+    monto_aportar = forms.DecimalField(
+        label='Monto a Aportar ($)', 
+        max_digits=15, 
+        decimal_places=2,
+        widget=forms.NumberInput(attrs={'class': 'form-input w-full rounded-lg border-gray-300 shadow-sm', 'placeholder': 'Monto', 'step': '0.01'})
+    )
+
+
+class TareaForm(forms.ModelForm):
+    """Formulario para crear una nueva tarea o recordatorio."""
+    class Meta:
+        model = Tarea
+        # Excluimos 'plan' y 'fecha_guardado' (asignados en la vista/modelo)
+        # Excluimos 'estado' (tiene valor por defecto)
+        fields = ['nombre', 'descripcion', 'tipo_tarea', 'fecha_a_completar'] 
+        
+        widgets = {
+            'nombre': forms.TextInput(attrs={'class': 'form-input w-full rounded-lg border-gray-300 shadow-sm', 'placeholder': 'Ej: Pagar la luz'}),
+            'descripcion': forms.TextInput(attrs={'class': 'form-textarea w-full rounded-lg border-gray-300 shadow-sm', 'rows': 2, 'placeholder': 'Descripción de la tarea (opcional)'}),
+            'tipo_tarea': forms.Select(attrs={'class': 'form-select w-full rounded-lg border-gray-300 shadow-sm'}),
+            'fecha_a_completar': forms.DateInput(attrs={'class': 'form-input w-full rounded-lg border-gray-300 shadow-sm', 'type': 'date'}),
+        }
+        labels = {
+            'nombre': 'Título de la Tarea',
+            'descripcion': 'Descripción',
+            'tipo_tarea': 'Tipo',
+            'fecha_a_completar': 'Fecha Límite',
+        }
+

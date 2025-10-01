@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ingresos - {{ plan.nombre }}</title>
+<script src="https://www.google.com/search?q=https://cdn.tailwindcss.com"></script>
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'ingresos/ingresos.css' %}">
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+        <h1 class="text-3xl font-extrabold text-gray-900 mb-6 border-b pb-2">
+            💰 Ingresos del Plan: {{ plan.nombre }}
+        </h1>
+    
+        <!-- Sección de Mensajes -->
+        {% if messages %}
+            <div class="mb-4">
+                {% for message in messages %}
+                <div class="p-3 rounded-lg text-sm {% if message.tags == 'success' %}bg-green-100 text-green-700{% elif message.tags == 'error' %}bg-red-100 text-red-700{% else %}bg-blue-100 text-blue-700{% endif %}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Columna de Registro (Formulario) -->
+            <div class="lg:col-span-1 bg-white p-6 rounded-xl shadow-2xl h-fit">
+                <h2 class="text-xl font-bold mb-4 text-gray-800 border-b pb-2">Registrar Nuevo Ingreso</h2>
+                
+                <form method="POST" action="{% url 'ingresos' plan_id=plan.id %}" class="space-y-4">
+                    {% csrf_token %}
+                    
+                    <!-- Renderiza el formulario con clases de Tailwind -->
+                    {% for field in form %}
+                        <div class="field-wrapper">
+                            <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.errors %}
+                                <p class="text-red-500 text-xs mt-1">{{ field.errors }}</p>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                    
+                    <button type="submit" class="w-full bg-green-600 text-white py-3 px-4 rounded-xl font-semibold hover:bg-green-700 transition duration-150 shadow-lg">
+                        Guardar Ingreso
+                    </button>
+                </form>
+            </div>
+    
+            <!-- Columna de Lista de Ingresos e Info Rápida -->
+            <div class="lg:col-span-2">
+                <!-- Resumen Financiero Rápido -->
+                <div class="mb-6 bg-green-50 p-5 rounded-xl shadow-inner border border-green-200">
+                    <p class="text-lg font-semibold text-gray-700">Saldo Actual del Plan: 
+                        <span class="text-green-700 text-2xl ml-2 font-extrabold">${{ dinero_info.total_dinero|floatformat:2 }}</span>
+                    </p>
+                    <p class="text-sm text-gray-500">Total Ingresos Históricos: ${{ dinero_info.ingreso_total|floatformat:2 }}</p>
+                </div>
+                
+                <h2 class="text-2xl font-bold mb-4 text-gray-800">Historial de Ingresos (Últimos 10)</h2>
+    
+                {% if ingresos_list %}
+                    <ul class="space-y-4">
+                        {% for ingreso in ingresos_list %}
+                        <li class="bg-white p-4 rounded-xl shadow-lg flex justify-between items-center transition duration-150 hover:shadow-xl border-l-4 border-green-500">
+                            <div>
+                                <p class="text-lg font-semibold text-gray-900">{{ ingreso.nombre }}</p>
+                                <p class="text-xs text-gray-500">{{ ingreso.descripcion|default:"Sin descripción" }}</p>
+                                <p class="text-xs font-medium text-green-600 mt-1">Tipo: {{ ingreso.get_tipo_ingreso_display }}</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-xl font-extrabold text-green-600">+ ${{ ingreso.cantidad|floatformat:2 }}</p>
+                                <p class="text-xs text-gray-400 mt-1">Guardado: {{ ingreso.fecha_guardado|date:"d M, Y" }}</p>
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-gray-500 p-8 bg-gray-50 rounded-lg text-center">Aún no hay ingresos registrados para este plan.</p>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="mt-8 text-center">
+            <a href="{% url 'Menu_plan' plan_id=plan.id %}" class="inline-flex items-center text-indigo-600 hover:text-indigo-800 font-medium">
+                <!-- Icono de flecha de retorno (lucide-react, usamos un SVG simple) -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-1">
+                    <path d="m15 18-6-6 6-6"/>
+                </svg>
+                Volver al Menú del Plan
+            </a>
+        </div>
+    
+    </div>
+</body>
+</html>

@@ -1,0 +1,237 @@
+/* ===== Paleta de Colores ===== */
+:root {
+    --violeta: #6A0DAD;
+    --violeta-claro: #efe0fa;
+    --rojo-principal: #e53935;
+    --rojo-suave: #ffebee;
+    --gris-fondo: #f4f6f8;
+    --gris-claro: #e0e0e0;
+    --gris-oscuro: #333;
+    --blanco: #ffffff;
+    --texto-principal: #1f2937;
+    --borde-card: #e5e7eb;
+}
+
+/* ===== Reset Básico ===== */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+    background-color: var(--gris-fondo);
+    color: var(--texto-principal);
+    line-height: 1.6;
+    padding: 2rem;
+}
+
+/* ===== Contenedor General ===== */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    background-color: var(--blanco);
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+    transition: box-shadow 0.3s ease;
+}
+
+/* ===== Títulos ===== */
+h1 {
+    font-size: 2.5rem;
+    font-weight: 900;
+    margin-bottom: 1.5rem;
+    border-bottom: 4px solid var(--violeta);
+    padding-bottom: 0.75rem;
+    color: var(--violeta);
+}
+
+h2 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin: 2rem 0 1rem;
+    color: var(--texto-principal);
+}
+
+/* ===== Mensajes ===== */
+.message {
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    font-weight: 500;
+    border-left: 6px solid;
+}
+
+.message.success {
+    background-color: #e6ffed;
+    border-color: #2e7d32;
+    color: #2e7d32;
+}
+
+.message.error {
+    background-color: #ffebee;
+    border-color: #c62828;
+    color: #c62828;
+}
+
+.message.info {
+    background-color: #e3f2fd;
+    border-color: #1565c0;
+    color: #1565c0;
+}
+
+/* ===== Formulario ===== */
+.form-section {
+    background-color: var(--blanco);
+    border-radius: 1rem;
+    padding: 2rem;
+    border: 1px solid var(--borde-card);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.03);
+}
+
+.form-group {
+    margin-bottom: 1.25rem;
+}
+
+label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #374151;
+}
+
+input[type="text"],
+input[type="number"],
+select,
+textarea {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--gris-claro);
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    transition: border-color 0.2s ease;
+    background-color: #fafafa;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: var(--violeta);
+    outline: none;
+    background-color: white;
+}
+
+.error-message {
+    color: var(--rojo-principal);
+    font-size: 0.85rem;
+    margin-top: 0.3rem;
+}
+
+/* ===== Botón ===== */
+.btn {
+    background-color: var(--rojo-principal);
+    color: var(--blanco);
+    padding: 0.9rem 1.2rem;
+    border: none;
+    border-radius: 0.75rem;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    width: 100%;
+    box-shadow: 0 4px 12px rgba(229, 57, 53, 0.3);
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    background-color: #c62828;
+    transform: translateY(-1px);
+}
+
+/* ===== Resumen Financiero ===== */
+.summary {
+    background-color: var(--violeta-claro);
+    border-left: 8px solid var(--violeta);
+    padding: 1.25rem 1.5rem;
+    border-radius: 1rem;
+    margin-bottom: 2rem;
+    box-shadow: inset 0 0 0.5rem rgba(106, 13, 173, 0.05);
+}
+
+.summary p {
+    font-size: 1rem;
+    margin: 0.3rem 0;
+}
+
+.summary .saldo {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--rojo-principal);
+}
+
+/* ===== Lista de Gastos ===== */
+.gasto-lista {
+    list-style: none;
+    padding: 0;
+}
+
+.gasto-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    background-color: var(--blanco);
+    padding: 1rem 1.5rem;
+    margin-bottom: 1rem;
+    border-radius: 1rem;
+    border-left: 6px solid var(--rojo-principal);
+    box-shadow: var(--sombra-suave);
+    transition: box-shadow 0.3s ease, transform 0.2s;
+}
+
+.gasto-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+}
+
+.gasto-item .info {
+    max-width: 70%;
+}
+
+.gasto-item .info p {
+    margin-bottom: 0.3rem;
+}
+
+.gasto-item .monto {
+    text-align: right;
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: var(--rojo-principal);
+}
+
+.gasto-item .fecha {
+    font-size: 0.8rem;
+    color: #777;
+}
+
+/* Enlace de volver */
+.objetivos-container a {
+  display: inline-flex;
+  align-items: center;
+  font-weight: 600;
+  color: inherit;
+  text-decoration: none;
+  margin-top: 2rem;
+  transition: text-decoration 0.3s ease;
+}
+
+.objetivos-container a:hover {
+  text-decoration: underline;
+}
+
+.objetivos-container svg {
+  margin-right: 0.5rem;
+  stroke: var(--violeta);
+}
+
+
