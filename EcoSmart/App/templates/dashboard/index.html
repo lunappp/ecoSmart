@@ -10,7 +10,15 @@
 
 <body>
     <div class="dashboard-container">
-        <h1>¡Hola, {{ request.user.username }}!</h1>
+        <div class="flex justify-between items-center mb-4">
+            <h1>¡Hola, {{ request.user.username }}!</h1>
+            <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="bg-red-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-red-600 transition-colors">
+                    Cerrar Sesión
+                </button>
+            </form>
+        </div>
         <p>Selecciona un plan para gestionar tus finanzas y tareas, o crea uno nuevo.</p>
 
          <div class="plan-options">
@@ -46,6 +54,25 @@
             </a>
         {% empty %}
             <p class="text-gray-500">Aún no estás en ningún plan.</p>
+        {% endfor %}
+    </div>
+
+    <div class="invitaciones-section">
+        <h2 class="text-2xl font-bold mb-4">Invitaciones Pendientes</h2>
+        {% for invitacion in invitaciones_pendientes %}
+            <div class="invitacion-card">
+                <p>Invitado por {{ invitacion.invitador.username }} al plan {{ invitacion.plan.nombre }}</p>
+                <form method="post" action="{% url 'aceptar_invitacion' invitacion.id %}" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="bg-green-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-600 transition-colors">Aceptar</button>
+                </form>
+                <form method="post" action="{% url 'rechazar_invitacion' invitacion.id %}" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="bg-red-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-red-600 transition-colors">Rechazar</button>
+                </form>
+            </div>
+        {% empty %}
+            <p class="text-gray-500">No tienes invitaciones pendientes.</p>
         {% endfor %}
     </div>
 </div>

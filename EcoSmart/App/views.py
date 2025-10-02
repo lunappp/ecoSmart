@@ -6,7 +6,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
 
-from Planes_app.models import Plan, Suscripcion # Asume estos modelos
+from Planes_app.models import Plan, Suscripcion, Invitacion # Asume estos modelos
 from Planes_app.forms import CrearPlanForm, UnirseAForm # Asume estos formularios
 from .forms import PlanForm
 from .models import Plan
@@ -97,11 +97,13 @@ def Dashboard(request):
         unirse_form = UnirseAForm()
 
     mis_planes = request.user.suscripciones.all()
-    
+    invitaciones_pendientes = Invitacion.objects.filter(invitado=request.user, estado='pendiente')
+
     context = {
         'mis_planes': mis_planes,
         'crear_form': crear_form,
-        'unirse_form': unirse_form
+        'unirse_form': unirse_form,
+        'invitaciones_pendientes': invitaciones_pendientes
     }
 
     return render(request, 'dashboard/index.html', context)
@@ -123,3 +125,20 @@ def plan_individual(request):
 
 def plan_grupal(request):
   return render(request, 'planes/plan_grupal.html')
+
+@login_required
+def aceptar_invitacion(request, invitacion_id):
+    invitacion = get_object_or_404(Invitacion, pk=invitacion_id, invitado=request.user, estado='pendiente')
+    Suscripcion.objects.create(plan=invitacion.plan, usuario=request.user)
+    invitacion.estado = 'aceptada'
+    invitacion.save()
+    messages.success(request, f'Te has unido al plan {invitacion.plan.nombre}.')
+    return redirect('Dashboard')
+
+@login_required
+def rechazar_invitacion(request, invitacion_id):
+    invitacion = get_object_or_404(Invitacion, pk=invitacion_id, invitado=request.user, estado='pendiente')
+    invitacion.estado = 'rechazada'
+    invitacion.save()
+    messages.info(request, 'Invitación rechazada.')
+    return redirect('Dashboard')

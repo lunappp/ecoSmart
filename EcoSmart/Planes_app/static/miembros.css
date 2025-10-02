@@ -1,0 +1,185 @@
+/* miembros.css */
+
+/* ============================= */
+/* Variables de color / diseño (opcional) */
+:root {
+    --color-bg-card: #ffffff;
+    --color-border: #e5e7eb; /* gray-200 */
+    --color-text: #374151; /* gray-700 */
+    --color-text-sub: #6b7280; /* gray-500 */
+    --color-role-admin: #fbbf24; /* amber-400 */
+    --color-role-member: #60a5fa; /* blue-400 */
+    --color-btn-delete: #ef4444; /* red-500 */
+    --color-btn-delete-hover: #dc2626; /* red-600 */
+    --color-btn-invite: #3b82f6; /* blue-500 */
+    --color-btn-invite-hover: #2563eb; /* blue-600 */
+  }
+  
+  /* ============================= */
+  /* Reset / ajustes base */
+  
+  body .main {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 1rem;
+  }
+  
+  /* Títulos */
+  .title {
+    @apply text-3xl font-bold text-gray-800 mb-4;
+  }
+  
+  .subtitle {
+    @apply text-lg mb-6;
+  }
+  
+  /* Mensajes de Django */
+  .messages .message {
+    @apply px-4 py-2 rounded mb-3 text-white;
+  }
+  
+  .messages .message.bg-green-500 {
+    /* ya usa Tailwind utility, si acaso ajustar */
+  }
+  .messages .message.bg-red-500 {
+    /* igual */
+  }
+  .messages .message.bg-blue-500 {
+    /* igual */
+  }
+  
+  /* ============================= */
+  /* Sección de invitar */
+  
+  .invite-section {
+    @apply bg-white border border-gray-200 rounded-lg p-6 mb-8 shadow-sm;
+  }
+  
+  .invite-section .section-title {
+    @apply text-xl font-semibold mb-4;
+  }
+  
+  .search-input {
+    @apply w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400;
+  }
+  
+  .loader {
+    display: none; /* mostrar/hide desde JS */
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #3490dc;
+    border-radius: 50%;
+    width: 1rem;
+    height: 1rem;
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+  
+  .search-results {
+    margin-top: 0.5rem;
+  }
+  
+  /* Cada resultado de búsqueda */
+  .result-card {
+    @apply bg-white border border-gray-200 rounded-lg p-4 mb-2 flex justify-between items-center hover:bg-gray-50;
+  }
+  
+  .result-username {
+    @apply font-medium text-gray-800;
+  }
+  
+  .result-email {
+    @apply text-sm text-gray-500;
+  }
+  
+  .invite-btn {
+    @apply bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600;
+  }
+  
+  /* ============================= */
+  /* Lista de miembros */
+  
+  .members-title {
+    @apply text-2xl font-semibold mb-4;
+  }
+  
+  .members-list {
+    @apply space-y-4;
+  }
+  
+  .member-card {
+    @apply bg-white border border-gray-200 rounded-lg p-4 flex justify-between items-center shadow-sm;
+  }
+  
+  .member-info {
+    @apply font-semibold text-gray-800;
+  }
+  
+  .member-email {
+    @apply text-sm text-gray-500;
+  }
+  
+  .member-actions {
+    @apply flex items-center space-x-3;
+  }
+  
+  /* Rol badge */
+  .role-badge {
+    @apply text-xs font-semibold uppercase px-2 py-1 rounded-full text-white;
+  }
+  
+  .role-admin {
+    background-color: var(--color-role-admin);
+  }
+  
+  .role-member {
+    background-color: var(--color-role-member);
+  }
+  
+  /* Botón eliminar */
+  .delete-btn {
+    @apply p-2 rounded-full text-white hover:bg-red-600;
+    background-color: var(--color-btn-delete);
+    transition: background-color 0.2s;
+  }
+  
+  /* ============================= */
+  /* Invitaciones pendientes */
+  
+  .invitations-title {
+    @apply text-xl font-semibold mt-8 mb-3;
+  }
+  
+  .invitations-list .invitation-item {
+    @apply bg-white border border-gray-200 rounded-lg p-4 flex justify-between items-center shadow-sm mb-2;
+    color: var(--color-text);
+  }
+  
+  .cancel-btn {
+    @apply bg-gray-300 text-gray-700 px-3 py-1 rounded hover:bg-gray-400;
+  }
+  
+  /* ============================= */
+  /* Mensajes vacíos */
+  
+  .empty-msg, .no-results, .error-msg {
+    @apply text-gray-500 italic;
+  }
+  
+  /* ============================= */
+  /* Responsividad */
+  
+  @media (max-width: 640px) {
+    .member-card {
+      @apply flex-col items-start space-y-3;
+    }
+    .member-actions {
+      @apply w-full justify-start space-x-2;
+    }
+    .invite-section {
+      @apply p-4;
+    }
+  }
+  

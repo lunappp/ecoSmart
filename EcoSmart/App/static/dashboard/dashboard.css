@@ -170,6 +170,45 @@ a.block {
   transition: all 0.3s ease;
 }
 
+/* Invitaciones */
+.invitaciones-section {
+  margin-top: 3rem;
+}
+
+.invitaciones-section h2 {
+  font-size: 1.5rem;
+  color: #6A0DAD;
+  margin-bottom: 1.25rem;
+  border-left: 4px solid #6A0DAD;
+  padding-left: 0.5rem;
+}
+
+.invitacion-card {
+  background-color: #fefefe;
+  border-left: 6px solid #10b981; /* Verde para invitaciones */
+  padding: 1.5rem;
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  transition: all 0.3s ease;
+}
+
+.invitacion-card:hover {
+  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.15);
+  transform: translateY(-3px);
+}
+
+.invitacion-card p {
+  color: #333;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+}
+
+.invitacion-card button {
+  width: auto;
+  margin-right: 0.5rem;
+}
+
 /* Responsive */
 @media (max-width: 600px) {
   .dashboard-container {
@@ -182,6 +221,6 @@ a.block {
 
   .plan-card {
     padding: 1rem;
-}
+  }
 
 }

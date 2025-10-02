@@ -16,6 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.contrib.auth.views import LogoutView
 import App.views
 import Planes_app.views
 
@@ -27,9 +28,12 @@ urlpatterns = [
     #---------------------- Auth ----------------------#
     path('Register/',App.views.Register, name= 'Register'),
     path('Login/',App.views.Login, name= 'Login'),
+    path('logout/', LogoutView.as_view(next_page='/'), name='logout'),
 
     #------------------- daashboard -------------------#
     path('Dashboard/',App.views.Dashboard, name= 'Dashboard'),
+    path('aceptar_invitacion/<int:invitacion_id>/', App.views.aceptar_invitacion, name='aceptar_invitacion'),
+    path('rechazar_invitacion/<int:invitacion_id>/', App.views.rechazar_invitacion, name='rechazar_invitacion'),
     
     #----------------- menu principal -----------------#
     path('Inicio/',App.views.Inicio, name= 'Inicio'),

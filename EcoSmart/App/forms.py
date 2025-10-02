@@ -8,14 +8,12 @@ class RegisterForm(UserCreationForm):
     
     username = forms.CharField(label="Nombre de usuario")
     email = forms.EmailField(label="Correo electrónico")
-    firstName = forms.CharField(label="Primer nombre")
-    lastName = forms.CharField(label="Apellido")
     password1 = forms.CharField(label="Contraseña")
     password2 = forms.CharField(label="Confirmar contraseña")
     
     class Meta:
         model = User
-        fields = ['username', 'email', 'firstName', 'lastName', 'password1', 'password2']
+        fields = ['username', 'email', 'password1', 'password2']
 
 
 class PlanForm(forms.ModelForm):

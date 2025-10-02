@@ -25,15 +25,21 @@ class Plan(models.Model):
         return self.nombre
 
 class Suscripcion(models.Model):
+    ROL_CHOICES = [
+        ('miembro', 'Miembro'),
+        ('admin', 'Admin'),
+    ]
+
     # id_suscripcion (INTEGER - PK) -> Django lo crea automáticamente
-    
+
     # id_usuario (FK a usuario)
     usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='suscripciones')
-    
+
     # id_plan (FK a planes_plan)
     plan = models.ForeignKey(Plan, on_delete=models.CASCADE, related_name='suscripcion')
-    
+
     fecha_suscripcion = models.DateTimeField(default=timezone.now)
+    rol = models.CharField(max_length=10, choices=ROL_CHOICES, default='miembro')
 
     class Meta:
         # Asegura que un usuario solo pueda suscribirse una vez al mismo plan
@@ -171,3 +177,23 @@ class Tarea(models.Model):
     class Meta:
         verbose_name = "Tarea y Recordatorio"
         verbose_name_plural = "Tareas y Recordatorios"
+
+class Invitacion(models.Model):
+    ESTADO_CHOICES = [
+        ('pendiente', 'Pendiente'),
+        ('aceptada', 'Aceptada'),
+        ('rechazada', 'Rechazada'),
+    ]
+
+    plan = models.ForeignKey(Plan, on_delete=models.CASCADE, related_name='invitaciones')
+    invitado = models.ForeignKey(User, on_delete=models.CASCADE, related_name='invitaciones_recibidas')
+    invitador = models.ForeignKey(User, on_delete=models.CASCADE, related_name='invitaciones_enviadas')
+    fecha_invitacion = models.DateTimeField(default=timezone.now)
+    estado = models.CharField(max_length=20, choices=ESTADO_CHOICES, default='pendiente')
+
+    class Meta:
+        verbose_name = "Invitación"
+        verbose_name_plural = "Invitaciones"
+
+    def __str__(self):
+        return f'Invitación de {self.invitador.username} a {self.invitado.username} para {self.plan.nombre}'
