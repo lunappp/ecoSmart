@@ -72,7 +72,7 @@ class Ingreso(models.Model):
         ('extra', 'Ingreso Extra'),
         ('otro', 'Otro'),
     ]
-    
+
     # id (INTEGER - PK) -> Django lo crea automáticamente
     nombre = models.CharField(max_length=255)
     descripcion = models.TextField(max_length=65535)
@@ -82,6 +82,9 @@ class Ingreso(models.Model):
 
     # id_dinero (FK a dinero)
     dinero = models.ForeignKey(Dinero, on_delete=models.CASCADE, related_name='ingresos')
+
+    # Usuario que registró el ingreso
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='ingresos', null=True, blank=True)
 
     def __str__(self):
         return f'Ingreso de {self.cantidad} ({self.nombre})'
@@ -102,9 +105,12 @@ class Gasto(models.Model):
     tipo_gasto = models.CharField(max_length=50, choices=TIPO_GASTO_CHOICES)
     cantidad = models.DecimalField(max_digits=15, decimal_places=2)
     fecha_guardado = models.DateTimeField(default=timezone.now)
-    
+
     # id_dinero (FK a dinero)
     dinero = models.ForeignKey(Dinero, on_delete=models.CASCADE, related_name='gastos')
+
+    # Usuario que registró el gasto
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='gastos', null=True, blank=True)
 
     def __str__(self):
         return f'Gasto de {self.cantidad} ({self.nombre})'

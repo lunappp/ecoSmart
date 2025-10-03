@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ingresos - {{ plan.nombre }}</title>
-<script src="https://www.google.com/search?q=https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.tailwindcss.com"></script>
 {% load static %}
 
 <link rel="stylesheet" href="{% static 'ingresos/ingresos.css' %}">
@@ -62,27 +62,6 @@
                     <p class="text-sm text-gray-500">Total Ingresos Históricos: ${{ dinero_info.ingreso_total|floatformat:2 }}</p>
                 </div>
                 
-                <h2 class="text-2xl font-bold mb-4 text-gray-800">Historial de Ingresos (Últimos 10)</h2>
-    
-                {% if ingresos_list %}
-                    <ul class="space-y-4">
-                        {% for ingreso in ingresos_list %}
-                        <li class="bg-white p-4 rounded-xl shadow-lg flex justify-between items-center transition duration-150 hover:shadow-xl border-l-4 border-green-500">
-                            <div>
-                                <p class="text-lg font-semibold text-gray-900">{{ ingreso.nombre }}</p>
-                                <p class="text-xs text-gray-500">{{ ingreso.descripcion|default:"Sin descripción" }}</p>
-                                <p class="text-xs font-medium text-green-600 mt-1">Tipo: {{ ingreso.get_tipo_ingreso_display }}</p>
-                            </div>
-                            <div class="text-right">
-                                <p class="text-xl font-extrabold text-green-600">+ ${{ ingreso.cantidad|floatformat:2 }}</p>
-                                <p class="text-xs text-gray-400 mt-1">Guardado: {{ ingreso.fecha_guardado|date:"d M, Y" }}</p>
-                            </div>
-                        </li>
-                        {% endfor %}
-                    </ul>
-                {% else %}
-                    <p class="text-gray-500 p-8 bg-gray-50 rounded-lg text-center">Aún no hay ingresos registrados para este plan.</p>
-                {% endif %}
             </div>
         </div>
         

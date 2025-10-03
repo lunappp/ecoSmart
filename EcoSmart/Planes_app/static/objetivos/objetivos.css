@@ -178,3 +178,59 @@ form button:hover {
   margin-right: 0.5rem;
   stroke: var(--violeta);
 }
+
+/* Toggle para mostrar objetivos completados */
+.toggle-completed {
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.toggle-completed label {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--violeta);
+  cursor: pointer;
+}
+
+.toggle-completed input[type="checkbox"] {
+  margin-right: 0.5rem;
+  transform: scale(1.2);
+}
+
+/* Estilo para objetivos completados */
+.completado {
+  font-weight: 600;
+  color: var(--verde);
+  margin-bottom: 0.5rem;
+}
+
+/* Botón de eliminar */
+.objetivo-item {
+  position: relative;
+}
+
+.delete-form {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+}
+
+.delete-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: var(--rojo);
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 50%;
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease;
+}
+
+.delete-btn:hover {
+  background-color: rgba(229, 57, 53, 0.1);
+}

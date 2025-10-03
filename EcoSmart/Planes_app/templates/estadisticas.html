@@ -1,45 +1,70 @@
+ {% load static %}
  <!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Estadísticas - {{ plan.nombre }}</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
+ <html lang="es">
+ <head>
+     <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <title>Estadísticas - {{ plan.nombre }}</title>
+     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>">
+     <script src="https://cdn.tailwindcss.com"></script>
+     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+ </head>
 <body class="bg-gray-100 p-8">
     <div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
-        <h1 class="text-3xl font-extrabold text-gray-900 mb-6 border-b pb-2">
-            📊 Estadísticas del Plan: {{ plan.nombre }}
-        </h1>
+        <div class="flex justify-between items-center mb-6 border-b pb-2">
+            <h1 class="text-3xl font-extrabold text-gray-900">
+                📊 Estadísticas del Plan: {{ plan.nombre }}
+            </h1>
+            <a href="{% url 'historiales' plan_id=plan.id %}" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-150">
+                Ver Historiales Completos
+            </a>
+        </div>
     
         <!-- Resumen Financiero -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             <!-- Saldo Total -->
-            <div class="bg-indigo-50 p-6 rounded-xl shadow-lg border border-indigo-200">
-                <p class="text-sm font-medium text-indigo-700">Saldo Actual</p>
-                <p class="text-4xl font-extrabold text-indigo-900 mt-1">${{ dinero_info.total_dinero|floatformat:2 }}</p>
+            <div class="bg-gradient-to-r from-indigo-50 to-indigo-100 p-6 rounded-xl shadow-lg border border-indigo-200 hover:shadow-xl transition-shadow">
+                <div class="flex items-center mb-2">
+                    <svg class="w-8 h-8 text-indigo-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                    </svg>
+                    <p class="text-sm font-medium text-indigo-700">Saldo Actual</p>
+                </div>
+                <p class="text-4xl font-extrabold text-indigo-900">${{ dinero_info.total_dinero|floatformat:2 }}</p>
             </div>
             <!-- Total Ingresos -->
-            <div class="bg-green-50 p-6 rounded-xl shadow-lg border border-green-200">
-                <p class="text-sm font-medium text-green-700">Total Ingresos</p>
-                <p class="text-4xl font-extrabold text-green-900 mt-1">${{ dinero_info.ingreso_total|floatformat:2 }}</p>
+            <div class="bg-gradient-to-r from-green-50 to-green-100 p-6 rounded-xl shadow-lg border border-green-200 hover:shadow-xl transition-shadow">
+                <div class="flex items-center mb-2">
+                    <svg class="w-8 h-8 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                    </svg>
+                    <p class="text-sm font-medium text-green-700">Total Ingresos</p>
+                </div>
+                <p class="text-4xl font-extrabold text-green-900">${{ dinero_info.ingreso_total|floatformat:2 }}</p>
             </div>
             <!-- Total Gastos -->
-            <div class="bg-red-50 p-6 rounded-xl shadow-lg border border-red-200">
-                <p class="text-sm font-medium text-red-700">Total Gastos</p>
-                <p class="text-4xl font-extrabold text-red-900 mt-1">${{ dinero_info.gasto_total|floatformat:2 }}</p>
+            <div class="bg-gradient-to-r from-red-50 to-red-100 p-6 rounded-xl shadow-lg border border-red-200 hover:shadow-xl transition-shadow">
+                <div class="flex items-center mb-2">
+                    <svg class="w-8 h-8 text-red-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"></path>
+                    </svg>
+                    <p class="text-sm font-medium text-red-700">Total Gastos</p>
+                </div>
+                <p class="text-4xl font-extrabold text-red-900">${{ dinero_info.gasto_total|floatformat:2 }}</p>
             </div>
         </div>
         
         <!-- Gráficos y Desglose por Categoría -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            
+
             <!-- Desglose de Ingresos por Tipo -->
             <div class="bg-white p-6 rounded-xl shadow-2xl">
-                <h2 class="text-2xl font-bold mb-4 text-green-700 border-b pb-2">Desglose de Ingresos por Tipo</h2>
-                
+                <h2 class="text-2xl font-bold mb-4 text-green-700 border-b pb-2">📈 Desglose de Ingresos por Tipo</h2>
+
                 {% if ingresos_por_tipo %}
+                <div class="mb-4">
+                    <canvas id="ingresosTipoChart" width="400" height="200"></canvas>
+                </div>
                 <ul class="space-y-3">
                     {% for item in ingresos_por_tipo %}
                     <li class="flex justify-between items-center p-3 rounded-lg bg-green-50">
@@ -52,16 +77,19 @@
                     <p class="text-gray-500 p-8 bg-gray-50 rounded-lg text-center">No hay ingresos para analizar categorías.</p>
                 {% endif %}
             </div>
-            
+
             <!-- Desglose de Gastos por Tipo -->
             <div class="bg-white p-6 rounded-xl shadow-2xl">
-                <h2 class="text-2xl font-bold mb-4 text-red-700 border-b pb-2">Desglose de Gastos por Tipo</h2>
-                
+                <h2 class="text-2xl font-bold mb-4 text-red-700 border-b pb-2">📉 Desglose de Gastos por Tipo</h2>
+
                 {% if gastos_por_tipo %}
+                <div class="mb-4">
+                    <canvas id="gastosTipoChart" width="400" height="200"></canvas>
+                </div>
                 <ul class="space-y-3">
                     {% for item in gastos_por_tipo %}
                     <li class="flex justify-between items-center p-3 rounded-lg bg-red-50">
-                        <span class="font-semibold text-gray-800">{{ item.tipo_gasto }}//{{item.descripcions}}</span>
+                        <span class="font-semibold text-gray-800">{{ item.tipo_gasto }}</span>
                         <span class="text-lg font-bold text-red-600">${{ item.total|floatformat:2 }}</span>
                     </li>
                     {% endfor %}
@@ -70,9 +98,51 @@
                     <p class="text-gray-500 p-8 bg-gray-50 rounded-lg text-center">No hay gastos para analizar categorías.</p>
                 {% endif %}
             </div>
-    
+
         </div>
-        
+
+        <!-- Desglose por Miembro -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
+
+            <!-- Desglose de Ingresos por Miembro -->
+            <div class="bg-white p-6 rounded-xl shadow-2xl">
+                <h2 class="text-2xl font-bold mb-4 text-blue-700 border-b pb-2">Desglose de Ingresos por Miembro</h2>
+
+                {% if ingresos_por_usuario %}
+                <ul class="space-y-3">
+                    {% for item in ingresos_por_usuario %}
+                    <li class="flex justify-between items-center p-3 rounded-lg bg-blue-50">
+                        <span class="font-semibold text-gray-800">{{ item.user__username|default:"Usuario Desconocido" }}</span>
+                        <span class="text-lg font-bold text-blue-600">${{ item.total|floatformat:2 }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                    <p class="text-gray-500 p-8 bg-gray-50 rounded-lg text-center">No hay ingresos registrados por miembros.</p>
+                {% endif %}
+            </div>
+
+            <!-- Desglose de Gastos por Miembro -->
+            <div class="bg-white p-6 rounded-xl shadow-2xl">
+                <h2 class="text-2xl font-bold mb-4 text-orange-700 border-b pb-2">Desglose de Gastos por Miembro</h2>
+
+                {% if gastos_por_usuario %}
+                <ul class="space-y-3">
+                    {% for item in gastos_por_usuario %}
+                    <li class="flex justify-between items-center p-3 rounded-lg bg-orange-50">
+                        <span class="font-semibold text-gray-800">{{ item.user__username|default:"Usuario Desconocido" }}</span>
+                        <span class="text-lg font-bold text-orange-600">${{ item.total|floatformat:2 }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                    <p class="text-gray-500 p-8 bg-gray-50 rounded-lg text-center">No hay gastos registrados por miembros.</p>
+                {% endif %}
+            </div>
+
+        </div>
+
+
         <div class="mt-10 text-center">
             <a href="{% url 'Menu_plan' plan_id=plan.id %}" class="inline-flex items-center text-indigo-600 hover:text-indigo-800 font-medium">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-1">
@@ -83,5 +153,104 @@
         </div>
     
     </div>
+    <script>
+
+        // Datos para gráficos
+        const ingresosTipoData = {
+            labels: [{% for item in ingresos_por_tipo %}'{{ item.tipo_ingreso }}',{% endfor %}],
+            datasets: [{
+                label: 'Ingresos por Tipo',
+                data: [{% for item in ingresos_por_tipo %}{{ item.total }},{% endfor %}],
+                backgroundColor: [
+                    'rgba(34, 197, 94, 0.8)',
+                    'rgba(59, 130, 246, 0.8)',
+                    'rgba(168, 85, 247, 0.8)',
+                    'rgba(251, 191, 36, 0.8)',
+                    'rgba(239, 68, 68, 0.8)',
+                ],
+                borderColor: [
+                    'rgba(34, 197, 94, 1)',
+                    'rgba(59, 130, 246, 1)',
+                    'rgba(168, 85, 247, 1)',
+                    'rgba(251, 191, 36, 1)',
+                    'rgba(239, 68, 68, 1)',
+                ],
+                borderWidth: 1
+            }]
+        };
+
+        const gastosTipoData = {
+            labels: [{% for item in gastos_por_tipo %}'{{ item.tipo_gasto }}',{% endfor %}],
+            datasets: [{
+                label: 'Gastos por Tipo',
+                data: [{% for item in gastos_por_tipo %}{{ item.total }},{% endfor %}],
+                backgroundColor: [
+                    'rgba(239, 68, 68, 0.8)',
+                    'rgba(251, 191, 36, 0.8)',
+                    'rgba(168, 85, 247, 0.8)',
+                    'rgba(59, 130, 246, 0.8)',
+                    'rgba(34, 197, 94, 0.8)',
+                ],
+                borderColor: [
+                    'rgba(239, 68, 68, 1)',
+                    'rgba(251, 191, 36, 1)',
+                    'rgba(168, 85, 247, 1)',
+                    'rgba(59, 130, 246, 1)',
+                    'rgba(34, 197, 94, 1)',
+                ],
+                borderWidth: 1
+            }]
+        };
+
+        // Configuración de gráficos
+        const configIngresos = {
+            type: 'pie',
+            data: ingresosTipoData,
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.label + ': $' + context.parsed.toFixed(2);
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
+        const configGastos = {
+            type: 'pie',
+            data: gastosTipoData,
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.label + ': $' + context.parsed.toFixed(2);
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
+        // Crear gráficos
+        {% if ingresos_por_tipo %}
+        new Chart(document.getElementById('ingresosTipoChart'), configIngresos);
+        {% endif %}
+
+        {% if gastos_por_tipo %}
+        new Chart(document.getElementById('gastosTipoChart'), configGastos);
+        {% endif %}
+    </script>
 </body>
 </html>

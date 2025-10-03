@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Objetivos - {{ plan.nombre }}</title>
     {% load static %}
 
 <link rel="stylesheet" href="{% static 'objetivos/objetivos.css' %}">
@@ -13,10 +13,21 @@
 <div class="objetivos-container">
     <h2>Objetivos del Plan - {{ plan.nombre }}</h2>
 
+    <!-- Toggle para mostrar objetivos completados -->
+    <div class="toggle-completed">
+        <form method="get" action="{% url 'objetivos' plan.id %}">
+            <label>
+                <input type="checkbox" name="show_completed" value="yes" {% if show_completed %}checked{% endif %} onchange="this.form.submit()">
+                Mostrar objetivos completados
+            </label>
+        </form>
+    </div>
+
     <div class="formulario-objetivo">
         <h3>Agregar Nuevo Objetivo</h3>
         <form method="post" action="{% url 'agregar_objetivo' plan.id %}">
             {% csrf_token %}
+            <input type="hidden" name="show_completed" value="{% if show_completed %}yes{% else %}no{% endif %}">
             {{ agregar_form.as_p }}
             <button type="submit">Agregar Objetivo</button>
         </form>
@@ -27,45 +38,62 @@
         {% if objetivos_del_plan %}
             <ul>
                 {% for objetivo in objetivos_del_plan %}
-                <li>
+                <li class="objetivo-item">
+                    <form method="post" action="{% url 'eliminar_objetivo' plan.id objetivo.id %}" class="delete-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="show_completed" value="{% if show_completed %}yes{% else %}no{% endif %}">
+                        <button type="submit" onclick="return confirm('¿Estás seguro de que quieres eliminar este objetivo?')" class="delete-btn">×</button>
+                    </form>
                     <div class="objetivo-info">
                         <h4>{{ objetivo.nombre }}</h4>
                         <p>{{ objetivo.detalles }}</p>
                         <p><strong>Meta:</strong> ${{ objetivo.monto_necesario|floatformat:2 }}</p>
                         <p><strong>Actual:</strong> ${{ objetivo.monto_actual|floatformat:2 }}</p>
-                        
-                        {% with progreso=objetivo.monto_actual|divisibleby:objetivo.monto_necesario %}
-                            {% if progreso %}
-                                <div class="progress-bar-bg">
-                                   <div class="progress-bar"></div>
-                                </div> 
-                                <p class="porcentaje-progreso">nada % completado</p>
-                            {% else %}
-                                <p class="porcentaje-progreso">casi % completado</p>
-                            {% endif %}
-                        {% endwith %}
+
+                        {% if objetivo.monto_necesario > 0 %}
+                            {% widthratio objetivo.monto_actual objetivo.monto_necesario 100 as porcentaje %}
+                            <div class="progress-bar-bg">
+                               <div class="progress-bar" style="width: {{ porcentaje }}%;"></div>
+                            </div>
+                            <p class="porcentaje-progreso">{{ porcentaje|floatformat:1 }}% completado</p>
+                        {% else %}
+                            <p class="porcentaje-progreso">Meta no definida</p>
+                        {% endif %}
 
                     </div>
+                    {% if objetivo.estado != 'completado' %}
                     <form method="post" action="{% url 'aportar_objetivo' plan.id objetivo.id %}">
                         {% csrf_token %}
+                        <input type="hidden" name="show_completed" value="{% if show_completed %}yes{% else %}no{% endif %}">
                         {{ aportar_form.as_p }}
                         <button type="submit">Aportar</button>
                     </form>
+                    {% if objetivo.monto_actual >= objetivo.monto_necesario %}
+                    <form method="post" action="{% url 'eliminar_objetivo' plan.id objetivo.id %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="completar" value="yes">
+                        <input type="hidden" name="show_completed" value="{% if show_completed %}yes{% else %}no{% endif %}">
+                        <button type="submit" onclick="return confirm('¿Estás seguro de que quieres completar este objetivo? Se eliminará y no se devolverá el dinero.')">Completar Objetivo</button>
+                    </form>
+                    {% endif %}
+                    {% else %}
+                    <p class="completado">Objetivo Completado</p>
+                    {% endif %}
                 </li>
                 {% endfor %}
             </ul>
-                    {% if messages %}
-            <div class="mb-4">
-                {% for message in messages %}
-                <div class="p-3 rounded-lg text-sm {% if message.tags == 'success' %}bg-green-100 text-green-700{% elif message.tags == 'error' %}bg-red-100 text-red-700{% else %}bg-blue-100 text-blue-700{% endif %}">
-                    {{ message }}
-                </div>
-                {% endfor %}
-            </div>
-        {% endif %}
-
         {% else %}
             <p>No hay objetivos para este plan. ¡Agrega el primero!</p>
+        {% endif %}
+
+        {% if messages %}
+        <div class="mb-4">
+            {% for message in messages %}
+            <div class="p-3 rounded-lg text-sm {% if message.tags == 'success' %}bg-green-100 text-green-700{% elif message.tags == 'error' %}bg-red-100 text-red-700{% else %}bg-blue-100 text-blue-700{% endif %}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
         {% endif %}
     </div>
 

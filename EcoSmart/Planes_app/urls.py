@@ -13,7 +13,7 @@ urlpatterns = [
     path('<int:plan_id>/gastos/<int:gasto_id>/eliminar/', views.eliminar_gasto, name='eliminar_gasto'),
     
     path('<int:plan_id>/estadisticas/', views.estadisticas, name='estadisticas'),
-
+    path('<int:plan_id>/historiales/', views.historiales, name='historiales'),
 
     path('<int:plan_id>/objetivos/', views.objetivos, name='objetivos'),
     path('<int:plan_id>/objetivos/agregar/', views.agregar_objetivo, name='agregar_objetivo'),

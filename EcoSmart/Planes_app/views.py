@@ -56,12 +56,13 @@ def ingresos(request, plan_id):
         if form.is_valid():
             ingreso = form.save(commit=False)
             ingreso.dinero = dinero_obj
+            ingreso.user = request.user
             ingreso.save()
-            
+
             dinero_obj.total_dinero += ingreso.cantidad
             dinero_obj.ingreso_total += ingreso.cantidad
             dinero_obj.save()
-            
+
             messages.success(request, 'Ingreso registrado con éxito.')
             return redirect('ingresos', plan_id=plan.id)
     else:
@@ -167,18 +168,19 @@ def gastos(request, plan_id):
         if form.is_valid():
             gasto = form.save(commit=False)
             gasto.dinero = dinero_obj
-            
+            gasto.user = request.user
+
             # Validación de fondos antes de guardar el gasto
             if gasto.cantidad > dinero_obj.total_dinero:
                  messages.error(request, 'Capital insuficiente para registrar este gasto.')
                  return redirect('gastos', plan_id=plan.id)
 
             gasto.save()
-            
+
             dinero_obj.total_dinero -= gasto.cantidad
             dinero_obj.gasto_total += gasto.cantidad
             dinero_obj.save()
-            
+
             messages.success(request, 'Gasto registrado con éxito.')
             return redirect('gastos', plan_id=plan.id)
     else:
@@ -279,7 +281,7 @@ def eliminar_gasto(request, plan_id, gasto_id):
 
 @login_required
 def estadisticas(request, plan_id):
-    
+
     """Muestra un resumen de estadísticas financieras."""
     plan, es_miembro = verificar_membresia(request, plan_id)
     if not es_miembro: return redirect('dashboard')
@@ -289,13 +291,45 @@ def estadisticas(request, plan_id):
     ingresos_por_tipo = Ingreso.objects.filter(dinero=dinero_obj).values('tipo_ingreso').annotate(total=Sum('cantidad'))
     gastos_por_tipo = Gasto.objects.filter(dinero=dinero_obj).values('tipo_gasto').annotate(total=Sum('cantidad'))
 
+    # Estadísticas por usuario
+    ingresos_por_usuario = Ingreso.objects.filter(dinero=dinero_obj).values('user__username').annotate(total=Sum('cantidad')).order_by('-total')
+    gastos_por_usuario = Gasto.objects.filter(dinero=dinero_obj).values('user__username').annotate(total=Sum('cantidad')).order_by('-total')
+
+    # Listas de ingresos y gastos individuales con usuario
+    ingresos_list = Ingreso.objects.filter(dinero=dinero_obj).select_related('user').order_by('-fecha_guardado')
+    gastos_list = Gasto.objects.filter(dinero=dinero_obj).select_related('user').order_by('-fecha_guardado')
+
     context = {
         'plan': plan,
         'dinero_info': dinero_obj,
         'ingresos_por_tipo': ingresos_por_tipo,
         'gastos_por_tipo': gastos_por_tipo,
+        'ingresos_por_usuario': ingresos_por_usuario,
+        'gastos_por_usuario': gastos_por_usuario,
+        'ingresos_list': ingresos_list,
+        'gastos_list': gastos_list,
     }
     return render(request, 'estadisticas.html', context)
+
+
+@login_required
+def historiales(request, plan_id):
+    """Muestra el historial completo de ingresos y gastos en pestañas."""
+    plan, es_miembro = verificar_membresia(request, plan_id)
+    if not es_miembro: return redirect('dashboard')
+
+    dinero_obj = get_object_or_404(Dinero, plan=plan)
+
+    # Listas completas de ingresos y gastos con usuario
+    ingresos_list = Ingreso.objects.filter(dinero=dinero_obj).select_related('user').order_by('-fecha_guardado')
+    gastos_list = Gasto.objects.filter(dinero=dinero_obj).select_related('user').order_by('-fecha_guardado')
+
+    context = {
+        'plan': plan,
+        'ingresos_list': ingresos_list,
+        'gastos_list': gastos_list,
+    }
+    return render(request, 'historiales.html', context)
 
 
 @login_required
@@ -304,21 +338,28 @@ def objetivos(request, plan_id):
     Muestra la lista de objetivos del plan y el formulario para agregar uno nuevo.
     """
     plan = get_object_or_404(Plan, pk=plan_id)
-    
-    # Obtener todos los objetivos asociados a este plan.
-    objetivos_del_plan = Objetivo.objects.filter(plan=plan)
-    
+
+    # Verificar si mostrar objetivos completados
+    show_completed = request.GET.get('show_completed', 'no') == 'yes'
+
+    # Obtener objetivos asociados a este plan, filtrando completados si no se muestran
+    if show_completed:
+        objetivos_del_plan = Objetivo.objects.filter(plan=plan)
+    else:
+        objetivos_del_plan = Objetivo.objects.filter(plan=plan).exclude(estado='completado')
+
     # Formulario para agregar un nuevo objetivo
     agregar_form = ObjetivoForm()
-    
+
     # Formulario para aportar dinero a un objetivo
     aportar_form = AportarObjetivoForm()
-    
+
     context = {
         'plan': plan,
         'objetivos_del_plan': objetivos_del_plan,
         'agregar_form': agregar_form,
         'aportar_form': aportar_form,
+        'show_completed': show_completed,
     }
     return render(request, 'objetivos.html', context)
 
@@ -326,7 +367,7 @@ def objetivos(request, plan_id):
 def agregar_objetivo(request, plan_id):
     """Maneja el formulario POST para agregar un nuevo objetivo."""
     plan = get_object_or_404(Plan, pk=plan_id)
-    
+
     if request.method == 'POST':
         form = ObjetivoForm(request.POST)
         if form.is_valid():
@@ -339,8 +380,11 @@ def agregar_objetivo(request, plan_id):
             messages.success(request, f"Objetivo '{objetivo.nombre}' agregado con éxito.")
         else:
             messages.error(request, 'Error al agregar el objetivo. Verifica los campos.')
-    
-    return redirect('objetivos', plan_id=plan.id)
+
+    # Preservar el parámetro show_completed
+    from django.urls import reverse
+    show_param = '?show_completed=yes' if request.GET.get('show_completed') == 'yes' else ''
+    return redirect(reverse('objetivos', kwargs={'plan_id': plan.id}) + show_param)
 
 
 @login_required
@@ -380,27 +424,39 @@ def eliminar_objetivo(request, plan_id, objetivo_id):
     dinero_obj = get_object_or_404(Dinero, plan=plan)
 
     if request.method == 'POST':
-        monto_a_devolver = objetivo.monto_actual
+        completar = request.POST.get('completar') == 'yes'
+        monto_a_devolver = objetivo.monto_actual if not completar else 0
 
         try:
             with transaction.atomic():
-                # 1. Devolver el monto acumulado al total disponible del plan
+                if completar:
+                    # Marcar como completado antes de eliminar
+                    objetivo.estado = 'completado'
+                    objetivo.save()
+
+                # 1. Devolver el monto acumulado al total disponible del plan (solo si no es completado)
                 if monto_a_devolver > 0:
                     dinero_obj.total_dinero += monto_a_devolver
                     # Revertir el gasto_total (ya que la aportación se registró como gasto)
-                    dinero_obj.gasto_total -= monto_a_devolver 
+                    dinero_obj.gasto_total -= monto_a_devolver
                     dinero_obj.save()
                     messages.info(request, f"${monto_a_devolver} devueltos al saldo disponible.")
 
                 # 2. Eliminar el objetivo
                 objetivo.delete()
-                
-                messages.success(request, f"Objetivo '{objetivo.nombre}' eliminado correctamente.")
+
+                if completar:
+                    messages.success(request, f"¡Objetivo '{objetivo.nombre}' completado y eliminado! 🎉")
+                else:
+                    messages.success(request, f"Objetivo '{objetivo.nombre}' eliminado correctamente.")
 
         except Exception as e:
             messages.error(request, f"Error al eliminar el objetivo: {e}")
 
-        return redirect('objetivos', plan_id=plan.id)
+        # Preservar el parámetro show_completed
+        from django.urls import reverse
+        show_param = '?show_completed=yes' if request.GET.get('show_completed') == 'yes' else ''
+        return redirect(reverse('objetivos', kwargs={'plan_id': plan.id}) + show_param)
 
     context = {'plan': plan, 'objetivo': objetivo}
     return render(request, 'confirmar_eliminar_objetivo.html', context)
@@ -441,12 +497,13 @@ def aportar_objetivo(request, plan_id, objetivo_id):
                     
                     if dinero_plan.total_dinero >= monto_aporte:
                         
-                        # A. CREAR EL GASTO 
+                        # A. CREAR EL GASTO
                         Gasto.objects.create(
                             nombre=f"Aporte a Objetivo: {objetivo.nombre}",
-                            tipo_gasto='objetivo', 
+                            tipo_gasto='objetivo',
                             cantidad=monto_aporte,
                             dinero=dinero_plan,
+                            user=request.user,
                             # NOTA: Los campos obligatorios ahora son solo los que existen en tu modelo
                         )
                         
@@ -458,12 +515,9 @@ def aportar_objetivo(request, plan_id, objetivo_id):
                         # C. ACTUALIZAR EL OBJETIVO
                         objetivo.monto_actual += monto_aporte
                         objetivo.save()
-                        
+
                         # Mensajes de éxito
-                        if objetivo.monto_actual >= objetivo.monto_necesario:
-                            messages.success(request, f"¡Objetivo '{objetivo.nombre}' completado! 🎉")
-                        else:
-                            messages.success(request, f"Se han aportado ${monto_aporte} a tu objetivo y se registró como gasto.")
+                        messages.success(request, f"Se han aportado ${monto_aporte} a tu objetivo y se registró como gasto.")
                         
                     else:
                         messages.error(request, f"Capital insuficiente. Solo tienes ${dinero_plan.total_dinero} disponibles para aportar.")
@@ -475,7 +529,10 @@ def aportar_objetivo(request, plan_id, objetivo_id):
         else:
             messages.error(request, 'Error en el formulario. Asegúrate de ingresar una cantidad válida.')
 
-    return redirect('objetivos', plan_id=plan.id)
+    # Preservar el parámetro show_completed
+    from django.urls import reverse
+    show_param = '?show_completed=yes' if request.GET.get('show_completed') == 'yes' else ''
+    return redirect(reverse('objetivos', kwargs={'plan_id': plan.id}) + show_param)
 
 
 # --- VISTAS DE TAREAS (CORREGIDAS) ---
