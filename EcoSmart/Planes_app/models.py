@@ -17,7 +17,8 @@ class Plan(models.Model):
     descripcion = models.TextField(max_length=65535)
     fecha_creacion = models.DateTimeField(default=timezone.now)
     tipo_plan = models.CharField(max_length=10, choices=TIPO_PLAN_CHOICES, default='individual')
-    
+    imagen = models.ImageField(upload_to='planes/', blank=True, null=True)
+
     # id_creador (FK a usuario)
     creador = models.ForeignKey(User, on_delete=models.CASCADE, related_name='planes_creados')
 
@@ -79,6 +80,7 @@ class Ingreso(models.Model):
     tipo_ingreso = models.CharField(max_length=50, choices=TIPO_INGRESO_CHOICES)
     cantidad = models.DecimalField(max_digits=15, decimal_places=2)
     fecha_guardado = models.DateTimeField(default=timezone.now)
+    imagen = models.ImageField(upload_to='ingresos/', blank=True, null=True)
 
     # id_dinero (FK a dinero)
     dinero = models.ForeignKey(Dinero, on_delete=models.CASCADE, related_name='ingresos')
@@ -105,6 +107,7 @@ class Gasto(models.Model):
     tipo_gasto = models.CharField(max_length=50, choices=TIPO_GASTO_CHOICES)
     cantidad = models.DecimalField(max_digits=15, decimal_places=2)
     fecha_guardado = models.DateTimeField(default=timezone.now)
+    imagen = models.ImageField(upload_to='gastos/', blank=True, null=True)
 
     # id_dinero (FK a dinero)
     dinero = models.ForeignKey(Dinero, on_delete=models.CASCADE, related_name='gastos')
@@ -120,18 +123,19 @@ class Objetivo(models.Model):
         ('pendiente', 'Pendiente'),
         ('completado', 'Completado'),
     ]
-    
+
     # id_objetivo (INTEGER - PK) -> Django lo crea automáticamente
-    
+
     # id_plan (FK a planes_plan)
     plan = models.ForeignKey(Plan, on_delete=models.CASCADE, related_name='objetivos')
-    
+
     nombre = models.CharField(max_length=255)
     detalles = models.TextField(max_length=65535)
     monto_necesario = models.DecimalField(max_digits=15, decimal_places=2)
     monto_actual = models.DecimalField(max_digits=15, decimal_places=2, default=0.00)
     estado = models.CharField(max_length=50, choices=ESTADO_CHOICES, default='pendiente')
     fecha_guardado = models.DateTimeField(default=timezone.now)
+    imagen = models.ImageField(upload_to='objetivos/', blank=True, null=True)
 
     def __str__(self):
         return self.nombre
@@ -157,7 +161,8 @@ class Tarea(models.Model):
     nombre = models.CharField(max_length=255)
     descripcion = models.TextField(max_length=65535, null=True, blank=True)
     tipo_tarea = models.CharField(max_length=50, choices=TIPO_TAREA_CHOICES)
-    
+    imagen = models.ImageField(upload_to='tareas/', blank=True, null=True)
+
     # Fechas
     fecha_guardado = models.DateTimeField(default=timezone.now)
     fecha_a_completar = models.DateField(null=True, blank=True) # La fecha límite

@@ -27,10 +27,15 @@
                 <ul class="space-y-4">
                     {% for ingreso in ingresos_list %}
                     <li class="bg-white p-4 rounded-xl shadow-lg flex justify-between items-center transition duration-150 hover:shadow-xl border-l-4 border-green-500">
-                        <div>
-                            <p class="text-lg font-semibold text-gray-900">{{ ingreso.nombre }}</p>
-                            <p class="text-xs text-gray-500">{{ ingreso.descripcion|default:"Sin descripción" }}</p>
-                            <p class="text-xs font-medium text-green-600 mt-1">Tipo: {{ ingreso.get_tipo_ingreso_display }} - Usuario: {{ ingreso.user.username|default:"Usuario Desconocido" }}</p>
+                        <div class="flex items-center space-x-4">
+                            {% if ingreso.imagen %}
+                                <img src="{{ ingreso.imagen.url }}" alt="Imagen de {{ ingreso.nombre }}" style="width: 60px; height: 60px; object-fit: cover;" class="rounded-lg">
+                            {% endif %}
+                            <div>
+                                <p class="text-lg font-semibold text-gray-900">{{ ingreso.nombre }}</p>
+                                <p class="text-xs text-gray-500">{{ ingreso.descripcion|default:"Sin descripción" }}</p>
+                                <p class="text-xs font-medium text-green-600 mt-1">Tipo: {{ ingreso.get_tipo_ingreso_display }} - Usuario: {{ ingreso.user.username|default:"Usuario Desconocido" }}</p>
+                            </div>
                         </div>
                         <div class="text-right">
                             <p class="text-xl font-extrabold text-green-600">+ ${{ ingreso.cantidad|floatformat:2 }}</p>
@@ -49,10 +54,15 @@
                 <ul class="space-y-4">
                     {% for gasto in gastos_list %}
                     <li class="bg-white p-4 rounded-xl shadow-lg flex justify-between items-center transition duration-150 hover:shadow-xl border-l-4 border-red-500">
-                        <div>
-                            <p class="text-lg font-semibold text-gray-900">{{ gasto.nombre }}</p>
-                            <p class="text-xs text-gray-500">{{ gasto.descripcion|default:"Sin descripción" }}</p>
-                            <p class="text-xs font-medium text-red-600 mt-1">Tipo: {{ gasto.get_tipo_gasto_display }} - Usuario: {{ gasto.user.username|default:"Usuario Desconocido" }}</p>
+                        <div class="flex items-center space-x-4">
+                            {% if gasto.imagen %}
+                                <img src="{{ gasto.imagen.url }}" alt="Imagen de {{ gasto.nombre }}" style="width: 60px; height: 60px; object-fit: cover;" class="rounded-lg">
+                            {% endif %}
+                            <div>
+                                <p class="text-lg font-semibold text-gray-900">{{ gasto.nombre }}</p>
+                                <p class="text-xs text-gray-500">{{ gasto.descripcion|default:"Sin descripción" }}</p>
+                                <p class="text-xs font-medium text-red-600 mt-1">Tipo: {{ gasto.get_tipo_gasto_display }} - Usuario: {{ gasto.user.username|default:"Usuario Desconocido" }}</p>
+                            </div>
                         </div>
                         <div class="text-right">
                             <p class="text-xl font-extrabold text-red-600">- ${{ gasto.cantidad|floatformat:2 }}</p>

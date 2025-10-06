@@ -54,9 +54,18 @@
         <div class="space-y-4">
             {% for suscripcion in miembros_actuales %}
                 <div class="p-4 bg-gray-50 border border-gray-200 rounded-xl flex justify-between items-center shadow-sm">
-                    <div>
-                        <p class="font-semibold text-gray-900">{{ suscripcion.usuario.username }}</p>
-                        <p class="text-sm text-gray-500">{{ suscripcion.usuario.email }}</p>
+                    <div class="flex items-center space-x-3">
+                        {% if suscripcion.usuario.profile.profile_picture %}
+                            <img src="{{ suscripcion.usuario.profile.profile_picture.url }}" alt="Foto de {{ suscripcion.usuario.username }}" width="40" height="40" class="rounded-full object-cover">
+                        {% else %}
+                            <div class="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center">
+                                <span class="text-gray-600 font-bold">{{ suscripcion.usuario.username|first|upper }}</span>
+                            </div>
+                        {% endif %}
+                        <div>
+                            <p class="font-semibold text-gray-900">{{ suscripcion.usuario.username }}</p>
+                            <p class="text-sm text-gray-500">{{ suscripcion.usuario.email }}</p>
+                        </div>
                     </div>
                     <div class="flex items-center space-x-4">
                         <span class="px-3 py-1 text-xs font-bold rounded-full 

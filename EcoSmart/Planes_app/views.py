@@ -52,7 +52,7 @@ def ingresos(request, plan_id):
     dinero_obj = get_object_or_404(Dinero, plan=plan)
     
     if request.method == 'POST':
-        form = IngresoForm(request.POST)
+        form = IngresoForm(request.POST, request.FILES)
         if form.is_valid():
             ingreso = form.save(commit=False)
             ingreso.dinero = dinero_obj
@@ -89,7 +89,7 @@ def editar_ingreso(request, plan_id, ingreso_id):
     dinero_obj = ingreso.dinero
     
     if request.method == 'POST':
-        form = IngresoForm(request.POST, instance=ingreso)
+        form = IngresoForm(request.POST, request.FILES, instance=ingreso)
         if form.is_valid():
             nueva_cantidad = form.cleaned_data['cantidad']
             antigua_cantidad = ingreso.cantidad
@@ -164,7 +164,7 @@ def gastos(request, plan_id):
     dinero_obj = get_object_or_404(Dinero, plan=plan)
     
     if request.method == 'POST':
-        form = GastoForm(request.POST)
+        form = GastoForm(request.POST, request.FILES)
         if form.is_valid():
             gasto = form.save(commit=False)
             gasto.dinero = dinero_obj
@@ -207,7 +207,7 @@ def editar_gasto(request, plan_id, gasto_id):
     dinero_obj = gasto.dinero
     
     if request.method == 'POST':
-        form = GastoForm(request.POST, instance=gasto)
+        form = GastoForm(request.POST, request.FILES, instance=gasto)
         if form.is_valid():
             nueva_cantidad = form.cleaned_data['cantidad']
             antigua_cantidad = gasto.cantidad
@@ -369,7 +369,7 @@ def agregar_objetivo(request, plan_id):
     plan = get_object_or_404(Plan, pk=plan_id)
 
     if request.method == 'POST':
-        form = ObjetivoForm(request.POST)
+        form = ObjetivoForm(request.POST, request.FILES)
         if form.is_valid():
             objetivo = form.save(commit=False)
             objetivo.plan = plan
@@ -396,7 +396,7 @@ def editar_objetivo(request, plan_id, objetivo_id):
     objetivo = get_object_or_404(Objetivo, pk=objetivo_id, plan=plan)
 
     if request.method == 'POST':
-        form = ObjetivoForm(request.POST, instance=objetivo)
+        form = ObjetivoForm(request.POST, request.FILES, instance=objetivo)
         if form.is_valid():
             form.save()
             messages.success(request, f"Objetivo '{objetivo.nombre}' actualizado con éxito.")
@@ -606,7 +606,7 @@ def agregar_tarea(request, plan_id):
     plan = get_object_or_404(Plan, pk=plan_id)
     
     if request.method == 'POST':
-        form = TareaForm(request.POST)
+        form = TareaForm(request.POST, request.FILES)
         if form.is_valid():
             tarea = form.save(commit=False)
             tarea.plan = plan
@@ -628,7 +628,7 @@ def editar_tarea(request, plan_id, tarea_id):
     tarea = get_object_or_404(Tarea, pk=tarea_id, plan=plan)
     
     if request.method == 'POST':
-        form = TareaForm(request.POST, instance=tarea)
+        form = TareaForm(request.POST, request.FILES, instance=tarea)
         if form.is_valid():
             nueva_tarea = form.save(commit=False)
             nuevo_estado = nueva_tarea.estado

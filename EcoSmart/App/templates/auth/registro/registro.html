@@ -12,7 +12,7 @@
 <body>
   <main class="registro">
     <h2>Registro</h2>
-    <form method="POST">
+    <form method="POST" enctype="multipart/form-data">
             {% csrf_token %}
                 {% for campo in registerForm %}
                     <div>
@@ -22,7 +22,7 @@
                         {{ campo }} <br>
                     </div>
             {% endfor %}            {%for field,error in errores.items%}
-              {{field}}:{{error}} 
+              {{field}}:{{error}}
             {% endfor %}
         <button type="submit">Registrarse</button>
     </form>

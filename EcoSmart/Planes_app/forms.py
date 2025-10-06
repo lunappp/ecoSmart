@@ -10,17 +10,19 @@ class CrearPlanForm(forms.ModelForm):
     class Meta:
         model = Plan
         # Excluimos 'creador' y 'fecha_creacion' ya que se asignan en la vista.
-        fields = ['nombre', 'descripcion', 'tipo_plan']
-        
+        fields = ['nombre', 'descripcion', 'tipo_plan', 'imagen']
+
         widgets = {
             'nombre': forms.TextInput(attrs={'class': 'form-input w-full rounded-lg border-gray-300 shadow-sm', 'placeholder': 'Ej: Viaje a Europa 2025'}),
             'descripcion': forms.Textarea(attrs={'class': 'form-textarea w-full rounded-lg border-gray-300 shadow-sm', 'rows': 3, 'placeholder': 'Breve descripción del propósito del plan.'}),
             'tipo_plan': forms.Select(attrs={'class': 'form-select w-full rounded-lg border-gray-300 shadow-sm'}),
+            'imagen': forms.FileInput(attrs={'class': 'form-input w-full rounded-lg border-gray-300 shadow-sm'}),
         }
         labels = {
             'nombre': 'Nombre del Plan',
             'descripcion': 'Descripción',
             'tipo_plan': 'Tipo de Plan',
+            'imagen': 'Imagen del Plan',
         }
 
 class UnirseAForm(forms.Form):
@@ -40,19 +42,21 @@ class IngresoForm(forms.ModelForm):
         model = Ingreso
         # Excluimos 'dinero' ya que se asigna automáticamente en la vista.
         # Excluimos 'fecha_guardado' ya que se asigna automáticamente en el modelo.
-        fields = ['nombre', 'descripcion', 'tipo_ingreso', 'cantidad'] 
-        
+        fields = ['nombre', 'descripcion', 'tipo_ingreso', 'cantidad', 'imagen']
+
         widgets = {
             'nombre': forms.TextInput(attrs={'class': 'form-input w-full rounded-lg border-gray-300 shadow-sm', 'placeholder': 'Ej: Salario de Septiembre'}),
             'descripcion': forms.Textarea(attrs={'class': 'form-textarea w-full rounded-lg border-gray-300 shadow-sm', 'rows': 3, 'placeholder': 'Detalles adicionales (opcional)'}),
             'tipo_ingreso': forms.Select(attrs={'class': 'form-select w-full rounded-lg border-gray-300 shadow-sm'}),
             'cantidad': forms.NumberInput(attrs={'class': 'form-input w-full rounded-lg border-gray-300 shadow-sm', 'placeholder': 'Monto del ingreso', 'step': '0.01'}),
+            'imagen': forms.FileInput(attrs={'class': 'form-input w-full rounded-lg border-gray-300 shadow-sm'}),
         }
         labels = {
             'nombre': 'Nombre del Ingreso',
             'descripcion': 'Descripción',
             'tipo_ingreso': 'Tipo',
             'cantidad': 'Cantidad ($)',
+            'imagen': 'Imagen del Ingreso',
         }
 
 class GastoForm(forms.ModelForm):
@@ -61,19 +65,21 @@ class GastoForm(forms.ModelForm):
         model = Gasto
         # Excluimos 'dinero' ya que se asigna automáticamente en la vista.
         # Excluimos 'fecha_guardado' ya que se asigna automáticamente en el modelo.
-        fields = ['nombre', 'descripcion', 'tipo_gasto', 'cantidad'] 
-        
+        fields = ['nombre', 'descripcion', 'tipo_gasto', 'cantidad', 'imagen']
+
         widgets = {
             'nombre': forms.TextInput(attrs={'class': 'form-input w-full rounded-lg border-gray-300 shadow-sm', 'placeholder': 'Ej: Pago de alquiler'}),
             'descripcion': forms.Textarea(attrs={'class': 'form-textarea w-full rounded-lg border-gray-300 shadow-sm', 'rows': 3, 'placeholder': 'Detalles de la transacción'}),
             'tipo_gasto': forms.Select(attrs={'class': 'form-select w-full rounded-lg border-gray-300 shadow-sm'}),
             'cantidad': forms.NumberInput(attrs={'class': 'form-input w-full rounded-lg border-gray-300 shadow-sm', 'placeholder': 'Monto del gasto', 'step': '0.01'}),
+            'imagen': forms.FileInput(attrs={'class': 'form-input w-full rounded-lg border-gray-300 shadow-sm'}),
         }
         labels = {
             'nombre': 'Nombre del Gasto',
             'descripcion': 'Descripción',
             'tipo_gasto': 'Tipo',
             'cantidad': 'Cantidad ($)',
+            'imagen': 'Imagen del Gasto',
         }
 
 # ------------------------------
@@ -86,17 +92,19 @@ class ObjetivoForm(forms.ModelForm):
         model = Objetivo
         # Excluimos 'plan' y 'fecha_guardado' (asignados en la vista/modelo)
         # Excluimos 'monto_actual' y 'estado' (tienen valores por defecto)
-        fields = ['nombre', 'detalles', 'monto_necesario'] 
-        
+        fields = ['nombre', 'detalles', 'monto_necesario', 'imagen']
+
         widgets = {
             'nombre': forms.TextInput(attrs={'class': 'form-input w-full rounded-lg border-gray-300 shadow-sm', 'placeholder': 'Ej: Fondo de Emergencia'}),
             'detalles': forms.Textarea(attrs={'class': 'form-textarea w-full rounded-lg border-gray-300 shadow-sm', 'rows': 3, 'placeholder': 'Detalles y propósito del objetivo'}),
             'monto_necesario': forms.NumberInput(attrs={'class': 'form-input w-full rounded-lg border-gray-300 shadow-sm', 'placeholder': 'Monto total requerido', 'step': '0.01'}),
+            'imagen': forms.FileInput(attrs={'class': 'form-input w-full rounded-lg border-gray-300 shadow-sm'}),
         }
         labels = {
             'nombre': 'Nombre del Objetivo',
             'detalles': 'Detalles',
             'monto_necesario': 'Meta de Ahorro ($)',
+            'imagen': 'Imagen del Objetivo',
         }
         
 # Este formulario es un placeholder para cuando el usuario quiera aportar dinero
@@ -116,18 +124,20 @@ class TareaForm(forms.ModelForm):
         model = Tarea
         # Excluimos 'plan' y 'fecha_guardado' (asignados en la vista/modelo)
         # Excluimos 'estado' (tiene valor por defecto)
-        fields = ['nombre', 'descripcion', 'tipo_tarea', 'fecha_a_completar'] 
-        
+        fields = ['nombre', 'descripcion', 'tipo_tarea', 'fecha_a_completar', 'imagen']
+
         widgets = {
             'nombre': forms.TextInput(attrs={'class': 'form-input w-full rounded-lg border-gray-300 shadow-sm', 'placeholder': 'Ej: Pagar la luz'}),
             'descripcion': forms.TextInput(attrs={'class': 'form-textarea w-full rounded-lg border-gray-300 shadow-sm', 'rows': 2, 'placeholder': 'Descripción de la tarea (opcional)'}),
             'tipo_tarea': forms.Select(attrs={'class': 'form-select w-full rounded-lg border-gray-300 shadow-sm'}),
             'fecha_a_completar': forms.DateInput(attrs={'class': 'form-input w-full rounded-lg border-gray-300 shadow-sm', 'type': 'date'}),
+            'imagen': forms.FileInput(attrs={'class': 'form-input w-full rounded-lg border-gray-300 shadow-sm'}),
         }
         labels = {
             'nombre': 'Título de la Tarea',
             'descripcion': 'Descripción',
             'tipo_tarea': 'Tipo',
             'fecha_a_completar': 'Fecha Límite',
+            'imagen': 'Imagen de la Tarea',
         }
 

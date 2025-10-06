@@ -17,6 +17,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth.views import LogoutView
+from django.conf import settings
+from django.conf.urls.static import static
 import App.views
 import Planes_app.views
 
@@ -32,6 +34,8 @@ urlpatterns = [
 
     #------------------- daashboard -------------------#
     path('Dashboard/',App.views.Dashboard, name= 'Dashboard'),
+    path('edit_profile/', App.views.edit_profile, name='edit_profile'),
+    path('crear_plan/', App.views.crear_plan_view, name='crear_plan'),
     path('aceptar_invitacion/<int:invitacion_id>/', App.views.aceptar_invitacion, name='aceptar_invitacion'),
     path('rechazar_invitacion/<int:invitacion_id>/', App.views.rechazar_invitacion, name='rechazar_invitacion'),
     
@@ -42,6 +46,9 @@ urlpatterns = [
     
     #----------------------planes-----------------------#
     path('planes/', include('Planes_app.urls')),
-    
+
 
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

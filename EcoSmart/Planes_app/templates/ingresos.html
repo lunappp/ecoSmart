@@ -32,11 +32,12 @@
             <div class="lg:col-span-1 bg-white p-6 rounded-xl shadow-2xl h-fit">
                 <h2 class="text-xl font-bold mb-4 text-gray-800 border-b pb-2">Registrar Nuevo Ingreso</h2>
                 
-                <form method="POST" action="{% url 'ingresos' plan_id=plan.id %}" class="space-y-4">
+                <form method="POST" action="{% url 'ingresos' plan_id=plan.id %}" enctype="multipart/form-data" class="space-y-4">
                     {% csrf_token %}
                     
                     <!-- Renderiza el formulario con clases de Tailwind -->
                     {% for field in form %}
+                        {% if field.name != 'imagen' %}
                         <div class="field-wrapper">
                             <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ field.label }}</label>
                             {{ field }}
@@ -44,7 +45,17 @@
                                 <p class="text-red-500 text-xs mt-1">{{ field.errors }}</p>
                             {% endif %}
                         </div>
+                        {% endif %}
                     {% endfor %}
+
+                    <!-- Campo de imagen separado -->
+                    <div class="field-wrapper">
+                        <label for="{{ form.imagen.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.imagen.label }}</label>
+                        {{ form.imagen }}
+                        {% if form.imagen.errors %}
+                            <p class="text-red-500 text-xs mt-1">{{ form.imagen.errors }}</p>
+                        {% endif %}
+                    </div>
                     
                     <button type="submit" class="w-full bg-green-600 text-white py-3 px-4 rounded-xl font-semibold hover:bg-green-700 transition duration-150 shadow-lg">
                         Guardar Ingreso

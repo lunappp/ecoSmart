@@ -25,10 +25,31 @@
 
     <div class="formulario-objetivo">
         <h3>Agregar Nuevo Objetivo</h3>
-        <form method="post" action="{% url 'agregar_objetivo' plan.id %}">
+        <form method="post" action="{% url 'agregar_objetivo' plan.id %}" enctype="multipart/form-data">
             {% csrf_token %}
             <input type="hidden" name="show_completed" value="{% if show_completed %}yes{% else %}no{% endif %}">
-            {{ agregar_form.as_p }}
+
+            {% for field in agregar_form %}
+                {% if field.name != 'imagen' %}
+                <div class="field-wrapper">
+                    <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.errors %}
+                        <p class="text-red-500 text-xs mt-1">{{ field.errors }}</p>
+                    {% endif %}
+                </div>
+                {% endif %}
+            {% endfor %}
+
+            <!-- Campo de imagen separado -->
+            <div class="field-wrapper">
+                <label for="{{ agregar_form.imagen.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ agregar_form.imagen.label }}</label>
+                {{ agregar_form.imagen }}
+                {% if agregar_form.imagen.errors %}
+                    <p class="text-red-500 text-xs mt-1">{{ agregar_form.imagen.errors }}</p>
+                {% endif %}
+            </div>
+
             <button type="submit">Agregar Objetivo</button>
         </form>
     </div>
@@ -45,6 +66,9 @@
                         <button type="submit" onclick="return confirm('¿Estás seguro de que quieres eliminar este objetivo?')" class="delete-btn">×</button>
                     </form>
                     <div class="objetivo-info">
+                        {% if objetivo.imagen %}
+                            <img src="{{ objetivo.imagen.url }}" alt="Imagen de {{ objetivo.nombre }}" style="width: 80px; height: 80px; object-fit: cover; float: right; margin-left: 10px;" class="rounded-lg">
+                        {% endif %}
                         <h4>{{ objetivo.nombre }}</h4>
                         <p>{{ objetivo.detalles }}</p>
                         <p><strong>Meta:</strong> ${{ objetivo.monto_necesario|floatformat:2 }}</p>
