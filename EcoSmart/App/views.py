@@ -8,8 +8,8 @@ from django.contrib.auth.decorators import login_required
 
 from Planes_app.models import Plan, Suscripcion, Invitacion # Asume estos modelos
 from Planes_app.forms import CrearPlanForm # Asume estos formularios
-from .forms import PlanForm, ProfileEditForm, PasswordChangeFormCustom
-from .models import Plan, Profile
+from .forms import ProfileEditForm, PasswordChangeFormCustom
+from .models import Profile
 
 from App.forms import RegisterForm
 
