@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from .models import Message
-import openai
+# import openai  # Temporarily commented out due to installation issues
 import os
 
 @login_required
@@ -27,20 +27,5 @@ def send_message(request):
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
 def get_ai_response(message):
-    api_key = os.getenv('OPENAI_API_KEY')
-    if not api_key:
-        return "Hola, soy el asistente de EcoSmart. Para usar la IA completa, configura tu clave de OpenAI. Por ahora, puedo ayudarte con preguntas básicas sobre finanzas."
-
-    try:
-        client = openai.OpenAI(api_key=api_key)
-        response = client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {"role": "system", "content": "Eres un asistente útil para EcoSmart, una aplicación de gestión financiera. Responde en español."},
-                {"role": "user", "content": message}
-            ],
-            max_tokens=150
-        )
-        return response.choices[0].message.content.strip()
-    except Exception as e:
-        return "Lo siento, no pude procesar tu mensaje en este momento. Verifica tu conexión a internet o la clave de API."
+    # Temporarily disabled due to openai installation issues
+    return "Hola, soy el asistente de EcoSmart. Actualmente tengo problemas técnicos con la IA. Por favor, contacta al administrador para resolver este inconveniente. Mientras tanto, puedes usar las otras funcionalidades de la aplicación."

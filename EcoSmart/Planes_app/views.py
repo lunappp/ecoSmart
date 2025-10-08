@@ -396,9 +396,48 @@ def objetivos(request, plan_id):
     # Formulario para aportar dinero a un objetivo
     aportar_form = AportarObjetivoForm()
 
+    # Calcular estadísticas de contribución para cada objetivo
+    objetivos_con_estadisticas = []
+    for objetivo in objetivos_del_plan:
+        # Obtener gastos relacionados con este objetivo
+        gastos_objetivo = Gasto.objects.filter(
+            dinero__plan=plan,
+            tipo_gasto='objetivo',
+            nombre__icontains=f"Aporte a Objetivo: {objetivo.nombre}"
+        ).select_related('user')
+
+        # Agrupar por usuario y sumar contribuciones
+        contribuciones_por_usuario = {}
+        for gasto in gastos_objetivo:
+            user_id = gasto.user.id
+            username = gasto.user.username
+            if user_id not in contribuciones_por_usuario:
+                contribuciones_por_usuario[user_id] = {
+                    'username': username,
+                    'total': 0
+                }
+            contribuciones_por_usuario[user_id]['total'] += gasto.cantidad
+
+        # Encontrar máximo y mínimo contribuyente
+        if contribuciones_por_usuario:
+            max_contribuyente = max(contribuciones_por_usuario.values(), key=lambda x: x['total'])
+            min_contribuyente = min(contribuciones_por_usuario.values(), key=lambda x: x['total'])
+
+            # Mostrar estadísticas si hay al menos un contribuyente
+            objetivo.contribuciones_stats = {
+                'max': max_contribuyente,
+                'min': min_contribuyente,
+                'total_contribuyentes': len(contribuciones_por_usuario),
+                'total_aportado': sum(c['total'] for c in contribuciones_por_usuario.values())
+            }
+        else:
+            objetivo.contribuciones_stats = None
+
+        objetivos_con_estadisticas.append(objetivo)
+
     context = {
         'plan': plan,
-        'objetivos_del_plan': objetivos_del_plan,
+        'objetivos_del_plan': objetivos_con_estadisticas,
         'agregar_form': agregar_form,
         'aportar_form': aportar_form,
         'show_completed': show_completed,
@@ -554,6 +593,7 @@ def aportar_objetivo(request, plan_id, objetivo_id):
                             cantidad=monto_aporte,
                             dinero=dinero_plan,
                             user=request.user,
+                            imagen=objetivo.imagen,  # Usar la imagen del objetivo
                             # NOTA: Los campos obligatorios ahora son solo los que existen en tu modelo
                         )
                         
@@ -631,21 +671,29 @@ def obtener_estado_tarea(tarea):
 @login_required
 def tareas(request, plan_id):
     """Muestra la lista de tareas del plan y el formulario para agregar una nueva."""
-    plan = get_object_or_404(Plan, pk=plan_id)
-    
+    plan, es_miembro = verificar_membresia(request, plan_id)
+    if not es_miembro:
+        messages.error(request, 'No tienes acceso a este plan.')
+        return redirect('dashboard')
+
+    # Determinar si el usuario es admin
+    es_admin = (plan.creador == request.user or
+                Suscripcion.objects.filter(plan=plan, usuario=request.user, rol='admin').exists())
+
     # 1. Obtener todas las tareas del plan
     tareas_del_plan = Tarea.objects.filter(plan=plan).order_by('estado', 'fecha_a_completar')
-    
+
     # 2. Adjuntar el estado calculado a cada objeto Tarea
     tareas_con_estado = []
     for tarea in tareas_del_plan:
         tarea.estado_calculado = obtener_estado_tarea(tarea) # Usamos el estado calculado
         tareas_con_estado.append(tarea)
-        
+
     context = {
         'plan': plan,
         'tareas_con_estado': tareas_con_estado,
-        'tarea_form': TareaForm(), 
+        'tarea_form': TareaForm(plan=plan),
+        'es_admin': es_admin,
     }
     return render(request, 'tareas.html', context)
 
@@ -654,9 +702,9 @@ def tareas(request, plan_id):
 def agregar_tarea(request, plan_id):
     """Maneja el POST para crear una nueva tarea."""
     plan = get_object_or_404(Plan, pk=plan_id)
-    
+
     if request.method == 'POST':
-        form = TareaForm(request.POST, request.FILES)
+        form = TareaForm(request.POST, request.FILES, plan=plan)
         if form.is_valid():
             tarea = form.save(commit=False)
             tarea.plan = plan
@@ -665,7 +713,7 @@ def agregar_tarea(request, plan_id):
             messages.success(request, f"Tarea '{tarea.nombre}' agregada con éxito.")
         else:
             messages.error(request, 'Error al agregar la tarea. Verifica todos los campos.')
-    
+
     return redirect('tareas', plan_id=plan.id)
 
 
@@ -676,26 +724,26 @@ def editar_tarea(request, plan_id, tarea_id):
     if not es_miembro: return redirect('dashboard')
 
     tarea = get_object_or_404(Tarea, pk=tarea_id, plan=plan)
-    
+
     if request.method == 'POST':
-        form = TareaForm(request.POST, request.FILES, instance=tarea)
+        form = TareaForm(request.POST, request.FILES, instance=tarea, plan=plan)
         if form.is_valid():
             nueva_tarea = form.save(commit=False)
             nuevo_estado = nueva_tarea.estado
-            
+
             # Lógica para gestionar la fecha_completado
             if nuevo_estado == 'completada' and tarea.estado != 'completada':
                 nueva_tarea.fecha_completado = timezone.now()
             elif nuevo_estado != 'completada' and tarea.estado == 'completada':
                 nueva_tarea.fecha_completado = None
-                
+
             nueva_tarea.save()
             messages.success(request, f"Tarea '{nueva_tarea.nombre}' actualizada con éxito.")
             return redirect('tareas', plan_id=plan.id)
         else:
             messages.error(request, 'Error al editar la tarea. Verifica los campos.')
     else:
-        form = TareaForm(instance=tarea)
+        form = TareaForm(instance=tarea, plan=plan)
 
     context = {
         'plan': plan,
@@ -730,8 +778,24 @@ def eliminar_tarea(request, plan_id, tarea_id):
 def cambiar_estado_tarea(request, plan_id, tarea_id):
     """Cambia el estado de una tarea entre 'completada' y 'pendiente', registrando la fecha."""
     tarea = get_object_or_404(Tarea, pk=tarea_id)
+    plan = tarea.plan
+
+    # Verificar membresía al plan
+    es_miembro = Suscripcion.objects.filter(plan=plan, usuario=request.user).exists() or plan.creador == request.user
+    if not es_miembro:
+        messages.error(request, 'No tienes acceso a este plan.')
+        return redirect('dashboard')
+
+    # Determinar si el usuario es admin
+    es_admin = (plan.creador == request.user or
+                Suscripcion.objects.filter(plan=plan, usuario=request.user, rol='admin').exists())
 
     if request.method == 'POST':
+
+        # Verificar si el usuario puede completar esta tarea (admin puede completar cualquier tarea)
+        if tarea.usuario_asignado and tarea.usuario_asignado != request.user and not es_admin:
+            messages.error(request, f"No puedes completar esta tarea. Solo {tarea.usuario_asignado.username} puede completarla.")
+            return redirect('tareas', plan_id=plan_id)
 
         # Si la tarea NO está completada, la completamos
         if tarea.estado != 'completada':
@@ -740,7 +804,11 @@ def cambiar_estado_tarea(request, plan_id, tarea_id):
             tarea.save()
             messages.success(request, f"Tarea '{tarea.nombre}' marcada como completada.")
         else:
-            # Si ya está completada, la reabrimos (cambiamos a pendiente)
+            # Si ya está completada, verificar si es admin para reabrir
+            if not es_admin:
+                messages.error(request, 'Solo los administradores pueden reabrir tareas.')
+                return redirect('tareas', plan_id=plan_id)
+            # Reabrir la tarea
             tarea.estado = 'pendiente'
             tarea.fecha_completado = None # Eliminamos la fecha de completado
             tarea.save()

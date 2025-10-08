@@ -138,16 +138,29 @@ class AportarObjetivoForm(forms.Form):
 
 class TareaForm(forms.ModelForm):
     """Formulario para crear una nueva tarea o recordatorio."""
+    def __init__(self, *args, **kwargs):
+        self.plan = kwargs.pop('plan', None)
+        super().__init__(*args, **kwargs)
+
+        # Si hay un plan, mostrar solo los miembros del plan como opciones para asignar
+        if self.plan:
+            miembros = Suscripcion.objects.filter(plan=self.plan).select_related('usuario')
+            choices = [(suscripcion.usuario.id, suscripcion.usuario.username) for suscripcion in miembros]
+            # Agregar opción para no asignar a nadie
+            choices.insert(0, ('', 'No asignar a nadie'))
+            self.fields['usuario_asignado'].choices = choices
+
     class Meta:
         model = Tarea
         # Excluimos 'plan' y 'fecha_guardado' (asignados en la vista/modelo)
-        # Excluimos 'estado' (tiene valor por defecto)
-        fields = ['nombre', 'descripcion', 'tipo_tarea', 'fecha_a_completar', 'imagen']
+        # Excluimos 'estado' y 'fecha_completado' (tienen valores por defecto)
+        fields = ['nombre', 'descripcion', 'tipo_tarea', 'usuario_asignado', 'fecha_a_completar', 'imagen']
 
         widgets = {
             'nombre': forms.TextInput(attrs={'class': 'form-input w-full rounded-lg border-gray-300 shadow-sm', 'placeholder': 'Ej: Pagar la luz'}),
             'descripcion': forms.TextInput(attrs={'class': 'form-textarea w-full rounded-lg border-gray-300 shadow-sm', 'rows': 2, 'placeholder': 'Descripción de la tarea (opcional)'}),
             'tipo_tarea': forms.Select(attrs={'class': 'form-select w-full rounded-lg border-gray-300 shadow-sm'}),
+            'usuario_asignado': forms.Select(attrs={'class': 'form-select w-full rounded-lg border-gray-300 shadow-sm'}),
             'fecha_a_completar': forms.DateInput(attrs={'class': 'form-input w-full rounded-lg border-gray-300 shadow-sm', 'type': 'date'}),
             'imagen': forms.FileInput(attrs={'class': 'form-input w-full rounded-lg border-gray-300 shadow-sm'}),
         }
@@ -155,6 +168,7 @@ class TareaForm(forms.ModelForm):
             'nombre': 'Título de la Tarea',
             'descripcion': 'Descripción',
             'tipo_tarea': 'Tipo',
+            'usuario_asignado': 'Asignar a',
             'fecha_a_completar': 'Fecha Límite',
             'imagen': 'Imagen de la Tarea',
         }

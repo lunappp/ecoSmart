@@ -5,117 +5,241 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Objetivos - {{ plan.nombre }}</title>
     {% load static %}
-
-<link rel="stylesheet" href="{% static 'objetivos/objetivos.css' %}">
+    <link rel="stylesheet" href="{% static 'objetivos/objetivos.css' %}">
 </head>
 <body>
-    
-<div class="objetivos-container">
-    <h2>Objetivos del Plan - {{ plan.nombre }}</h2>
 
-    <!-- Toggle para mostrar objetivos completados -->
-    <div class="toggle-completed">
-        <form method="get" action="{% url 'objetivos' plan.id %}">
-            <label>
-                <input type="checkbox" name="show_completed" value="yes" {% if show_completed %}checked{% endif %} onchange="this.form.submit()">
-                Mostrar objetivos completados
-            </label>
-        </form>
+<div class="objetivos-container">
+    <div class="header-section">
+        <h2>Objetivos del Plan - {{ plan.nombre }}</h2>
+        <!-- Toggle para mostrar objetivos completados -->
+        <div class="toggle-completed">
+            <form method="get" action="{% url 'objetivos' plan.id %}">
+                <label>
+                    <input type="checkbox" name="show_completed" value="yes" {% if show_completed %}checked{% endif %} onchange="this.form.submit()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="toggle-icon">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                        <circle cx="12" cy="12" r="3"/>
+                    </svg>
+                    Mostrar objetivos completados
+                </label>
+            </form>
+        </div>
     </div>
 
     {% if es_admin %}
-    <div class="formulario-objetivo">
-        <h3>Agregar Nuevo Objetivo</h3>
+    <div class="formulario-objetivo card">
+        <div class="card-header">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 5v14"/>
+                <path d="M5 12h14"/>
+            </svg>
+            <h3>Agregar Nuevo Objetivo</h3>
+        </div>
         <form method="post" action="{% url 'agregar_objetivo' plan.id %}" enctype="multipart/form-data">
             {% csrf_token %}
             <input type="hidden" name="show_completed" value="{% if show_completed %}yes{% else %}no{% endif %}">
 
-            {% for field in agregar_form %}
-                {% if field.name != 'imagen' %}
-                <div class="field-wrapper">
-                    <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ field.label }}</label>
-                    {{ field }}
-                    {% if field.errors %}
-                        <p class="text-red-500 text-xs mt-1">{{ field.errors }}</p>
+            <div class="form-grid">
+                {% for field in agregar_form %}
+                    {% if field.name != 'imagen' %}
+                    <div class="field-wrapper">
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.errors %}
+                            <p class="error-text">{{ field.errors }}</p>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                {% endfor %}
+
+                <!-- Campo de imagen separado -->
+                <div class="field-wrapper full-width">
+                    <label for="{{ agregar_form.imagen.id_for_label }}">{{ agregar_form.imagen.label }}</label>
+                    {{ agregar_form.imagen }}
+                    {% if agregar_form.imagen.errors %}
+                        <p class="error-text">{{ agregar_form.imagen.errors }}</p>
                     {% endif %}
                 </div>
-                {% endif %}
-            {% endfor %}
-
-            <!-- Campo de imagen separado -->
-            <div class="field-wrapper">
-                <label for="{{ agregar_form.imagen.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ agregar_form.imagen.label }}</label>
-                {{ agregar_form.imagen }}
-                {% if agregar_form.imagen.errors %}
-                    <p class="text-red-500 text-xs mt-1">{{ agregar_form.imagen.errors }}</p>
-                {% endif %}
             </div>
 
-            <button type="submit">Agregar Objetivo</button>
+            <button type="submit" class="btn-primary">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 5v14"/>
+                    <path d="M5 12h14"/>
+                </svg>
+                Agregar Objetivo
+            </button>
         </form>
     </div>
     {% endif %}
 
-    <div class="lista-objetivos">
-        <h3>Lista de Objetivos</h3>
+    <div class="lista-objetivos card">
+        <div class="card-header">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 12l2 2 4-4"/>
+                <path d="M21 12c.552 0 1-.448 1-1V5c0-.552-.448-1-1-1H3c-.552 0-1 .448-1 1v6c0 .552.448 1 1 1"/>
+                <path d="M3 21h18"/>
+            </svg>
+            <h3>Lista de Objetivos</h3>
+        </div>
         {% if objetivos_del_plan %}
-            <ul>
+            <div class="objetivos-grid">
                 {% for objetivo in objetivos_del_plan %}
-                <li class="objetivo-item">
-                    <form method="post" action="{% url 'eliminar_objetivo' plan.id objetivo.id %}" class="delete-form">
-                        {% csrf_token %}
-                        <input type="hidden" name="show_completed" value="{% if show_completed %}yes{% else %}no{% endif %}">
-                        <button type="submit" onclick="return confirm('¿Estás seguro de que quieres eliminar este objetivo?')" class="delete-btn">×</button>
-                    </form>
-                    <div class="objetivo-info">
+                <div class="objetivo-card">
+                    <div class="objetivo-header">
                         {% if objetivo.imagen %}
-                            <img src="{{ objetivo.imagen.url }}" alt="Imagen de {{ objetivo.nombre }}" style="width: 80px; height: 80px; object-fit: cover; float: right; margin-left: 10px;" class="rounded-lg">
+                            <img src="{{ objetivo.imagen.url }}" alt="Imagen de {{ objetivo.nombre }}" class="objetivo-imagen">
                         {% endif %}
+                        <form method="post" action="{% url 'eliminar_objetivo' plan.id objetivo.id %}" class="delete-form">
+                            {% csrf_token %}
+                            <input type="hidden" name="show_completed" value="{% if show_completed %}yes{% else %}no{% endif %}">
+                            <button type="submit" onclick="return confirm('¿Estás seguro de que quieres eliminar este objetivo?')" class="delete-btn" title="Eliminar">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M18 6L6 18"/>
+                                    <path d="M6 6l12 12"/>
+                                </svg>
+                            </button>
+                        </form>
+                    </div>
+                    <div class="objetivo-content">
                         <h4>{{ objetivo.nombre }}</h4>
-                        <p>{{ objetivo.detalles }}</p>
-                        <p><strong>Meta:</strong> ${{ objetivo.monto_necesario|floatformat:2 }}</p>
-                        <p><strong>Actual:</strong> ${{ objetivo.monto_actual|floatformat:2 }}</p>
+                        <p class="objetivo-detalles">{{ objetivo.detalles }}</p>
+                        <div class="objetivo-stats">
+                            <div class="stat">
+                                <span class="stat-label">Meta:</span>
+                                <span class="stat-value">${{ objetivo.monto_necesario|floatformat:2 }}</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-label">Actual:</span>
+                                <span class="stat-value">${{ objetivo.monto_actual|floatformat:2 }}</span>
+                            </div>
+                        </div>
 
                         {% if objetivo.monto_necesario > 0 %}
                             {% widthratio objetivo.monto_actual objetivo.monto_necesario 100 as porcentaje %}
-                            <div class="progress-bar-bg">
-                               <div class="progress-bar" style="width: {{ porcentaje }}%;"></div>
+                            <div class="progress-container">
+                                <div class="progress-bar-bg">
+                                   <div class="progress-bar" style="width: {{ porcentaje }}%;"></div>
+                                </div>
+                                <p class="porcentaje-progreso">{{ porcentaje|floatformat:1 }}% completado</p>
                             </div>
-                            <p class="porcentaje-progreso">{{ porcentaje|floatformat:1 }}% completado</p>
                         {% else %}
                             <p class="porcentaje-progreso">Meta no definida</p>
                         {% endif %}
-
                     </div>
-                    {% if objetivo.estado != 'completado' %}
-                    <form method="post" action="{% url 'aportar_objetivo' plan.id objetivo.id %}">
-                        {% csrf_token %}
-                        <input type="hidden" name="show_completed" value="{% if show_completed %}yes{% else %}no{% endif %}">
-                        {{ aportar_form.as_p }}
-                        <button type="submit">Aportar</button>
-                    </form>
-                    {% if objetivo.monto_actual >= objetivo.monto_necesario %}
-                    <form method="post" action="{% url 'eliminar_objetivo' plan.id objetivo.id %}">
-                        {% csrf_token %}
-                        <input type="hidden" name="completar" value="yes">
-                        <input type="hidden" name="show_completed" value="{% if show_completed %}yes{% else %}no{% endif %}">
-                        <button type="submit" onclick="return confirm('¿Estás seguro de que quieres completar este objetivo? Se eliminará y no se devolverá el dinero.')">Completar Objetivo</button>
-                    </form>
-                    {% endif %}
+                    <div class="objetivo-actions">
+                        {% if objetivo.estado != 'completado' %}
+                        <form method="post" action="{% url 'aportar_objetivo' plan.id objetivo.id %}" class="aport-form">
+                            {% csrf_token %}
+                            <input type="hidden" name="show_completed" value="{% if show_completed %}yes{% else %}no{% endif %}">
+                            <div class="aport-input">
+                                {{ aportar_form.monto_aportar }}
+                            </div>
+                            <button type="submit" class="btn-secondary">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M12 5v14"/>
+                                    <path d="M5 12h14"/>
+                                </svg>
+                                Aportar
+                            </button>
+                        </form>
+                        {% if objetivo.monto_actual >= objetivo.monto_necesario %}
+                        <form method="post" action="{% url 'eliminar_objetivo' plan.id objetivo.id %}" class="complete-form">
+                            {% csrf_token %}
+                            <input type="hidden" name="completar" value="yes">
+                            <input type="hidden" name="show_completed" value="{% if show_completed %}yes{% else %}no{% endif %}">
+                            <button type="submit" onclick="return confirm('¿Estás seguro de que quieres completar este objetivo? Se eliminará y no se devolverá el dinero.')" class="btn-success">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                                    <polyline points="22,4 12,14.01 9,11.01"/>
+                                </svg>
+                                Completar
+                            </button>
+                        </form>
+                        {% endif %}
+                        {% else %}
+                        <div class="completado-badge">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                                <polyline points="22,4 12,14.01 9,11.01"/>
+                            </svg>
+                            Objetivo Completado
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Mini gráfico de contribuciones -->
+                    {% if objetivo.contribuciones_stats %}
+                    <div class="contribuciones-chart">
+                        <div class="chart-header">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M3 3v18h18"/>
+                                <path d="M18 9l-5 5-3-3-4 4"/>
+                            </svg>
+                            <span>Contribuciones ({{ objetivo.contribuciones_stats.total_contribuyentes }} miembros)</span>
+                        </div>
+                        <div class="chart-bars">
+                            {% if objetivo.contribuciones_stats.total_contribuyentes > 1 %}
+                            <div class="chart-item">
+                                <div class="contributor-info">
+                                    <span class="contributor-name">{{ objetivo.contribuciones_stats.max.username }}</span>
+                                    <span class="contributor-amount">${{ objetivo.contribuciones_stats.max.total|floatformat:2 }}</span>
+                                </div>
+                                <div class="chart-bar-container">
+                                    <div class="chart-bar max-bar" style="width: 100%;"></div>
+                                </div>
+                                <span class="chart-label">Más aporte</span>
+                            </div>
+                            <div class="chart-item">
+                                <div class="contributor-info">
+                                    <span class="contributor-name">{{ objetivo.contribuciones_stats.min.username }}</span>
+                                    <span class="contributor-amount">${{ objetivo.contribuciones_stats.min.total|floatformat:2 }}</span>
+                                </div>
+                                <div class="chart-bar-container">
+                                    {% widthratio objetivo.contribuciones_stats.min.total objetivo.contribuciones_stats.max.total 100 as min_percentage %}
+                                    <div class="chart-bar min-bar" style="width: {{ min_percentage }}%;"></div>
+                                </div>
+                                <span class="chart-label">Menos aporte</span>
+                            </div>
+                            {% else %}
+                            <div class="chart-item single-contributor">
+                                <div class="contributor-info">
+                                    <span class="contributor-name">{{ objetivo.contribuciones_stats.max.username }}</span>
+                                    <span class="contributor-amount">${{ objetivo.contribuciones_stats.max.total|floatformat:2 }}</span>
+                                </div>
+                                <div class="chart-bar-container">
+                                    <div class="chart-bar single-bar" style="width: 100%;"></div>
+                                </div>
+                                <span class="chart-label">Único contribuyente</span>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
                     {% else %}
-                    <p class="completado">Objetivo Completado</p>
+                    <!-- Debug: No hay estadísticas de contribución -->
+                    <div class="no-contributions">
+                        <strong>Debug:</strong> No hay contribuciones para este objetivo aún. Una vez que alguien aporte dinero, aparecerá el gráfico aquí.
+                    </div>
                     {% endif %}
-                </li>
+                </div>
                 {% endfor %}
-            </ul>
+            </div>
         {% else %}
-            <p>No hay objetivos para este plan. ¡Agrega el primero!</p>
+            <div class="empty-state">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 12l2 2 4-4"/>
+                    <path d="M21 12c.552 0 1-.448 1-1V5c0-.552-.448-1-1-1H3c-.552 0-1 .448-1 1v6c0 .552.448 1 1 1"/>
+                    <path d="M3 21h18"/>
+                </svg>
+                <p>No hay objetivos para este plan. ¡Agrega el primero!</p>
+            </div>
         {% endif %}
 
         {% if messages %}
-        <div class="mb-4">
+        <div class="messages-container">
             {% for message in messages %}
-            <div class="p-3 rounded-lg text-sm {% if message.tags == 'success' %}bg-green-100 text-green-700{% elif message.tags == 'error' %}bg-red-100 text-red-700{% else %}bg-blue-100 text-blue-700{% endif %}">
+            <div class="message {% if message.tags == 'success' %}message-success{% elif message.tags == 'error' %}message-error{% else %}message-info{% endif %}">
                 {{ message }}
             </div>
             {% endfor %}
@@ -123,13 +247,14 @@
         {% endif %}
     </div>
 
-    <a href="{% url 'Menu_plan' plan_id=plan.id %}" >
-                <!-- Icono de flecha de retorno (lucide-react, usamos un SVG simple) -->
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-1">
-                    <path d="m15 18-6-6 6-6"/>
-                </svg>
-                Volver al Menú del Plan
-            </a>
+    <div class="back-link">
+        <a href="{% url 'Menu_plan' plan_id=plan.id %}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m15 18-6-6 6-6"/>
+            </svg>
+            Volver al Menú del Plan
+        </a>
+    </div>
 </div>
 </body>
 </html>

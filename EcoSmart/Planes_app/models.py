@@ -157,6 +157,9 @@ class Tarea(models.Model):
     # Relación con el Plan
     plan = models.ForeignKey(Plan, on_delete=models.CASCADE, related_name='tareas')
 
+    # Usuario asignado para completar la tarea
+    usuario_asignado = models.ForeignKey(User, on_delete=models.CASCADE, related_name='tareas_asignadas', null=True, blank=True)
+
     # Campos del Formulario
     nombre = models.CharField(max_length=255)
     descripcion = models.TextField(max_length=65535, null=True, blank=True)

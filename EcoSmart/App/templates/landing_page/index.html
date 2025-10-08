@@ -1,124 +1,55 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>EcoSmart - Organización familiar y financiera</title>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
-    rel="stylesheet"
-  />
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
-  />
-    {%load static%}
-  <link rel="stylesheet" href="{% static 'Landing_page/styleslog.css'%}">
-  <link rel="stylesheet" href="" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoSmart - Gestión Financiera Inteligente</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'landing_page/styleslog.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body>
-  <header class="header">
-    <div class="container">
-      <div class="logo">EcoSmart</div>
-      
-    </div>
-  </header>
-
-  <main>
-    <section class="hero">
-    <div class="container hero-content">
-    <h1>Organizá tu hogar y finanzas en un solo lugar</h1>
-    <p>
-      Asigná tareas, compartí gastos y controlá tu economía familiar
-      fácil y seguro con EcoSmart.
-    </p>
-    <a href="{% url 'Register'%}" class="btn-registro">Registrarse</a>
-    <a href="{% url 'Login'%}" class="btn-registro">Iniciar sesion</a>
-    </div>
-  </section>
-
-
-    <section id="funciones" class="funciones section-padding">
-      <div class="container">
-        <h2 class="section-title">¿Qué podés hacer con EcoSmart?</h2>
-        <div class="funciones-grid">
-          <div class="funcion-card">
-            <i class="fa-solid fa-hand-holding-dollar fa-3x"></i>
-            <h3>Control de gastos</h3>
-            <p>Registrá y categorizá tus ingresos y egresos para un mejor control.</p>
-          </div>
-          <div class="funcion-card">
-            <i class="fa-solid fa-calendar-check fa-3x"></i>
-            <h3>Recordatorios y alertas</h3>
-            <p>Recibí notificaciones para pagos y tareas pendientes.</p>
-          </div>
-          <div class="funcion-card">
-            <i class="fa-solid fa-users fa-3x"></i>
-            <h3>Gestión familiar</h3>
-            <p>Compartí responsabilidades y gastos con los miembros de tu familia.</p>
-          </div>
-          <div class="funcion-card">
-            <i class="fa-solid fa-chart-line fa-3x"></i>
-            <h3>Reportes y análisis</h3>
-            <p>Visualizá gráficos y reportes para tomar mejores decisiones.</p>
-          </div>
-          <div class="funcion-card">
-            <i class="fa-solid fa-mobile-screen-button fa-3x"></i>
-            <h3>App móvil</h3>
-            <p>Accedé desde cualquier dispositivo, estés donde estés.</p>
-          </div>
-          <div class="funcion-card">
-            <i class="fa-solid fa-lock fa-3x"></i>
-            <h3>Seguridad y privacidad</h3>
-            <p>Protegemos tus datos con los mejores estándares de seguridad.</p>
-          </div>
+<body class="bg-gradient-to-br from-green-400 to-blue-500 min-h-screen">
+    <div class="container mx-auto px-4 py-16">
+        <div class="text-center mb-16">
+            <h1 class="text-6xl font-bold text-white mb-4">EcoSmart</h1>
+            <p class="text-xl text-white mb-8">Gestión Financiera Inteligente para un Futuro Sostenible</p>
+            <div class="flex justify-center space-x-4">
+                <a href="{% url 'Register' %}" class="bg-white text-green-600 px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition duration-300">Registrarse</a>
+                <a href="{% url 'Login' %}" class="bg-transparent border-2 border-white text-white px-8 py-3 rounded-full font-semibold hover:bg-white hover:text-green-600 transition duration-300">Iniciar Sesión</a>
+            </div>
         </div>
-      </div>
-    </section>
 
-    <section id="imagenes" class="galeria section-padding">
-      <div class="container">
-        <h2 class="section-title">Visualizá cómo funciona</h2>
-        <div class="scroll-horizontal">
-          <img
-            src="https://static.vecteezy.com/system/resources/previews/054/705/871/non_2x/budget-management-concept-personal-financial-control-cash-flow-personal-budget-planning-budget-plan-modern-flat-cartoon-style-flat-design-illustration-vector.jpg"
-            alt="Gestión financiera ilustración"
-          />
-          <img
-            src="https://www.shutterstock.com/image-vector/people-reducing-energy-consumption-vector-600nw-2337467283.jpg"
-            alt="Planificación familiar ilustración"
-          />
-          <img
-            src="https://ultimatefinancialservices.ca/wp-content/uploads/2022/12/20943665-scaled.jpg"
-            alt="Control de gastos ilustración"
-          />
-          <img
-            src="https://img.freepik.com/vector-premium/calcular-gastos-ilustraciones-vectores-dibujos-animados-aislados_107173-21705.jpg?w=1060"
-            alt="Presupuesto mensual ilustración"
-          />
-          <img
-            src="https://thumbs.dreamstime.com/b/calculadora-de-lista-comprobaci%C3%B3n-planificaci%C3%B3n-gastos-mensuales-presupuesto-e-ilustraci%C3%B3n-icono-vector-econom%C3%ADa-compras-207457206.jpg"
-            alt="Análisis financiero ilustración"
-          />
+        <div class="grid md:grid-cols-3 gap-8 mb-16">
+            <div class="bg-white bg-opacity-90 p-8 rounded-lg shadow-lg">
+                <div class="text-4xl mb-4">💰</div>
+                <h3 class="text-2xl font-bold mb-4">Control de Gastos</h3>
+                <p class="text-gray-600">Registra y categoriza tus gastos para mantener un control total de tus finanzas.</p>
+            </div>
+            <div class="bg-white bg-opacity-90 p-8 rounded-lg shadow-lg">
+                <div class="text-4xl mb-4">📈</div>
+                <h3 class="text-2xl font-bold mb-4">Seguimiento de Ingresos</h3>
+                <p class="text-gray-600">Monitorea tus ingresos y planifica tu presupuesto de manera efectiva.</p>
+            </div>
+            <div class="bg-white bg-opacity-90 p-8 rounded-lg shadow-lg">
+                <div class="text-4xl mb-4">🎯</div>
+                <h3 class="text-2xl font-bold mb-4">Objetivos Financieros</h3>
+                <p class="text-gray-600">Establece y alcanza tus metas financieras con herramientas de seguimiento.</p>
+            </div>
         </div>
-      </div>
-    </section>
 
-    <section id="contacto" class="contacto section-padding">
-      <div class="container">
-        <h2 class="section-title">Contacto</h2>
-        <p>
-          Tenés preguntas o sugerencias? Escribinos a
-          <a href="mailto:contacto@ecosmart.com">contacto@ecosmart.com</a>
-        </p>
-      </div>
-    </section>
-  </main>
-
-  <footer>
-    <div class="container footer-content">
-      © 2025 EcoSmart - Todos los derechos reservados
+        <div class="text-center">
+            <h2 class="text-4xl font-bold text-white mb-8">¿Por qué elegir EcoSmart?</h2>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="bg-white bg-opacity-90 p-8 rounded-lg shadow-lg">
+                    <h4 class="text-xl font-bold mb-4">Planes Colaborativos</h4>
+                    <p class="text-gray-600">Crea planes financieros grupales y colabora con familiares o amigos.</p>
+                </div>
+                <div class="bg-white bg-opacity-90 p-8 rounded-lg shadow-lg">
+                    <h4 class="text-xl font-bold mb-4">Análisis Inteligente</h4>
+                    <p class="text-gray-600">Obtén insights y estadísticas detalladas de tus hábitos financieros.</p>
+                </div>
+            </div>
+        </div>
     </div>
-  </footer>
 </body>
 </html>

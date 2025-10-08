@@ -86,6 +86,11 @@
                         </p>
                         <p class="tarea-metadata">
                             Tipo: {{ tarea.get_tipo_tarea_display }} | Límite: {{ tarea.fecha_a_completar|date:"d M Y" }}
+                            {% if tarea.usuario_asignado %}
+                                | Asignado a: <strong>{{ tarea.usuario_asignado.username }}</strong>
+                            {% else %}
+                                | <em>No asignado</em>
+                            {% endif %}
                         </p>
                         {% if tarea.descripcion %}
                             <p class="tarea-descripcion">{{ tarea.descripcion }}</p>
@@ -97,18 +102,37 @@
 
                     <!-- Botón de Completado/Desmarcar -->
                     <div class="tarea-acciones">
-                        <form method="post" action="{% url 'cambiar_estado_tarea' plan.id tarea.id %}">
-                            {% csrf_token %}
-                            {% if tarea.estado != 'completada' %}
-                                <button type="submit" class="boton-completar">
-                                    Marcar Completada
-                                </button>
-                            {% else %}
-                                <button type="submit" class="boton-reabrir">
-                                    Reabrir
-                                </button>
-                            {% endif %}
-                        </form>
+                        {% if es_admin %}
+                            <form method="post" action="{% url 'cambiar_estado_tarea' plan.id tarea.id %}">
+                                {% csrf_token %}
+                                {% if tarea.estado != 'completada' %}
+                                    <button type="submit" class="boton-completar">
+                                        Marcar Completada
+                                    </button>
+                                {% else %}
+                                    <button type="submit" class="boton-reabrir">
+                                        Reabrir
+                                    </button>
+                                {% endif %}
+                            </form>
+                        {% elif not tarea.usuario_asignado or tarea.usuario_asignado == user %}
+                            <form method="post" action="{% url 'cambiar_estado_tarea' plan.id tarea.id %}">
+                                {% csrf_token %}
+                                {% if tarea.estado != 'completada' %}
+                                    <button type="submit" class="boton-completar">
+                                        Marcar Completada
+                                    </button>
+                                {% else %}
+                                    <button type="submit" class="boton-reabrir">
+                                        Reabrir
+                                    </button>
+                                {% endif %}
+                            </form>
+                        {% else %}
+                            <div class="tarea-restringida">
+                                <span class="restriccion-msg">Solo {{ tarea.usuario_asignado.username }} puede completar esta tarea</span>
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
                 
