@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 
 
 from Planes_app.models import Plan, Suscripcion, Invitacion # Asume estos modelos
-from Planes_app.forms import CrearPlanForm, UnirseAForm # Asume estos formularios
+from Planes_app.forms import CrearPlanForm # Asume estos formularios
 from .forms import PlanForm, ProfileEditForm, PasswordChangeFormCustom
 from .models import Plan, Profile
 
@@ -89,17 +89,8 @@ def Dashboard(request):
                 Suscripcion.objects.create(usuario=request.user, plan=nuevo_plan)
                 return redirect('Dashboard')
 
-    elif request.method == 'POST' and 'unirse_a_plan' in request.POST:
-        unirse_form = UnirseAForm(request.POST)
-        if unirse_form.is_valid():
-            plan_id = unirse_form.cleaned_data['plan_id']
-            plan_a_unirse = Plan.objects.get(id=plan_id)
-            Suscripcion.objects.create(usuario=request.user, plan=plan_a_unirse)
-            return redirect('Dashboard')
-    
     else:
         crear_form = CrearPlanForm()
-        unirse_form = UnirseAForm()
 
     mis_planes = request.user.suscripciones.all()
     invitaciones_pendientes = Invitacion.objects.filter(invitado=request.user, estado='pendiente')
@@ -107,7 +98,6 @@ def Dashboard(request):
     context = {
         'mis_planes': mis_planes,
         'crear_form': crear_form,
-        'unirse_form': unirse_form,
         'invitaciones_pendientes': invitaciones_pendientes
     }
 

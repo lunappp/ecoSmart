@@ -23,6 +23,7 @@
         </form>
     </div>
 
+    {% if es_admin %}
     <div class="formulario-objetivo">
         <h3>Agregar Nuevo Objetivo</h3>
         <form method="post" action="{% url 'agregar_objetivo' plan.id %}" enctype="multipart/form-data">
@@ -53,6 +54,7 @@
             <button type="submit">Agregar Objetivo</button>
         </form>
     </div>
+    {% endif %}
 
     <div class="lista-objetivos">
         <h3>Lista de Objetivos</h3>

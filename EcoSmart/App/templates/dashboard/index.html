@@ -4,21 +4,24 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>EcoSmart Finanzas - Dashboard</title>
-     {% load static %}
-    <link rel="stylesheet" href="{% static 'dashboard/dashboard.css' %}">
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'dashboard/dashboard.css' %}">
 </head>
 <body>
-<<<<<<< HEAD
   <header>
     <div class="container">
       <div class="header-content">
         <div class="logo">
-          
+          <div class="logo-icon">E</div>
           <div class="logo-text">EcoSmart Finanzas</div>
         </div>
         <div class="user-info">
-          <div class="user-avatar">{{ request.user.username|slice:":2"|upper }}</div>
-          <form method="post" action="{% url 'logout' %}" class="logout-form">
+          {% if request.user.profile.profile_picture %}
+            <img src="{{ request.user.profile.profile_picture.url }}" alt="Foto de {{ request.user.username }}" class="user-avatar" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
+          {% else %}
+            <div class="user-avatar">{{ request.user.username|first|upper }}</div>
+          {% endif %}
+          <form method="post" action="{% url 'logout' %}">
             {% csrf_token %}
             <button type="submit" class="btn-logout">Cerrar Sesión</button>
           </form>
@@ -30,106 +33,42 @@
   <main class="container">
     <!-- Bienvenida -->
     <section class="welcome-section">
-      <h2>Hola, {{ request.user.username }}</h2>
-      <p>Gestiona tus planes financieros de manera simple y profesional.</p>
+      <h2>¡Hola, {{ request.user.username }}!</h2>
+      <p>Bienvenido de vuelta. <a href="{% url 'edit_profile' %}" style="color: var(--primary);">Editar perfil</a></p>
     </section>
 
     <!-- Acciones principales -->
-    <div class="dashboard-grid">
-      <div class="card">
+    <div class="dashboard-grid" style="justify-content: center;">
+      <div class="card" style="max-width: 400px;">
         <div class="card-header">
           <div class="card-icon primary">
             <span>+</span>
           </div>
           <h3 class="card-title">Crear un Nuevo Plan Financiero</h3>
         </div>
-=======
-    <div class="dashboard-container">
-        <div class="flex justify-between items-center mb-6">
-            <div class="flex items-center space-x-4">
-                {% if request.user.profile.profile_picture %}
-                    <img src="{{ request.user.profile.profile_picture.url }}" alt="Foto de {{ request.user.username }}" width="56" height="56" class="rounded-full object-cover border-2 border-indigo-200">
-                {% else %}
-                    <div class="w-14 h-14 rounded-full bg-gray-300 flex items-center justify-center border-2 border-gray-400">
-                        <span class="text-gray-600 font-bold text-lg">{{ request.user.username|first|upper }}</span>
-                    </div>
-                {% endif %}
-                <div>
-                    <h1 class="text-2xl font-bold text-gray-800">¡Hola, {{ request.user.username }}!</h1>
-                    <p class="text-gray-600">Bienvenido de vuelta</p>
-                    <a href="{% url 'edit_profile' %}" class="text-indigo-600 hover:text-indigo-800 text-sm font-medium">Editar perfil</a>
-                </div>
-            </div>
-            <form method="post" action="{% url 'logout' %}">
-                {% csrf_token %}
-                <button type="submit" class="bg-red-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-red-600 transition-colors">
-                    Cerrar Sesión
-                </button>
-            </form>
-        </div>
-        <p>Selecciona un plan para gestionar tus finanzas y tareas, o crea uno nuevo.</p>
-
-         <div class="plan-options">
-        <h2 class="text-2xl font-bold mb-4">Crear un Nuevo Plan</h2>
-        <a href="{% url 'crear_plan' %}" class="w-full bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-indigo-700 transition-colors inline-block text-center">
-            Crear Plan
-        </a>
-
-        <h2 class="text-2xl font-bold mt-8 mb-4">Unirse a un Plan</h2>
->>>>>>> 47b89ae167a8b0249c5977237135a070bbad5bec
-        <form method="post" action="{% url 'Dashboard' %}">
-          {% csrf_token %}
-          {{ crear_form.as_p }} <!-- Integración con el form original de Django -->
-          <button type="submit" name="crear_plan" class="btn btn-primary">+ Crear Plan</button>
-        </form>
-      </div>
-
-      <div class="card">
-        <div class="card-header">
-          <div class="card-icon secondary">
-            <span>🔗</span>
-          </div>
-          <h3 class="card-title">Unirse a un Plan Financiero</h3>
-        </div>
-        <form method="post" action="{% url 'Dashboard' %}">
-          {% csrf_token %}
-          {{ unirse_form.as_p }} <!-- Integración con el form original de Django -->
-          <button type="submit" name="unirse_a_plan" class="btn btn-secondary">Unirse</button>
-        </form>
+        <a href="{% url 'crear_plan' %}" class="btn btn-primary" style="display: inline-block; text-align: center; text-decoration: none;">Crear Plan</a>
       </div>
     </div>
 
-<<<<<<< HEAD
     <!-- Mis Planes -->
     <h3 class="section-title">Mis Planes Financieros</h3>
-    <section class="plans-section">
-      {% for s in mis_planes %}
-        <a href="{% url 'Menu_plan' s.plan.id %}" class="plan-card">
-          <h4 class="plan-title">{{ s.plan.nombre }}</h4>
-          <p class="plan-type">{{ s.plan.get_tipo_plan_display }}</p>
+    <section class="plans-section" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem;">
+      {% for suscripcion in mis_planes %}
+        <a href="{% url 'Menu_plan' suscripcion.plan.id %}" class="plan-card" style="padding: 1rem; margin-bottom: 0;">
+          {% if suscripcion.plan.imagen %}
+            <img src="{{ suscripcion.plan.imagen.url }}" alt="Imagen de {{ suscripcion.plan.nombre }}" style="width: 100%; height: 80px; object-fit: cover; border-radius: var(--radius); margin-bottom: 0.75rem;">
+          {% else %}
+            <div style="width: 100%; height: 80px; background-color: var(--border); border-radius: var(--radius); margin-bottom: 0.75rem; display: flex; align-items: center; justify-content: center;">
+              <span style="color: var(--text-light); font-weight: 500; font-size: 0.9rem;">Sin imagen</span>
+            </div>
+          {% endif %}
+          <h4 class="plan-title" style="font-size: 1rem; margin-bottom: 0.25rem;">{{ suscripcion.plan.nombre }}</h4>
+          <p class="plan-type" style="font-size: 0.85rem;">{{ suscripcion.plan.get_tipo_plan_display }}</p>
         </a>
       {% empty %}
         <p class="empty-state">Aún no estás en ningún plan financiero.</p>
       {% endfor %}
     </section>
-=======
-    <div class="plans-list">
-        <h2 class="text-2xl font-bold mb-4">Mis Planes</h2>
-        {% for suscripcion in mis_planes %}
-            <a href="{% url 'Menu_plan' suscripcion.plan.id %}" class="block">
-                <div class="plan-card">
-                    {% if suscripcion.plan.imagen %}
-                        <img src="{{ suscripcion.plan.imagen.url }}" alt="Imagen de {{ suscripcion.plan.nombre }}" style="width: 100px; height: 100px; object-fit: cover;" class="rounded-lg mb-2">
-                    {% endif %}
-                    <h3 class="text-xl font-bold">{{ suscripcion.plan.nombre }}</h3>
-                    <p class="text-gray-500">Tipo: {{ suscripcion.plan.get_tipo_plan_display }}</p>
-                </div>
-            </a>
-        {% empty %}
-            <p class="text-gray-500">Aún no estás en ningún plan.</p>
-        {% endfor %}
-    </div>
->>>>>>> 47b89ae167a8b0249c5977237135a070bbad5bec
 
     <!-- Invitaciones Pendientes -->
     <h3 class="section-title">Invitaciones Pendientes</h3>
@@ -161,8 +100,8 @@
     document.addEventListener('DOMContentLoaded', function() {
       // El nombre de usuario ya se renderiza con Django, pero esto es para fallback
       const userNameElement = document.querySelector('.welcome-section h2');
-      if (userNameElement && !userNameElement.textContent.includes('Hola,')) {
-        userNameElement.textContent = 'Hola, Usuario Demo';
+      if (userNameElement && !userNameElement.textContent.includes('¡Hola,')) {
+        userNameElement.textContent = '¡Hola, Usuario Demo!';
       }
     });
   </script>

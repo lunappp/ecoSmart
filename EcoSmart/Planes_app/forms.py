@@ -32,6 +32,24 @@ class UnirseAForm(forms.Form):
         widget=forms.NumberInput(attrs={'class': 'form-input w-full rounded-lg border-gray-300 shadow-sm', 'placeholder': 'Ingresa el ID numérico del plan'})
     )
 
+class EditPlanForm(forms.ModelForm):
+    """Formulario para editar un Plan existente."""
+    class Meta:
+        model = Plan
+        # Excluimos 'creador', 'fecha_creacion' y 'tipo_plan' ya que no se deben editar.
+        fields = ['nombre', 'descripcion', 'imagen']
+
+        widgets = {
+            'nombre': forms.TextInput(attrs={'class': 'form-input w-full rounded-lg border-gray-300 shadow-sm', 'placeholder': 'Ej: Viaje a Europa 2025'}),
+            'descripcion': forms.Textarea(attrs={'class': 'form-textarea w-full rounded-lg border-gray-300 shadow-sm', 'rows': 3, 'placeholder': 'Breve descripción del propósito del plan.'}),
+            'imagen': forms.FileInput(attrs={'class': 'form-input w-full rounded-lg border-gray-300 shadow-sm'}),
+        }
+        labels = {
+            'nombre': 'Nombre del Plan',
+            'descripcion': 'Descripción',
+            'imagen': 'Imagen del Plan',
+        }
+
 # ------------------------------
 # 1. Formularios de FINANZAS
 # ------------------------------

@@ -94,6 +94,27 @@
             transform: translateY(-1px);
         }
 
+        .btn-edit {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background-color: var(--secondary);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s;
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+        }
+
+        .btn-edit:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
         /* Section */
         section {
             margin-bottom: 3rem;
@@ -203,6 +224,9 @@
     <div class="container">
         <header class="header">
             <a class="btn-back" href="{% url 'Dashboard' %}">← Volver al Dashboard</a>
+            {% if es_admin %}
+                <a class="btn-edit" href="{% url 'editar_plan' plan_id=plan.id %}">Editar Plan</a>
+            {% endif %}
             <h1>{{ plan.nombre }}</h1>
             <p>{{ plan.descripcion }}</p>
         </header>

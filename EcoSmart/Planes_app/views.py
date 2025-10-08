@@ -9,7 +9,7 @@ from django.http import JsonResponse
 
 # Asumiendo que estas son las importaciones correctas para tus modelos y formularios
 from .models import Plan, Suscripcion, Objetivo, Dinero, Gasto, Ingreso, Tarea, Invitacion
-from .forms import ObjetivoForm, AportarObjetivoForm, IngresoForm, GastoForm, TareaForm # Asegúrate que todos estos existen
+from .forms import ObjetivoForm, AportarObjetivoForm, IngresoForm, GastoForm, TareaForm, EditPlanForm # Asegúrate que todos estos existen
 
 User = get_user_model()
 
@@ -35,12 +35,50 @@ def menu_plan(request, plan_id):
         return redirect('Dashboard') 
 
     dinero_info, created = Dinero.objects.get_or_create(plan=plan)
-    
+
+    # Determinar si el usuario es admin
+    es_admin = (plan.creador == request.user or
+                Suscripcion.objects.filter(plan=plan, usuario=request.user, rol='admin').exists())
+
     context = {
         'plan': plan,
         'dinero_info': dinero_info,
+        'es_admin': es_admin,
     }
     return render(request, 'menu_plan.html', context)
+
+
+@login_required
+def editar_plan(request, plan_id):
+    """Permite editar el nombre, descripción e imagen del plan (solo admin)."""
+    plan, es_miembro = verificar_membresia(request, plan_id)
+    if not es_miembro:
+        messages.error(request, 'No tienes acceso a este plan.')
+        return redirect('dashboard')
+
+    # Verificar si el usuario es admin
+    es_admin = (plan.creador == request.user or
+                Suscripcion.objects.filter(plan=plan, usuario=request.user, rol='admin').exists())
+    if not es_admin:
+        messages.error(request, 'Solo los administradores pueden editar el plan.')
+        return redirect('Menu_plan', plan_id=plan.id)
+
+    if request.method == 'POST':
+        form = EditPlanForm(request.POST, request.FILES, instance=plan)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f'Plan "{plan.nombre}" actualizado con éxito.')
+            return redirect('Menu_plan', plan_id=plan.id)
+        else:
+            messages.error(request, 'Error al editar el plan. Verifica los campos.')
+    else:
+        form = EditPlanForm(instance=plan)
+
+    context = {
+        'plan': plan,
+        'form': form,
+    }
+    return render(request, 'editar_plan.html', context)
 
 
 @login_required
@@ -335,7 +373,7 @@ def historiales(request, plan_id):
 @login_required
 def objetivos(request, plan_id):
     """
-    Muestra la lista de objetivos del plan y el formulario para agregar uno nuevo.
+    Muestra la lista de objetivos del plan y el formulario para agregar uno nuevo (solo para admins).
     """
     plan = get_object_or_404(Plan, pk=plan_id)
 
@@ -348,8 +386,12 @@ def objetivos(request, plan_id):
     else:
         objetivos_del_plan = Objetivo.objects.filter(plan=plan).exclude(estado='completado')
 
-    # Formulario para agregar un nuevo objetivo
-    agregar_form = ObjetivoForm()
+    # Verificar si el usuario es admin
+    es_admin = (plan.creador == request.user or
+                Suscripcion.objects.filter(plan=plan, usuario=request.user, rol='admin').exists())
+
+    # Formulario para agregar un nuevo objetivo (solo si es admin)
+    agregar_form = ObjetivoForm() if es_admin else None
 
     # Formulario para aportar dinero a un objetivo
     aportar_form = AportarObjetivoForm()
@@ -360,6 +402,7 @@ def objetivos(request, plan_id):
         'agregar_form': agregar_form,
         'aportar_form': aportar_form,
         'show_completed': show_completed,
+        'es_admin': es_admin,
     }
     return render(request, 'objetivos.html', context)
 
@@ -367,6 +410,13 @@ def objetivos(request, plan_id):
 def agregar_objetivo(request, plan_id):
     """Maneja el formulario POST para agregar un nuevo objetivo."""
     plan = get_object_or_404(Plan, pk=plan_id)
+
+    # Verificar si el usuario es admin del plan
+    es_admin = (plan.creador == request.user or
+                Suscripcion.objects.filter(plan=plan, usuario=request.user, rol='admin').exists())
+    if not es_admin:
+        messages.error(request, 'Solo los administradores pueden crear objetivos.')
+        return redirect('objetivos', plan_id=plan.id)
 
     if request.method == 'POST':
         form = ObjetivoForm(request.POST, request.FILES)
