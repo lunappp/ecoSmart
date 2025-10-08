@@ -235,6 +235,11 @@
                     <p>Visualiza reportes y análisis de tu plan.</p>
                 </a>
 
+                <a href="{% url 'chatbot' %}" class="card">
+                    <h3>Chatbot IA</h3>
+                    <p>Consulta con nuestro asistente inteligente.</p>
+                </a>
+
                 {% if plan.tipo_plan == 'grupal' %}
                 <a href="{% url 'miembros' plan_id=plan.id %}" class="card">
                     <h3>Miembros</h3>

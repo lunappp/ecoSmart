@@ -47,6 +47,9 @@ urlpatterns = [
     #----------------------planes-----------------------#
     path('planes/', include('Planes_app.urls')),
 
+    #----------------------chatbot-----------------------#
+    path('chatbot/', include('chatbot.urls')),
+
 
 ]
 

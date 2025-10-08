@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'App',
-    'Planes_app'
+    'Planes_app',
+    'chatbot'
 ]
 
 MIDDLEWARE = [
