@@ -37,7 +37,7 @@ class Suscripcion(models.Model):
     usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='suscripciones')
 
     # id_plan (FK a planes_plan)
-    plan = models.ForeignKey(Plan, on_delete=models.CASCADE, related_name='suscripcion')
+    plan = models.ForeignKey(Plan, on_delete=models.CASCADE, related_name='suscripciones')
 
     fecha_suscripcion = models.DateTimeField(default=timezone.now)
     rol = models.CharField(max_length=10, choices=ROL_CHOICES, default='miembro')

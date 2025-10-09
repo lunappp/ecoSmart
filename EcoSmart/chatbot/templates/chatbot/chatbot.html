@@ -13,14 +13,14 @@
         <div id="chat-window" class="border border-gray-300 rounded p-4 h-96 overflow-y-auto mb-4 bg-white">
             {% for message in messages %}
             <div class="mb-2">
-                <strong>Tú:</strong> {{ message.user_message }}
+                <strong>{{ message.user.username }}:</strong> {{ message.user_message }}
             </div>
             <div class="mb-2">
                 <strong>Bot:</strong> {{ message.bot_response }}
             </div>
             {% endfor %}
         </div>
-        <form id="chat-form" method="post" action="{% url 'send_message' %}">
+        <form id="chat-form" method="post" action="{% url 'send_message' plan.id %}">
             {% csrf_token %}
             <div class="flex">
                 <input type="text" id="message-input" name="message" class="flex-1 border border-gray-300 rounded-l px-4 py-2" placeholder="Escribe tu mensaje..." required>
@@ -28,13 +28,15 @@
             </div>
         </form>
         <a href="{% url 'Dashboard' %}" class="mt-4 inline-block bg-gray-500 text-white px-4 py-2 rounded">Volver al Dashboard</a>
+        
     </div>
 
     <script>
+    const username = "{{ request.user.username }}";
     document.getElementById('chat-form').addEventListener('submit', function(e) {
         e.preventDefault();
         const message = document.getElementById('message-input').value;
-        fetch('{% url "send_message" %}', {
+        fetch('{% url "send_message" plan.id %}', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
@@ -46,7 +48,7 @@
         .then(data => {
             if (data.response) {
                 const chatWindow = document.getElementById('chat-window');
-                chatWindow.innerHTML += '<div class="mb-2"><strong>Tú:</strong> ' + message + '</div>';
+                chatWindow.innerHTML += '<div class="mb-2"><strong>' + username + ':</strong> ' + message + '</div>';
                 chatWindow.innerHTML += '<div class="mb-2"><strong>Bot:</strong> ' + data.response + '</div>';
                 document.getElementById('message-input').value = '';
                 chatWindow.scrollTop = chatWindow.scrollHeight;
