@@ -3,39 +3,156 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chatbot EcoSmart</title>
+    <title>Chatbot EcoSmart - {{ plan.nombre }}</title>
     {% load static %}
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .chat-bubble-user {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 18px 18px 4px 18px;
+        }
+        .chat-bubble-bot {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border-radius: 18px 18px 18px 4px;
+        }
+        .scrollbar-thin::-webkit-scrollbar {
+            width: 6px;
+        }
+        .scrollbar-thin::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        .scrollbar-thin::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 10px;
+        }
+        .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+    </style>
 </head>
-<body class="bg-gray-100">
-    <div class="container mx-auto p-4">
-        <h1 class="text-2xl font-bold mb-4">Chatbot EcoSmart</h1>
-        <div id="chat-window" class="border border-gray-300 rounded p-4 h-96 overflow-y-auto mb-4 bg-white">
-            {% for message in messages %}
-            <div class="mb-2">
-                <strong>{{ message.user.username }}:</strong> {{ message.user_message }}
+<body class="bg-gradient-to-br from-purple-100 via-blue-50 to-indigo-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+        <!-- Header -->
+        <div class="bg-white rounded-2xl shadow-xl p-6 mb-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <div class="bg-gradient-to-r from-purple-500 to-pink-500 p-3 rounded-full">
+                        <i class="fas fa-robot text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-800">EcoBot</h1>
+                        <p class="text-gray-600">Asistente Financiero - Plan: {{ plan.nombre }}</p>
+                    </div>
+                </div>
+                <a href="{% url 'Menu_plan' plan_id=plan.id %}" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg transition duration-200 flex items-center space-x-2">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Volver al Plan</span>
+                </a>
             </div>
-            <div class="mb-2">
-                <strong>Bot:</strong> {{ message.bot_response }}
-            </div>
-            {% endfor %}
         </div>
-        <form id="chat-form" method="post" action="{% url 'send_message' plan.id %}">
-            {% csrf_token %}
-            <div class="flex">
-                <input type="text" id="message-input" name="message" class="flex-1 border border-gray-300 rounded-l px-4 py-2" placeholder="Escribe tu mensaje..." required>
-                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-r">Enviar</button>
+
+        <!-- Chat Window -->
+        <div class="bg-white rounded-2xl shadow-xl p-6 mb-6">
+            <div id="chat-window" class="h-96 overflow-y-auto scrollbar-thin p-4 space-y-4 bg-gray-50 rounded-xl">
+                {% for message in messages %}
+                <!-- User Message -->
+                <div class="flex justify-end">
+                    <div class="chat-bubble-user px-4 py-3 max-w-xs lg:max-w-md">
+                        <div class="flex items-center space-x-2 mb-1">
+                            <i class="fas fa-user text-xs opacity-75"></i>
+                            <span class="text-sm font-medium">{{ message.user.username }}</span>
+                        </div>
+                        <p class="text-sm">{{ message.user_message }}</p>
+                    </div>
+                </div>
+                <!-- Bot Message -->
+                <div class="flex justify-start">
+                    <div class="chat-bubble-bot px-4 py-3 max-w-xs lg:max-w-md">
+                        <div class="flex items-center space-x-2 mb-1">
+                            <i class="fas fa-robot text-xs opacity-75"></i>
+                            <span class="text-sm font-medium">EcoBot</span>
+                        </div>
+                        <p class="text-sm">{{ message.bot_response }}</p>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="text-center text-gray-500 py-8">
+                    <i class="fas fa-comments text-4xl mb-4 text-gray-300"></i>
+                    <p class="text-lg">¡Hola! Soy EcoBot, tu asistente financiero.</p>
+                    <p class="text-sm">Pregúntame sobre tu plan, gastos, consejos o cualquier cosa financiera.</p>
+                </div>
+                {% endfor %}
             </div>
-        </form>
-        <a href="{% url 'Dashboard' %}" class="mt-4 inline-block bg-gray-500 text-white px-4 py-2 rounded">Volver al Dashboard</a>
-        
+        </div>
+
+        <!-- Message Input -->
+        <div class="bg-white rounded-2xl shadow-xl p-6">
+            <form id="chat-form" method="post" action="{% url 'send_message' plan.id %}">
+                {% csrf_token %}
+                <div class="flex space-x-4">
+                    <div class="flex-1 relative">
+                        <input type="text" id="message-input" name="message"
+                               class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent pr-12"
+                               placeholder="Escribe tu mensaje aquí..." required>
+                        <div class="absolute right-3 top-3 text-gray-400">
+                            <i class="fas fa-paper-plane"></i>
+                        </div>
+                    </div>
+                    <button type="submit"
+                            class="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-6 py-3 rounded-xl transition duration-200 flex items-center space-x-2 font-medium">
+                        <span>Enviar</span>
+                        <i class="fas fa-send"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Quick Suggestions -->
+        <div class="bg-white rounded-2xl shadow-xl p-6 mt-6">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">Preguntas rápidas:</h3>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <button onclick="sendQuickMessage('¿Cuál es mi saldo?')" class="bg-purple-100 hover:bg-purple-200 text-purple-700 px-3 py-2 rounded-lg text-sm transition duration-200">Saldo</button>
+                <button onclick="sendQuickMessage('¿Cuáles son mis gastos?')" class="bg-blue-100 hover:bg-blue-200 text-blue-700 px-3 py-2 rounded-lg text-sm transition duration-200">Gastos</button>
+                <button onclick="sendQuickMessage('¿Cuáles son mis objetivos?')" class="bg-green-100 hover:bg-green-200 text-green-700 px-3 py-2 rounded-lg text-sm transition duration-200">Objetivos</button>
+                <button onclick="sendQuickMessage('Dame consejos')" class="bg-pink-100 hover:bg-pink-200 text-pink-700 px-3 py-2 rounded-lg text-sm transition duration-200">Consejos</button>
+            </div>
+        </div>
     </div>
 
     <script>
     const username = "{{ request.user.username }}";
+
+    function sendQuickMessage(message) {
+        document.getElementById('message-input').value = message;
+        document.getElementById('chat-form').dispatchEvent(new Event('submit'));
+    }
+
     document.getElementById('chat-form').addEventListener('submit', function(e) {
         e.preventDefault();
-        const message = document.getElementById('message-input').value;
+        const message = document.getElementById('message-input').value.trim();
+        if (!message) return;
+
+        const chatWindow = document.getElementById('chat-window');
+
+        // Add user message
+        const userMessageDiv = document.createElement('div');
+        userMessageDiv.className = 'flex justify-end';
+        userMessageDiv.innerHTML = `
+            <div class="chat-bubble-user px-4 py-3 max-w-xs lg:max-w-md">
+                <div class="flex items-center space-x-2 mb-1">
+                    <i class="fas fa-user text-xs opacity-75"></i>
+                    <span class="text-sm font-medium">${username}</span>
+                </div>
+                <p class="text-sm">${message}</p>
+            </div>
+        `;
+        chatWindow.appendChild(userMessageDiv);
+
+        // Send to server
         fetch('{% url "send_message" plan.id %}', {
             method: 'POST',
             headers: {
@@ -47,13 +164,33 @@
         .then(response => response.json())
         .then(data => {
             if (data.response) {
-                const chatWindow = document.getElementById('chat-window');
-                chatWindow.innerHTML += '<div class="mb-2"><strong>' + username + ':</strong> ' + message + '</div>';
-                chatWindow.innerHTML += '<div class="mb-2"><strong>Bot:</strong> ' + data.response + '</div>';
-                document.getElementById('message-input').value = '';
+                // Add bot message
+                const botMessageDiv = document.createElement('div');
+                botMessageDiv.className = 'flex justify-start';
+                botMessageDiv.innerHTML = `
+                    <div class="chat-bubble-bot px-4 py-3 max-w-xs lg:max-w-md">
+                        <div class="flex items-center space-x-2 mb-1">
+                            <i class="fas fa-robot text-xs opacity-75"></i>
+                            <span class="text-sm font-medium">EcoBot</span>
+                        </div>
+                        <p class="text-sm">${data.response}</p>
+                    </div>
+                `;
+                chatWindow.appendChild(botMessageDiv);
                 chatWindow.scrollTop = chatWindow.scrollHeight;
             }
+        })
+        .catch(error => {
+            console.error('Error:', error);
         });
+
+        document.getElementById('message-input').value = '';
+    });
+
+    // Auto-scroll to bottom on load
+    document.addEventListener('DOMContentLoaded', function() {
+        const chatWindow = document.getElementById('chat-window');
+        chatWindow.scrollTop = chatWindow.scrollHeight;
     });
     </script>
 </body>
