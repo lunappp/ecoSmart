@@ -94,13 +94,14 @@
             transform: translateY(-1px);
         }
 
-        .btn-edit {
+        .btn-gear {
             display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
+            justify-content: center;
             background-color: var(--secondary);
             color: white;
-            padding: 0.75rem 1.5rem;
+            width: 3rem;
+            height: 3rem;
             border-radius: var(--radius);
             text-decoration: none;
             font-weight: 500;
@@ -108,12 +109,19 @@
             position: absolute;
             top: 1rem;
             right: 1rem;
+            cursor: pointer;
         }
 
-        .btn-edit:hover {
+        .btn-gear:hover {
             background-color: var(--primary-dark);
             transform: translateY(-1px);
         }
+
+        .btn-gear svg {
+            width: 1.5rem;
+            height: 1.5rem;
+        }
+
 
         /* Section */
         section {
@@ -225,7 +233,12 @@
         <header class="header">
             <a class="btn-back" href="{% url 'Dashboard' %}">← Volver al Dashboard</a>
             {% if es_admin %}
-                <a class="btn-edit" href="{% url 'editar_plan' plan_id=plan.id %}">Editar Plan</a>
+                <a class="btn-gear" href="{% url 'ajustes' plan_id=plan.id %}">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    </svg>
+                </a>
             {% endif %}
             <h1>{{ plan.nombre }}</h1>
             <p>{{ plan.descripcion }}</p>
@@ -265,7 +278,7 @@
                 </a>
 
                 {% if plan.tipo_plan == 'grupal' %}
-                <a href="{% url 'miembros' plan_id=plan.id %}" class="card">
+                <a href="{% url 'ajustes' plan_id=plan.id %}" class="card">
                     <h3>Miembros</h3>
                     <p>Gestiona la colaboración en el plan grupal.</p>
                 </a>
@@ -278,6 +291,7 @@
         </footer>
     </div>
     {% endblock %}
+
 
     <script>
         // Opcional: Mejoras de interacción (no afecta funcionalidad Django)
@@ -292,6 +306,7 @@
                 });
             });
         });
+
     </script>
 </body>
 </html>

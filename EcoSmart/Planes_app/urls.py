@@ -4,6 +4,7 @@ from . import views
 urlpatterns = [
     path('<int:plan_id>/', views.menu_plan, name='Menu_plan'),
     path('<int:plan_id>/editar/', views.editar_plan, name='editar_plan'),
+    path('<int:plan_id>/ajustes/', views.ajustes, name='ajustes'),
 
     path('<int:plan_id>/ingresos/', views.ingresos, name='ingresos'),
     path('<int:plan_id>/ingresos/<int:ingreso_id>/editar/', views.editar_ingreso, name='editar_ingreso'),
@@ -29,9 +30,6 @@ urlpatterns = [
     path('<int:plan_id>/tareas/<int:tarea_id>/editar/', views.editar_tarea, name='editar_tarea'),
     path('<int:plan_id>/tareas/<int:tarea_id>/eliminar/', views.eliminar_tarea, name='eliminar_tarea'),
 
-    path('<int:plan_id>/miembros/', views.miembros, name='miembros'),
-    path('<int:plan_id>/miembros/eliminar/<int:suscripcion_id>/', views.eliminar_miembro, name='eliminar_miembro'),
     path('<int:plan_id>/miembros/buscar/', views.buscar_usuarios, name='buscar_usuarios'),
-    path('<int:plan_id>/miembros/invitar/', views.enviar_invitacion, name='enviar_invitacion'),
     path('<int:plan_id>/miembros/cancelar/<int:invitacion_id>/', views.cancelar_invitacion, name='cancelar_invitacion'),
 ]

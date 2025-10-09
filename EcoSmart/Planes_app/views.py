@@ -32,13 +32,45 @@ def menu_plan(request, plan_id):
 
     if not es_miembro:
         messages.error(request, 'No tienes acceso a este plan.')
-        return redirect('Dashboard') 
-
-    dinero_info, created = Dinero.objects.get_or_create(plan=plan)
+        return redirect('Dashboard')
 
     # Determinar si el usuario es admin
     es_admin = (plan.creador == request.user or
                 Suscripcion.objects.filter(plan=plan, usuario=request.user, rol='admin').exists())
+
+    if request.method == 'POST' and es_admin:
+        if 'user_id' in request.POST:
+            # Handle invitation
+            user_id = request.POST.get('user_id')
+            user = get_object_or_404(User, pk=user_id)
+            if Suscripcion.objects.filter(plan=plan, usuario=user).exists():
+                messages.error(request, 'El usuario ya es miembro del plan.')
+            else:
+                existing = Invitacion.objects.filter(plan=plan, invitado=user).first()
+                if existing:
+                    if existing.estado == 'pendiente':
+                        messages.error(request, 'Ya existe una invitación pendiente para este usuario.')
+                    else:
+                        existing.estado = 'pendiente'
+                        existing.invitador = request.user
+                        existing.fecha_invitacion = timezone.now()
+                        existing.save()
+                        messages.success(request, f'Invitación reenviada a {user.username}.')
+                else:
+                    Invitacion.objects.create(plan=plan, invitado=user, invitador=request.user)
+                    messages.success(request, f'Invitación enviada a {user.username}.')
+        elif 'suscripcion_id' in request.POST:
+            # Handle member deletion
+            suscripcion_id = request.POST.get('suscripcion_id')
+            suscripcion = get_object_or_404(Suscripcion, pk=suscripcion_id, plan=plan)
+            if suscripcion.usuario != request.user:
+                username = suscripcion.usuario.username
+                suscripcion.delete()
+                messages.success(request, f'Miembro {username} eliminado del plan.')
+            else:
+                messages.error(request, 'No puedes eliminarte a ti mismo.')
+
+    dinero_info, created = Dinero.objects.get_or_create(plan=plan)
 
     context = {
         'plan': plan,
@@ -64,13 +96,24 @@ def editar_plan(request, plan_id):
         return redirect('Menu_plan', plan_id=plan.id)
 
     if request.method == 'POST':
-        form = EditPlanForm(request.POST, request.FILES, instance=plan)
-        if form.is_valid():
-            form.save()
-            messages.success(request, f'Plan "{plan.nombre}" actualizado con éxito.')
-            return redirect('Menu_plan', plan_id=plan.id)
+        if 'delete_plan' in request.POST:
+            # Handle plan deletion
+            try:
+                plan_name = plan.nombre
+                plan.delete()
+                messages.success(request, f'Plan "{plan_name}" eliminado con éxito.')
+                return redirect('Dashboard')
+            except Exception as e:
+                messages.error(request, f'Error al eliminar el plan: {e}')
+                return redirect('Menu_plan', plan_id=plan_id)
         else:
-            messages.error(request, 'Error al editar el plan. Verifica los campos.')
+            form = EditPlanForm(request.POST, request.FILES, instance=plan)
+            if form.is_valid():
+                form.save()
+                messages.success(request, f'Plan "{plan.nombre}" actualizado con éxito.')
+                return redirect('Menu_plan', plan_id=plan.id)
+            else:
+                messages.error(request, 'Error al editar el plan. Verifica los campos.')
     else:
         form = EditPlanForm(instance=plan)
 
@@ -79,6 +122,85 @@ def editar_plan(request, plan_id):
         'form': form,
     }
     return render(request, 'editar_plan.html', context)
+
+
+@login_required
+def ajustes(request, plan_id):
+    """Página de ajustes del plan: editar y gestionar miembros."""
+    plan, es_miembro = verificar_membresia(request, plan_id)
+    if not es_miembro:
+        messages.error(request, 'No tienes acceso a este plan.')
+        return redirect('Dashboard')
+
+    es_admin = (plan.creador == request.user or
+                Suscripcion.objects.filter(plan=plan, usuario=request.user, rol='admin').exists())
+    if not es_admin:
+        messages.error(request, 'Solo los administradores pueden acceder a los ajustes.')
+        return redirect('Menu_plan', plan_id=plan.id)
+
+    if request.method == 'POST':
+        if 'user_id' in request.POST:
+            # Handle invitation
+            user_id = request.POST.get('user_id')
+            user = get_object_or_404(User, pk=user_id)
+            if Suscripcion.objects.filter(plan=plan, usuario=user).exists():
+                messages.error(request, 'El usuario ya es miembro del plan.')
+            else:
+                existing = Invitacion.objects.filter(plan=plan, invitado=user).first()
+                if existing:
+                    if existing.estado == 'pendiente':
+                        messages.error(request, 'Ya existe una invitación pendiente para este usuario.')
+                    else:
+                        existing.estado = 'pendiente'
+                        existing.invitador = request.user
+                        existing.fecha_invitacion = timezone.now()
+                        existing.save()
+                        messages.success(request, f'Invitación reenviada a {user.username}.')
+                else:
+                    Invitacion.objects.create(plan=plan, invitado=user, invitador=request.user)
+                    messages.success(request, f'Invitación enviada a {user.username}.')
+        elif 'suscripcion_id' in request.POST:
+            # Handle member deletion
+            suscripcion_id = request.POST.get('suscripcion_id')
+            suscripcion = get_object_or_404(Suscripcion, pk=suscripcion_id, plan=plan)
+            if suscripcion.usuario != request.user:
+                username = suscripcion.usuario.username
+                suscripcion.delete()
+                messages.success(request, f'Miembro {username} eliminado del plan.')
+            else:
+                messages.error(request, 'No puedes eliminarte a ti mismo.')
+        elif 'delete_plan' in request.POST:
+            # Handle plan deletion
+            try:
+                plan_name = plan.nombre
+                plan.delete()
+                messages.success(request, f'Plan "{plan_name}" eliminado con éxito.')
+                return redirect('Dashboard')
+            except Exception as e:
+                messages.error(request, f'Error al eliminar el plan: {e}')
+        else:
+            # Handle plan edit
+            form = EditPlanForm(request.POST, request.FILES, instance=plan)
+            if form.is_valid():
+                form.save()
+                messages.success(request, f'Plan "{plan.nombre}" actualizado con éxito.')
+            else:
+                messages.error(request, 'Error al editar el plan. Verifica los campos.')
+
+    edit_form = EditPlanForm(instance=plan)
+    miembros_actuales = None
+    invitaciones_enviadas = None
+    if plan.tipo_plan == 'grupal':
+        miembros_actuales = Suscripcion.objects.filter(plan=plan).select_related('usuario')
+        invitaciones_enviadas = Invitacion.objects.filter(plan=plan, invitador=request.user, estado='pendiente')
+
+    context = {
+        'plan': plan,
+        'edit_form': edit_form,
+        'miembros_actuales': miembros_actuales,
+        'invitaciones_enviadas': invitaciones_enviadas,
+    }
+    return render(request, 'ajustes.html', context)
 
 
 @login_required
@@ -817,64 +939,6 @@ def cambiar_estado_tarea(request, plan_id, tarea_id):
     return redirect('tareas', plan_id=plan_id)
 
 
-@login_required
-def miembros(request, plan_id):
-    """Muestra la gestión de miembros del plan grupal."""
-    plan, es_miembro = verificar_membresia(request, plan_id)
-    if not es_miembro:
-        messages.error(request, 'No tienes acceso a este plan.')
-        return redirect('Dashboard')
-
-    # Obtener miembros actuales
-    miembros_actuales = Suscripcion.objects.filter(plan=plan).select_related('usuario')
-
-    # Determinar si el usuario es admin
-    es_admin = (plan.creador == request.user or
-                Suscripcion.objects.filter(plan=plan, usuario=request.user, rol='admin').exists())
-
-    # Rol del usuario
-    rol_usuario = 'Admin' if es_admin else 'Miembro'
-
-    # Placeholder para invitaciones enviadas (implementar si hay modelo Invitacion)
-    invitaciones_enviadas = []
-
-    context = {
-        'plan': plan,
-        'miembros_actuales': miembros_actuales,
-        'es_admin': es_admin,
-        'rol_usuario': rol_usuario,
-        'invitaciones_enviadas': invitaciones_enviadas,
-    }
-    return render(request, 'miembros.html', context)
-
-
-@login_required
-def eliminar_miembro(request, plan_id, suscripcion_id):
-    """Elimina un miembro del plan (solo admin)."""
-    plan, es_miembro = verificar_membresia(request, plan_id)
-    if not es_miembro:
-        messages.error(request, 'No tienes acceso a este plan.')
-        return redirect('Dashboard')
-
-    suscripcion = get_object_or_404(Suscripcion, pk=suscripcion_id, plan=plan)
-
-    es_admin = (plan.creador == request.user or
-                Suscripcion.objects.filter(plan=plan, usuario=request.user, rol='admin').exists())
-
-    if not es_admin:
-        messages.error(request, 'No tienes permisos para eliminar miembros.')
-        return redirect('miembros', plan_id=plan.id)
-
-    if suscripcion.usuario == request.user:
-        messages.error(request, 'No puedes eliminarte a ti mismo.')
-        return redirect('miembros', plan_id=plan.id)
-
-    if request.method == 'POST':
-        username = suscripcion.usuario.username
-        suscripcion.delete()
-        messages.success(request, f'Miembro {username} eliminado del plan.')
-
-    return redirect('miembros', plan_id=plan.id)
 
 
 @login_required
@@ -905,57 +969,19 @@ def buscar_usuarios(request, plan_id):
         data = [{'id': u.id, 'username': u.username, 'email': u.email} for u in usuarios]
         return JsonResponse(data, safe=False)
     except Exception as e:
-        
+
         return JsonResponse({'error': f'Error interno: {str(e)}'}, status=500)
 
 
 @login_required
-def enviar_invitacion(request, plan_id):
-    """Envía invitación a un usuario (crea suscripción directamente)."""
-    plan, es_miembro = verificar_membresia(request, plan_id)
-    if not es_miembro:
-        messages.error(request, 'No tienes acceso a este plan.')
-        return redirect('Dashboard')
-
-    es_admin = (plan.creador == request.user or
-                Suscripcion.objects.filter(plan=plan, usuario=request.user, rol='admin').exists())
-
-    if not es_admin:
-        messages.error(request, 'No tienes permisos para invitar miembros.')
-        return redirect('miembros', plan_id=plan.id)
-
-    if request.method == 'POST':
-        user_id = request.POST.get('user_id')
-        user = get_object_or_404(User, pk=user_id)
-
-        if Suscripcion.objects.filter(plan=plan, usuario=user).exists():
-            messages.error(request, 'El usuario ya es miembro del plan.')
-        else:
-            existing = Invitacion.objects.filter(plan=plan, invitado=user).first()
-            if existing:
-                if existing.estado == 'pendiente':
-                    messages.error(request, 'Ya existe una invitación pendiente para este usuario.')
-                else:  # rechazada o aceptada, pero aceptada ya verificada arriba
-                    existing.estado = 'pendiente'
-                    existing.invitador = request.user
-                    existing.fecha_invitacion = timezone.now()
-                    existing.save()
-                    messages.success(request, f'Invitación reenviada a {user.username}.')
-            else:
-                Invitacion.objects.create(plan=plan, invitado=user, invitador=request.user)
-                messages.success(request, f'Invitación enviada a {user.username}.')
-
-    return redirect('miembros', plan_id=plan.id)
-
-
-@login_required
 def cancelar_invitacion(request, plan_id, invitacion_id):
-    """Cancela una invitación pendiente (placeholder)."""
+    """Cancela una invitación pendiente."""
     plan, es_miembro = verificar_membresia(request, plan_id)
     if not es_miembro:
         messages.error(request, 'No tienes acceso a este plan.')
         return redirect('Dashboard')
 
-    # Placeholder: no hay modelo Invitacion
-    messages.info(request, 'Funcionalidad de cancelar invitación no implementada aún.')
-    return redirect('miembros', plan_id=plan.id)
+    invitacion = get_object_or_404(Invitacion, pk=invitacion_id, plan=plan, invitador=request.user)
+    invitacion.delete()
+    messages.success(request, f'Invitación a {invitacion.invitado.username} cancelada.')
+    return redirect('Menu_plan', plan_id=plan.id)
