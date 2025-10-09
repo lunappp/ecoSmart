@@ -26,6 +26,18 @@
             {% endfor %}
         <button type="submit">Registrarse</button>
     </form>
+        <!-- Redirección -->
+          <p class="redirect">
+            ¿Ya tienes cuenta? <a href="http://127.0.0.1:8000/Login/">Inicia Sesion acá</a>
+
+        {% if messages %}
+            <ul>
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
   </main>
 </body>
 </html>
