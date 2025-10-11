@@ -11,12 +11,23 @@
 <body class="bg-gray-100 min-h-screen pb-12">
 
     <div class="main max-w-4xl mx-auto p-6">
-        <h1 class="text-3xl font-extrabold mb-2 text-indigo-800 text-center">
-            Ajustes del Plan ({{ plan.nombre }})
-        </h1>
-        <p class="text-center text-gray-600 mb-8">
-            Gestiona la configuración y miembros del plan.
-        </p>
+        <div class="flex items-center justify-center mb-4">
+            {% if plan.imagen %}
+                <img src="{{ plan.imagen.url }}" alt="Imagen del plan" class="w-16 h-16 rounded-full mr-4 object-cover">
+            {% endif %}
+            <div class="text-center">
+                <h1 class="text-3xl font-extrabold text-indigo-800">
+                    Ajustes del Plan ({{ plan.nombre }})
+                </h1>
+                <p class="text-gray-600 mt-2">
+                    {% if es_admin %}
+                        Gestiona la configuración y miembros del plan.
+                    {% else %}
+                        Visualiza la configuración y miembros del plan.
+                    {% endif %}
+                </p>
+            </div>
+        </div>
 
         <!-- Mensajes de Django -->
         {% if messages %}
@@ -33,6 +44,7 @@
         {% endif %}
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {% if es_admin %}
             <!-- Editar Plan -->
             <div class="bg-white p-6 rounded-xl shadow-2xl">
                 <h2 class="text-xl font-bold mb-4 text-gray-800">Editar Plan</h2>
@@ -65,6 +77,7 @@
                         </button>
                     </div>
                 </form>
+                {% if es_admin_real %}
                 <div class="mt-6 pt-4 border-t border-gray-200">
                     <h4 class="text-sm font-medium text-gray-900 mb-2">Zona de Peligro</h4>
                     <form method="post" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este plan? Esta acción no se puede deshacer.');">
@@ -75,13 +88,16 @@
                         </button>
                     </form>
                 </div>
+                {% endif %}
             </div>
+            {% endif %}
 
             {% if plan.tipo_plan == 'grupal' %}
             <!-- Gestionar Miembros -->
             <div class="bg-white p-6 rounded-xl shadow-2xl">
                 <h2 class="text-xl font-bold mb-4 text-gray-800">Gestionar Miembros</h2>
 
+                {% if es_admin %}
                 <!-- Invitar Miembros -->
                 <div class="mb-6 p-4 border-2 border-indigo-200 rounded-xl bg-indigo-50">
                     <h3 class="text-lg font-semibold mb-4 text-indigo-800">Enviar Invitación</h3>
@@ -94,6 +110,7 @@
                         <!-- Resultados de búsqueda se insertarán aquí -->
                     </div>
                 </div>
+                {% endif %}
 
                 <!-- Lista de Miembros Actuales -->
                 <div class="mb-6">
@@ -117,12 +134,75 @@
                                 <div class="flex items-center space-x-4">
                                     <span class="px-3 py-1 text-xs font-bold rounded-full
                                         {% if suscripcion.rol == 'admin' %}bg-indigo-600 text-white
+                                        {% elif suscripcion.rol == 'moderador' %}bg-blue-600 text-white
                                         {% else %}bg-green-100 text-green-800{% endif %}">
                                         {{ suscripcion.get_rol_display }}
                                     </span>
 
-                                    {% if suscripcion.usuario != request.user %}
-                                        <form method="post" onsubmit="return confirm('¿Estás seguro de que deseas eliminar a {{ suscripcion.usuario.username }} del plan?');">
+                                    {% if es_admin and suscripcion.usuario != request.user %}
+                                        <!-- Promote buttons -->
+                                        {% if suscripcion.rol == 'miembro' %}
+                                            <form method="post" class="inline">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="promote_suscripcion_id" value="{{ suscripcion.id }}">
+                                                <input type="hidden" name="new_rol" value="moderador">
+                                                <button type="submit" class="text-blue-500 hover:text-blue-700 p-2 rounded-full transition-colors" title="Ascender a Moderador">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                        <path d="M7 17L17 7"/><path d="M7 7h10v10"/>
+                                                    </svg>
+                                                </button>
+                                            </form>
+                                            {% if es_admin_real %}
+                                            <form method="post" class="inline">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="promote_suscripcion_id" value="{{ suscripcion.id }}">
+                                                <input type="hidden" name="new_rol" value="admin">
+                                                <button type="submit" class="text-purple-500 hover:text-purple-700 p-2 rounded-full transition-colors" title="Ascender a Admin">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                        <path d="M7 17L17 7"/><path d="M7 7h10v10"/><path d="M17 7v10"/>
+                                                    </svg>
+                                                </button>
+                                            </form>
+                                            {% endif %}
+                                        {% endif %}
+                                        {% if suscripcion.rol == 'moderador' and es_admin_real %}
+                                            <form method="post" class="inline">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="promote_suscripcion_id" value="{{ suscripcion.id }}">
+                                                <input type="hidden" name="new_rol" value="admin">
+                                                <button type="submit" class="text-purple-500 hover:text-purple-700 p-2 rounded-full transition-colors" title="Ascender a Admin">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                        <path d="M7 17L17 7"/><path d="M7 7h10v10"/><path d="M17 7v10"/>
+                                                    </svg>
+                                                </button>
+                                            </form>
+                                        {% endif %}
+
+                                        <!-- Demote buttons -->
+                                        {% if suscripcion.rol == 'moderador' and es_admin_real %}
+                                            <form method="post" class="inline">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="demote_suscripcion_id" value="{{ suscripcion.id }}">
+                                                <button type="submit" class="text-yellow-500 hover:text-yellow-700 p-2 rounded-full transition-colors" title="Degradar a Miembro">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                        <path d="M7 13L12 18L17 13"/><path d="M12 18V6"/>
+                                                    </svg>
+                                                </button>
+                                            </form>
+                                        {% endif %}
+                                        {% if suscripcion.rol == 'admin' and plan.creador != suscripcion.usuario and es_admin_real %}
+                                            <form method="post" class="inline">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="demote_suscripcion_id" value="{{ suscripcion.id }}">
+                                                <button type="submit" class="text-orange-500 hover:text-orange-700 p-2 rounded-full transition-colors" title="Degradar a Moderador">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                        <path d="M7 13L12 18L17 13"/><path d="M12 18V6"/>
+                                                    </svg>
+                                                </button>
+                                            </form>
+                                        {% endif %}
+
+                                        <form method="post" onsubmit="return confirm('¿Estás seguro de que deseas eliminar a {{ suscripcion.usuario.username }} del plan?');" class="inline">
                                             {% csrf_token %}
                                             <input type="hidden" name="suscripcion_id" value="{{ suscripcion.id }}">
                                             <button type="submit" class="text-red-500 hover:text-red-700 p-2 rounded-full transition-colors" title="Eliminar Miembro">

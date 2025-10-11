@@ -88,16 +88,21 @@ def editar_plan(request, plan_id):
         messages.error(request, 'No tienes acceso a este plan.')
         return redirect('dashboard')
 
-    # Verificar si el usuario es admin
+    # Verificar si el usuario es admin o moderador
     es_admin = (plan.creador == request.user or
-                Suscripcion.objects.filter(plan=plan, usuario=request.user, rol='admin').exists())
+                Suscripcion.objects.filter(plan=plan, usuario=request.user, rol__in=['admin', 'moderador']).exists())
     if not es_admin:
-        messages.error(request, 'Solo los administradores pueden editar el plan.')
+        messages.error(request, 'Solo los administradores o moderadores pueden editar el plan.')
         return redirect('Menu_plan', plan_id=plan.id)
 
     if request.method == 'POST':
         if 'delete_plan' in request.POST:
-            # Handle plan deletion
+            # Handle plan deletion - only admins can delete
+            es_admin_real = (plan.creador == request.user or
+                            Suscripcion.objects.filter(plan=plan, usuario=request.user, rol='admin').exists())
+            if not es_admin_real:
+                messages.error(request, 'Solo los administradores pueden eliminar el plan.')
+                return redirect('Menu_plan', plan_id=plan_id)
             try:
                 plan_name = plan.nombre
                 plan.delete()
@@ -133,12 +138,14 @@ def ajustes(request, plan_id):
         return redirect('Dashboard')
 
     es_admin = (plan.creador == request.user or
-                Suscripcion.objects.filter(plan=plan, usuario=request.user, rol='admin').exists())
-    if not es_admin:
-        messages.error(request, 'Solo los administradores pueden acceder a los ajustes.')
-        return redirect('Menu_plan', plan_id=plan.id)
+                Suscripcion.objects.filter(plan=plan, usuario=request.user, rol__in=['admin', 'moderador']).exists())
+    es_admin_real = (plan.creador == request.user or
+                     Suscripcion.objects.filter(plan=plan, usuario=request.user, rol='admin').exists())
 
     if request.method == 'POST':
+        if not es_admin:
+            messages.error(request, 'Solo los administradores o moderadores pueden realizar cambios en los ajustes.')
+            return redirect('ajustes', plan_id=plan.id)
         if 'user_id' in request.POST:
             # Handle invitation
             user_id = request.POST.get('user_id')
@@ -169,8 +176,57 @@ def ajustes(request, plan_id):
                 messages.success(request, f'Miembro {username} eliminado del plan.')
             else:
                 messages.error(request, 'No puedes eliminarte a ti mismo.')
+        elif 'promote_suscripcion_id' in request.POST:
+            # Handle member promotion
+            suscripcion_id = request.POST.get('promote_suscripcion_id')
+            suscripcion = get_object_or_404(Suscripcion, pk=suscripcion_id, plan=plan)
+            new_rol = request.POST.get('new_rol')
+            if suscripcion.usuario == request.user:
+                messages.error(request, 'No puedes cambiar tu propio rol.')
+            elif new_rol not in ['moderador', 'admin']:
+                messages.error(request, 'Rol inválido.')
+            else:
+                can_promote = False
+                user_is_admin = (plan.creador == request.user or
+                                 Suscripcion.objects.filter(plan=plan, usuario=request.user, rol='admin').exists())
+                user_is_moderator = Suscripcion.objects.filter(plan=plan, usuario=request.user, rol='moderador').exists()
+                if user_is_admin:
+                    can_promote = True
+                elif user_is_moderator and new_rol == 'moderador':
+                    can_promote = True
+                if can_promote:
+                    suscripcion.rol = new_rol
+                    suscripcion.save()
+                    messages.success(request, f'{suscripcion.usuario.username} ascendido a {suscripcion.get_rol_display()}.')
+                else:
+                    messages.error(request, 'No tienes permisos para ascender a ese rol.')
+        elif 'demote_suscripcion_id' in request.POST:
+            # Handle member demotion
+            suscripcion_id = request.POST.get('demote_suscripcion_id')
+            suscripcion = get_object_or_404(Suscripcion, pk=suscripcion_id, plan=plan)
+            if suscripcion.usuario == request.user:
+                messages.error(request, 'No puedes cambiar tu propio rol.')
+            else:
+                user_is_admin = (plan.creador == request.user or
+                                 Suscripcion.objects.filter(plan=plan, usuario=request.user, rol='admin').exists())
+                if user_is_admin:
+                    if suscripcion.rol == 'moderador':
+                        suscripcion.rol = 'miembro'
+                        suscripcion.save()
+                        messages.success(request, f'{suscripcion.usuario.username} degradado a Miembro.')
+                    elif suscripcion.rol == 'admin' and plan.creador != suscripcion.usuario:
+                        suscripcion.rol = 'moderador'
+                        suscripcion.save()
+                        messages.success(request, f'{suscripcion.usuario.username} degradado a Moderador.')
+                    else:
+                        messages.error(request, 'No se puede degradar más.')
+                else:
+                    messages.error(request, 'Solo administradores pueden degradar miembros.')
         elif 'delete_plan' in request.POST:
-            # Handle plan deletion
+            # Handle plan deletion - only admins can delete
+            if not es_admin_real:
+                messages.error(request, 'Solo los administradores pueden eliminar el plan.')
+                return redirect('ajustes', plan_id=plan.id)
             try:
                 plan_name = plan.nombre
                 plan.delete()
@@ -199,6 +255,8 @@ def ajustes(request, plan_id):
         'edit_form': edit_form,
         'miembros_actuales': miembros_actuales,
         'invitaciones_enviadas': invitaciones_enviadas,
+        'es_admin': es_admin,
+        'es_admin_real': es_admin_real,
     }
     return render(request, 'ajustes.html', context)
 
@@ -508,9 +566,11 @@ def objetivos(request, plan_id):
     else:
         objetivos_del_plan = Objetivo.objects.filter(plan=plan).exclude(estado='completado')
 
-    # Verificar si el usuario es admin
+    # Verificar si el usuario es admin o moderador
     es_admin = (plan.creador == request.user or
-                Suscripcion.objects.filter(plan=plan, usuario=request.user, rol='admin').exists())
+                Suscripcion.objects.filter(plan=plan, usuario=request.user, rol__in=['admin', 'moderador']).exists())
+    es_admin_real = (plan.creador == request.user or
+                     Suscripcion.objects.filter(plan=plan, usuario=request.user, rol='admin').exists())
 
     # Formulario para agregar un nuevo objetivo (solo si es admin)
     agregar_form = ObjetivoForm() if es_admin else None
@@ -572,11 +632,11 @@ def agregar_objetivo(request, plan_id):
     """Maneja el formulario POST para agregar un nuevo objetivo."""
     plan = get_object_or_404(Plan, pk=plan_id)
 
-    # Verificar si el usuario es admin del plan
+    # Verificar si el usuario es admin o moderador del plan
     es_admin = (plan.creador == request.user or
-                Suscripcion.objects.filter(plan=plan, usuario=request.user, rol='admin').exists())
+                Suscripcion.objects.filter(plan=plan, usuario=request.user, rol__in=['admin', 'moderador']).exists())
     if not es_admin:
-        messages.error(request, 'Solo los administradores pueden crear objetivos.')
+        messages.error(request, 'Solo los administradores o moderadores pueden crear objetivos.')
         return redirect('objetivos', plan_id=plan.id)
 
     if request.method == 'POST':
@@ -798,9 +858,9 @@ def tareas(request, plan_id):
         messages.error(request, 'No tienes acceso a este plan.')
         return redirect('dashboard')
 
-    # Determinar si el usuario es admin
+    # Determinar si el usuario es admin o moderador
     es_admin = (plan.creador == request.user or
-                Suscripcion.objects.filter(plan=plan, usuario=request.user, rol='admin').exists())
+                Suscripcion.objects.filter(plan=plan, usuario=request.user, rol__in=['admin', 'moderador']).exists())
 
     # 1. Obtener todas las tareas del plan
     tareas_del_plan = Tarea.objects.filter(plan=plan).order_by('estado', 'fecha_a_completar')
@@ -908,9 +968,9 @@ def cambiar_estado_tarea(request, plan_id, tarea_id):
         messages.error(request, 'No tienes acceso a este plan.')
         return redirect('dashboard')
 
-    # Determinar si el usuario es admin
+    # Determinar si el usuario es admin o moderador
     es_admin = (plan.creador == request.user or
-                Suscripcion.objects.filter(plan=plan, usuario=request.user, rol='admin').exists())
+                Suscripcion.objects.filter(plan=plan, usuario=request.user, rol__in=['admin', 'moderador']).exists())
 
     if request.method == 'POST':
 
@@ -950,7 +1010,7 @@ def buscar_usuarios(request, plan_id):
             return JsonResponse({'error': 'No autorizado'}, status=403)
 
         es_admin = (plan.creador == request.user or
-                    Suscripcion.objects.filter(plan=plan, usuario=request.user, rol='admin').exists())
+                    Suscripcion.objects.filter(plan=plan, usuario=request.user, rol__in=['admin', 'moderador']).exists())
 
         if not es_admin:
             return JsonResponse({'error': 'No autorizado'}, status=403)

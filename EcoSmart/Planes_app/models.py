@@ -28,6 +28,7 @@ class Plan(models.Model):
 class Suscripcion(models.Model):
     ROL_CHOICES = [
         ('miembro', 'Miembro'),
+        ('moderador', 'Moderador'),
         ('admin', 'Admin'),
     ]
 
