@@ -542,10 +542,120 @@ def historiales(request, plan_id):
     ingresos_list = Ingreso.objects.filter(dinero=dinero_obj).select_related('user').order_by('-fecha_guardado')
     gastos_list = Gasto.objects.filter(dinero=dinero_obj).select_related('user').order_by('-fecha_guardado')
 
+    # Preparar datos para los gráficos de balance diario (último mes), mensual y anual
+    from collections import defaultdict
+    from datetime import datetime, date
+    from django.utils import timezone
+    from calendar import monthrange
+
+    hoy = timezone.now().date()
+    anio_actual = hoy.year
+
+    # Obtener todas las transacciones ordenadas por fecha
+    ingresos = Ingreso.objects.filter(dinero=dinero_obj).order_by('fecha_guardado')
+    gastos = Gasto.objects.filter(dinero=dinero_obj).order_by('fecha_guardado')
+
+    # Combinar en una lista de tuplas (fecha, cantidad) donde cantidad es positiva para ingresos, negativa para gastos
+    transacciones = []
+    for ingreso in ingresos:
+        transacciones.append((ingreso.fecha_guardado, float(ingreso.cantidad)))
+    for gasto in gastos:
+        transacciones.append((gasto.fecha_guardado, -float(gasto.cantidad)))
+
+    # Ordenar por fecha
+    transacciones.sort(key=lambda x: x[0])
+
+    # Calcular balance acumulado por mes y año
+    balance_por_mes = defaultdict(float)
+    balance_por_anio = defaultdict(float)
+    balance_acumulado = 0
+
+    for fecha, cantidad in transacciones:
+        balance_acumulado += cantidad
+        mes = fecha.strftime('%Y-%m')
+        anio = fecha.strftime('%Y')
+        balance_por_mes[mes] = balance_acumulado
+        balance_por_anio[anio] = balance_acumulado
+
+    # Preparar datos para el gráfico mensual (balance al final de cada mes del año actual)
+    monthly_labels = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
+    monthly_data = []
+
+    # Calcular balance acumulado al final de cada mes
+    balance_por_mes = {}
+    balance_acumulado = 0
+
+    # Para meses pasados, calcular basado en transacciones
+    for fecha, cantidad in transacciones:
+        if fecha.year == anio_actual:
+            balance_acumulado += cantidad
+            mes_num = fecha.month
+            balance_por_mes[mes_num] = balance_acumulado
+
+    # Para el mes actual, usar el total_dinero actual
+    mes_actual_num = hoy.month
+    balance_por_mes[mes_actual_num] = float(dinero_obj.total_dinero)
+
+    # Para cada mes, usar el balance si existe, sino 0
+    for m in range(1, 13):
+        if m in balance_por_mes:
+            monthly_data.append(round(balance_por_mes[m], 2))
+        else:
+            monthly_data.append(0)
+
+    # Preparar datos para el gráfico anual
+    yearly_labels = []
+    yearly_data = []
+    for anio in sorted(balance_por_anio.keys()):
+        yearly_labels.append(anio)
+        yearly_data.append(round(balance_por_anio[anio], 2))
+
+    # Preparar datos para el gráfico diario del mes actual (balance al final de cada día)
+    mes_actual = hoy.strftime('%Y-%m')
+    _, dias_en_mes = monthrange(hoy.year, hoy.month)
+
+    daily_labels = []
+    daily_data = []
+
+    # Filtrar transacciones del mes actual
+    transacciones_mes = [t for t in transacciones if t[0].strftime('%Y-%m') == mes_actual]
+
+    # Calcular el balance al inicio del mes
+    balance_inicio_mes = float(dinero_obj.total_dinero)
+    for _, cantidad in transacciones_mes:
+        balance_inicio_mes -= cantidad
+
+    # Calcular balance acumulado al final de cada día que ha ocurrido
+    balance_por_dia = {}
+    balance_acumulado = balance_inicio_mes
+
+    dia_actual = hoy.day
+    for dia in range(1, dia_actual + 1):
+        # Sumar transacciones de este día
+        transacciones_dia = [t for t in transacciones_mes if t[0].day == dia]
+        for _, cantidad in transacciones_dia:
+            balance_acumulado += cantidad
+        balance_por_dia[dia] = balance_acumulado
+
+    # Solo incluir días que han ocurrido
+    for dia in range(1, dia_actual + 1):
+        daily_labels.append(str(dia))
+        daily_data.append(round(balance_por_dia.get(dia, balance_inicio_mes), 2))
+
+    import json
+    meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
     context = {
         'plan': plan,
         'ingresos_list': ingresos_list,
         'gastos_list': gastos_list,
+        'current_year': anio_actual,
+        'current_month': meses[hoy.month - 1],
+        'daily_labels_json': json.dumps(daily_labels),
+        'daily_data_json': json.dumps(daily_data),
+        'monthly_labels_json': json.dumps(monthly_labels),
+        'monthly_data_json': json.dumps(monthly_data),
+        'yearly_labels_json': json.dumps(yearly_labels),
+        'yearly_data_json': json.dumps(yearly_data),
     }
     return render(request, 'historiales.html', context)
 
