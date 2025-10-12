@@ -1,76 +1,31 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro - EcoSmart</title>
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'auth/registro.css' %}">
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Registro - EcoSmart</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet"/>
+      {%load static%}
+  <link rel="stylesheet" href="{% static 'Auth/registro.css'%}">
+  
 </head>
-<body class="bg-gradient-to-br from-green-400 to-blue-500 min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-md w-full space-y-8">
-        <div>
-            <h2 class="mt-6 text-center text-3xl font-extrabold text-white">
-                Crear cuenta en EcoSmart
-            </h2>
-            <p class="mt-2 text-center text-sm text-white">
-                Únete a nosotros para gestionar tus finanzas
-            </p>
-        </div>
-
-        {% if messages %}
-            <div class="mb-4">
-                {% for message in messages %}
-                    <div class="p-3 rounded-lg text-sm {% if message.tags == 'error' %}bg-red-100 text-red-700{% else %}bg-blue-100 text-blue-700{% endif %}">
-                        {{ message }}
-                    </div>
-                {% endfor %}
-            </div>
-        {% endif %}
-
-        <form method="post" enctype="multipart/form-data" class="mt-8 space-y-6">
+<body>
+  <main class="registro">
+    <h2>Registro</h2>
+    <form method="POST" enctype="multipart/form-data">
             {% csrf_token %}
-            <div class="rounded-md shadow-sm -space-y-px">
-                <div>
-                    <label for="id_username" class="sr-only">Nombre de usuario</label>
-                    <input id="id_username" name="username" type="text" required class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm" placeholder="Nombre de usuario">
-                </div>
-                <div>
-                    <label for="id_email" class="sr-only">Correo electrónico</label>
-                    <input id="id_email" name="email" type="email" required class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm" placeholder="Correo electrónico">
-                </div>
-                <div>
-                    <label for="id_password1" class="sr-only">Contraseña</label>
-                    <input id="id_password1" name="password1" type="password" required class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm" placeholder="Contraseña">
-                </div>
-                <div>
-                    <label for="id_password2" class="sr-only">Confirmar contraseña</label>
-                    <input id="id_password2" name="password2" type="password" required class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm" placeholder="Confirmar contraseña">
-                </div>
-            </div>
-
-            <div>
-                <label for="id_profile_picture" class="block text-sm font-medium text-white">Foto de perfil (opcional)</label>
-                <input id="id_profile_picture" name="profile_picture" type="file" accept="image/*" class="mt-1 block w-full text-sm text-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-white file:text-green-700 hover:file:bg-gray-100">
-            </div>
-
-            <div>
-                <button type="submit" class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-                    Registrarse
-                </button>
-            </div>
-        </form>
-
-        <div class="text-center">
-            <p class="text-sm text-white">
-                ¿Ya tienes cuenta?
-                <a href="{% url 'Login' %}" class="font-medium text-green-200 hover:text-white">Inicia sesión aquí</a>
-            </p>
-            <p class="text-sm text-white mt-2">
-                <a href="{% url 'Landing' %}" class="font-medium text-blue-200 hover:text-white">Volver al inicio</a>
-            </p>
-        </div>
-    </div>
+                {% for campo in registerForm %}
+                    <div>
+                        <!-- Mostrar la etiqueta del campo -->
+                        <label for="{{ campo.id_for_label }}">{{ campo.label }}</label> <br>
+                        <!-- Mostrar el campo de formulario -->
+                        {{ campo }} <br>
+                    </div>
+            {% endfor %}            {%for field,error in errores.items%}
+              {{field}}:{{error}}
+            {% endfor %}
+        <button type="submit">Registrarse</button>
+    </form>
+  </main>
 </body>
 </html>

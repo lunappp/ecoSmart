@@ -32,47 +32,68 @@
             }
         }
 
+        // Función para cambiar de año
+        function changeYear(yearValue) {
+            const url = new URL(window.location);
+            url.searchParams.set('year', yearValue);
+            url.searchParams.delete('month'); // Reset month when changing year
+            window.location.href = url.toString();
+        }
+
+        // Función para cambiar de mes
+        function changeMonth(monthValue) {
+            const url = new URL(window.location);
+            if (monthValue) {
+                url.searchParams.set('month', monthValue);
+            } else {
+                url.searchParams.delete('month');
+            }
+            window.location.href = url.toString();
+        }
+
         // Función para renderizar los gráficos
         function renderChart() {
-            // Gráfico diario
-            const dailyCtx = document.getElementById('dailyChart').getContext('2d');
+            // Gráfico diario (solo si hay datos)
             const dailyLabels = JSON.parse('{{ daily_labels_json|escapejs }}');
-            const dailyData = JSON.parse('{{ daily_data_json|escapejs }}');
+            if (dailyLabels.length > 0) {
+                const dailyCtx = document.getElementById('dailyChart').getContext('2d');
+                const dailyData = JSON.parse('{{ daily_data_json|escapejs }}');
 
-            new Chart(dailyCtx, {
-                type: 'line',
-                data: {
-                    labels: dailyLabels,
-                    datasets: [{
-                        label: 'Balance Diario ($)',
-                        data: dailyData,
-                        borderColor: 'rgb(54, 162, 235)',
-                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                        tension: 0.1,
-                        pointRadius: 4,
-                        pointHoverRadius: 6
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            position: 'top',
-                        }
+                new Chart(dailyCtx, {
+                    type: 'line',
+                    data: {
+                        labels: dailyLabels,
+                        datasets: [{
+                            label: 'Balance Diario ($)',
+                            data: dailyData,
+                            borderColor: 'rgb(54, 162, 235)',
+                            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                            tension: 0.1,
+                            pointRadius: 4,
+                            pointHoverRadius: 6
+                        }]
                     },
-                    scales: {
-                        x: {
-                            title: {
-                                display: true,
-                                text: 'Día del Mes'
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'top',
                             }
                         },
-                        y: {
-                            beginAtZero: true
+                        scales: {
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Día del Mes'
+                                }
+                            },
+                            y: {
+                                beginAtZero: true
+                            }
                         }
                     }
-                }
-            });
+                });
+            }
 
             // Gráfico mensual
             const monthlyCtx = document.getElementById('monthlyChart').getContext('2d');
@@ -106,6 +127,13 @@
                 }
             });
         }
+
+        // Renderizar gráficos al cargar la página si la pestaña de gráficos está activa
+        document.addEventListener('DOMContentLoaded', function() {
+            if (document.getElementById('grafico').classList.contains('active')) {
+                renderChart();
+            }
+        });
     </script>
 </head>
 <body class="bg-gray-100 p-8">
@@ -117,13 +145,13 @@
         <!-- Tabs -->
         <div class="bg-white p-6 rounded-xl shadow-2xl">
             <div class="tabs">
-                <button class="tab-button active" onclick="openTab('ingresos', this)">Ingresos</button>
+                <button class="tab-button" onclick="openTab('ingresos', this)">Ingresos</button>
                 <button class="tab-button" onclick="openTab('gastos', this)">Gastos</button>
-                <button class="tab-button" onclick="openTab('grafico', this)">Gráfico</button>
+                <button class="tab-button active" onclick="openTab('grafico', this)">Gráfico</button>
             </div>
 
             <!-- Tab Content -->
-            <div id="ingresos" class="tab-content active">
+            <div id="ingresos" class="tab-content">
                 {% if ingresos_list %}
                 <ul class="space-y-4">
                     {% for ingreso in ingresos_list %}
@@ -177,15 +205,68 @@
                 {% endif %}
             </div>
 
-            <div id="grafico" class="tab-content">
+            <div id="grafico" class="tab-content active">
+                <!-- Selectores de año y mes -->
+                <div class="mb-6 flex space-x-4">
+                    <div class="flex-1">
+                        <label for="yearSelector" class="block text-sm font-medium text-gray-700 mb-2">Seleccionar Año:</label>
+                        <select id="yearSelector" onchange="changeYear(this.value)" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                            {% for anio in anios_disponibles %}
+                                <option value="{{ anio }}" {% if selected_year == anio %}selected{% endif %}>
+                                    {{ anio }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="flex-1">
+                        <label for="monthSelector" class="block text-sm font-medium text-gray-700 mb-2">Seleccionar Mes:</label>
+                        <select id="monthSelector" onchange="changeMonth(this.value)" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                            <option value="">{% now "M Y" %}</option>
+                            {% for mes in meses_disponibles %}
+                                {% if mes != hoy_str %}
+                                <option value="{{ mes }}" {% if selected_month == mes %}selected{% endif %}>
+                                    {{ mes|date:"M Y" }}
+                                </option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
                 <div class="space-y-8">
                     <div class="bg-gray-50 p-6 rounded-lg">
-                        <h3 class="text-xl font-semibold text-gray-900 mb-4">Resumen de {{ current_month }}</h3>
-                        <canvas id="dailyChart" width="400" height="200"></canvas>
+                        {% if daily_labels_json|length > 2 %}
+                            <h3 class="text-xl font-semibold text-gray-900 mb-4">
+                                {% if selected_month %}
+                                    Resumen de {{ selected_month|date:"M Y" }}
+                                {% else %}
+                                    Resumen de {{ current_month }}
+                                {% endif %}
+                            </h3>
+                            <canvas id="dailyChart" width="400" height="200"></canvas>
+                        {% else %}
+                            <h3 class="text-xl font-semibold text-gray-900 mb-4">
+                                {% if selected_month %}
+                                    Resumen de {{ selected_month|date:"M Y" }}
+                                {% else %}
+                                    Resumen de {{ current_month }}
+                                {% endif %}
+                            </h3>
+                            <p class="text-gray-500 text-center py-8">No hay datos de este mes</p>
+                        {% endif %}
                     </div>
                     <div class="bg-gray-50 p-6 rounded-lg">
                         <h3 class="text-xl font-semibold text-gray-900 mb-4">Resumen de {{ current_year }}</h3>
                         <canvas id="monthlyChart" width="400" height="200"></canvas>
+                    </div>
+                    <div class="text-center mt-6">
+                        <a href="{% url 'descargar_pdf_graficos' plan_id=plan.id %}?{% if selected_year %}year={{ selected_year }}{% endif %}{% if selected_month %}&month={{ selected_month }}{% endif %}"
+                           class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                            Descargar PDF
+                        </a>
                     </div>
                 </div>
             </div>

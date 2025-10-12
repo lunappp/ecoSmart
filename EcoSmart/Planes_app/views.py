@@ -5,7 +5,7 @@ from django.contrib.auth import get_user_model
 from django.db import transaction
 from django.utils import timezone
 from django.db.models import Sum, Q
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 
 # Asumiendo que estas son las importaciones correctas para tus modelos y formularios
 from .models import Plan, Suscripcion, Objetivo, Dinero, Gasto, Ingreso, Tarea, Invitacion
@@ -536,6 +536,32 @@ def historiales(request, plan_id):
     plan, es_miembro = verificar_membresia(request, plan_id)
     if not es_miembro: return redirect('dashboard')
 
+    # Preparar datos para los gráficos de balance diario (último mes), mensual y anual
+    from collections import defaultdict
+    from datetime import datetime, date
+    from django.utils import timezone
+    from calendar import monthrange
+
+    hoy = timezone.now().date()
+    anio_actual = hoy.year
+
+    # Obtener parámetros de mes y año seleccionados
+    selected_month = request.GET.get('month')
+    selected_year_param = request.GET.get('year')
+
+    if selected_month:
+        try:
+            selected_date = datetime.strptime(selected_month, '%Y-%m')
+            selected_year = selected_date.year
+            selected_month_num = selected_date.month
+        except ValueError:
+            selected_month = None
+            selected_year = int(selected_year_param) if selected_year_param else hoy.year
+            selected_month_num = None
+    else:
+        selected_year = int(selected_year_param) if selected_year_param else hoy.year
+        selected_month_num = None
+
     dinero_obj = get_object_or_404(Dinero, plan=plan)
 
     # Listas completas de ingresos y gastos con usuario
@@ -577,7 +603,7 @@ def historiales(request, plan_id):
         balance_por_mes[mes] = balance_acumulado
         balance_por_anio[anio] = balance_acumulado
 
-    # Preparar datos para el gráfico mensual (balance al final de cada mes del año actual)
+    # Preparar datos para el gráfico mensual (balance al final de cada mes del año seleccionado)
     monthly_labels = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
     monthly_data = []
 
@@ -587,14 +613,15 @@ def historiales(request, plan_id):
 
     # Para meses pasados, calcular basado en transacciones
     for fecha, cantidad in transacciones:
-        if fecha.year == anio_actual:
+        if fecha.year == selected_year:
             balance_acumulado += cantidad
             mes_num = fecha.month
             balance_por_mes[mes_num] = balance_acumulado
 
-    # Para el mes actual, usar el total_dinero actual
-    mes_actual_num = hoy.month
-    balance_por_mes[mes_actual_num] = float(dinero_obj.total_dinero)
+    # Para el mes actual si es el año actual, usar el total_dinero actual
+    if selected_year == hoy.year:
+        mes_actual_num = hoy.month
+        balance_por_mes[mes_actual_num] = float(dinero_obj.total_dinero)
 
     # Para cada mes, usar el balance si existe, sino 0
     for m in range(1, 13):
@@ -610,37 +637,96 @@ def historiales(request, plan_id):
         yearly_labels.append(anio)
         yearly_data.append(round(balance_por_anio[anio], 2))
 
-    # Preparar datos para el gráfico diario del mes actual (balance al final de cada día)
-    mes_actual = hoy.strftime('%Y-%m')
-    _, dias_en_mes = monthrange(hoy.year, hoy.month)
+    # Preparar datos para el gráfico diario del mes seleccionado o actual
+    if selected_month:
+        mes_seleccionado = selected_month
+        anio_seleccionado = selected_year
+        mes_num_seleccionado = selected_month_num
+        dia_actual = None  # Para meses pasados, mostrar todos los días con datos
+    else:
+        mes_seleccionado = hoy.strftime('%Y-%m')
+        anio_seleccionado = hoy.year
+        mes_num_seleccionado = hoy.month
+        dia_actual = hoy.day
+
+    _, dias_en_mes = monthrange(anio_seleccionado, mes_num_seleccionado)
 
     daily_labels = []
     daily_data = []
 
-    # Filtrar transacciones del mes actual
-    transacciones_mes = [t for t in transacciones if t[0].strftime('%Y-%m') == mes_actual]
+    # Filtrar transacciones del mes seleccionado
+    transacciones_mes = [t for t in transacciones if t[0].strftime('%Y-%m') == mes_seleccionado]
 
-    # Calcular el balance al inicio del mes
-    balance_inicio_mes = float(dinero_obj.total_dinero)
-    for _, cantidad in transacciones_mes:
-        balance_inicio_mes -= cantidad
+    if transacciones_mes:
+        # Calcular el balance al inicio del mes seleccionado
+        # Para meses pasados, necesitamos calcular el balance histórico
+        if selected_month and selected_month != hoy.strftime('%Y-%m'):
+            # Calcular balance histórico al inicio del mes seleccionado
+            transacciones_anteriores = [t for t in transacciones if t[0] < transacciones_mes[0][0]]
+            balance_inicio_mes = 0
+            for _, cantidad in transacciones_anteriores:
+                balance_inicio_mes += cantidad
+        else:
+            # Mes actual: usar total_dinero actual
+            balance_inicio_mes = float(dinero_obj.total_dinero)
+            for _, cantidad in transacciones_mes:
+                balance_inicio_mes -= cantidad
 
-    # Calcular balance acumulado al final de cada día que ha ocurrido
-    balance_por_dia = {}
-    balance_acumulado = balance_inicio_mes
+        # Calcular balance acumulado al final de cada día
+        balance_por_dia = {}
+        balance_acumulado = balance_inicio_mes
 
-    dia_actual = hoy.day
-    for dia in range(1, dia_actual + 1):
-        # Sumar transacciones de este día
-        transacciones_dia = [t for t in transacciones_mes if t[0].day == dia]
-        for _, cantidad in transacciones_dia:
-            balance_acumulado += cantidad
-        balance_por_dia[dia] = balance_acumulado
+        if selected_month and selected_month != hoy.strftime('%Y-%m'):
+            # Para meses pasados, mostrar todos los días del mes con datos
+            for dia in range(1, dias_en_mes + 1):
+                transacciones_dia = [t for t in transacciones_mes if t[0].day == dia]
+                for _, cantidad in transacciones_dia:
+                    balance_acumulado += cantidad
+                if transacciones_dia:  # Solo incluir días que tuvieron transacciones
+                    balance_por_dia[dia] = balance_acumulado
 
-    # Solo incluir días que han ocurrido
-    for dia in range(1, dia_actual + 1):
-        daily_labels.append(str(dia))
-        daily_data.append(round(balance_por_dia.get(dia, balance_inicio_mes), 2))
+            for dia in sorted(balance_por_dia.keys()):
+                daily_labels.append(str(dia))
+                daily_data.append(round(balance_por_dia[dia], 2))
+        else:
+            # Mes actual: mostrar días hasta hoy
+            if dia_actual:
+                for dia in range(1, dia_actual + 1):
+                    transacciones_dia = [t for t in transacciones_mes if t[0].day == dia]
+                    for _, cantidad in transacciones_dia:
+                        balance_acumulado += cantidad
+                    balance_por_dia[dia] = balance_acumulado
+
+                for dia in range(1, dia_actual + 1):
+                    daily_labels.append(str(dia))
+                    daily_data.append(round(balance_por_dia.get(dia, balance_inicio_mes), 2))
+    else:
+        # No hay transacciones para este mes
+        daily_labels = []
+        daily_data = []
+
+    # Generar lista de años disponibles (años que tienen transacciones)
+    anios_disponibles = set()
+    for fecha, _ in transacciones:
+        anios_disponibles.add(fecha.year)
+
+    # Agregar año actual si no tiene transacciones pero queremos mostrarlo
+    if hoy.year not in anios_disponibles:
+        anios_disponibles.add(hoy.year)
+
+    anios_disponibles = sorted(list(anios_disponibles), reverse=True)  # Más recientes primero
+
+    # Generar lista de meses disponibles (meses que tienen transacciones)
+    meses_disponibles = set()
+    for fecha, _ in transacciones:
+        meses_disponibles.add(fecha.strftime('%Y-%m'))
+
+    # Agregar mes actual si no tiene transacciones pero queremos mostrarlo
+    mes_actual_str = hoy.strftime('%Y-%m')
+    if mes_actual_str not in meses_disponibles:
+        meses_disponibles.add(mes_actual_str)
+
+    meses_disponibles = sorted(list(meses_disponibles), reverse=True)  # Más recientes primero
 
     import json
     meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
@@ -650,6 +736,11 @@ def historiales(request, plan_id):
         'gastos_list': gastos_list,
         'current_year': anio_actual,
         'current_month': meses[hoy.month - 1],
+        'selected_month': selected_month,
+        'selected_year': selected_year,
+        'meses_disponibles': meses_disponibles,
+        'anios_disponibles': anios_disponibles,
+        'hoy_str': hoy.strftime('%Y-%m'),
         'daily_labels_json': json.dumps(daily_labels),
         'daily_data_json': json.dumps(daily_data),
         'monthly_labels_json': json.dumps(monthly_labels),
@@ -1092,7 +1183,7 @@ def cambiar_estado_tarea(request, plan_id, tarea_id):
         # Si la tarea NO está completada, la completamos
         if tarea.estado != 'completada':
             tarea.estado = 'completada'
-            tarea.fecha_completado = timezone.now() # Registramos la fecha y hora de completado
+            tarea.fecha_completado = timezone.now()  # Registramos la fecha y hora de completado
             tarea.save()
             messages.success(request, f"Tarea '{tarea.nombre}' marcada como completada.")
         else:
@@ -1102,11 +1193,219 @@ def cambiar_estado_tarea(request, plan_id, tarea_id):
                 return redirect('tareas', plan_id=plan_id)
             # Reabrir la tarea
             tarea.estado = 'pendiente'
-            tarea.fecha_completado = None # Eliminamos la fecha de completado
+            tarea.fecha_completado = None  # Eliminamos la fecha de completado
             tarea.save()
             messages.info(request, f"Tarea '{tarea.nombre}' reabierta.")
 
     return redirect('tareas', plan_id=plan_id)
+
+
+@login_required
+def descargar_pdf_graficos(request, plan_id):
+            """Genera y descarga un PDF con los gráficos actuales."""
+            plan, es_miembro = verificar_membresia(request, plan_id)
+            if not es_miembro:
+                return HttpResponse('No autorizado', status=403)
+        
+            from reportlab.lib.pagesizes import letter
+            from reportlab.lib import colors
+            from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+            from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image
+            from reportlab.lib.units import inch
+            import matplotlib.pyplot as plt
+            import io
+            import base64
+        
+            # Obtener parámetros actuales
+            selected_month = request.GET.get('month')
+            selected_year_param = request.GET.get('year')
+        
+            # Preparar datos (reutilizar lógica de historiales)
+            from collections import defaultdict
+            from datetime import datetime, date
+            from django.utils import timezone
+            from calendar import monthrange
+        
+            hoy = timezone.now().date()
+            anio_actual = hoy.year
+        
+            if selected_month:
+                try:
+                    selected_date = datetime.strptime(selected_month, '%Y-%m')
+                    selected_year = selected_date.year
+                    selected_month_num = selected_date.month
+                except ValueError:
+                    selected_month = None
+                    selected_year = int(selected_year_param) if selected_year_param else hoy.year
+                    selected_month_num = None
+            else:
+                selected_year = int(selected_year_param) if selected_year_param else hoy.year
+                selected_month_num = None
+        
+            dinero_obj = get_object_or_404(Dinero, plan=plan)
+        
+            # Obtener transacciones
+            ingresos = Ingreso.objects.filter(dinero=dinero_obj).order_by('fecha_guardado')
+            gastos = Gasto.objects.filter(dinero=dinero_obj).order_by('fecha_guardado')
+        
+            transacciones = []
+            for ingreso in ingresos:
+                transacciones.append((ingreso.fecha_guardado, float(ingreso.cantidad)))
+            for gasto in gastos:
+                transacciones.append((gasto.fecha_guardado, -float(gasto.cantidad)))
+        
+            transacciones.sort(key=lambda x: x[0])
+        
+            # Preparar datos para gráficos
+            balance_por_mes = {}
+            balance_acumulado = 0
+        
+            for fecha, cantidad in transacciones:
+                if fecha.year == selected_year:
+                    balance_acumulado += cantidad
+                    mes_num = fecha.month
+                    balance_por_mes[mes_num] = balance_acumulado
+        
+            if selected_year == hoy.year:
+                mes_actual_num = hoy.month
+                balance_por_mes[mes_actual_num] = float(dinero_obj.total_dinero)
+        
+            monthly_labels = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
+            monthly_data = []
+            for m in range(1, 13):
+                if m in balance_por_mes:
+                    monthly_data.append(round(balance_por_mes[m], 2))
+                else:
+                    monthly_data.append(0)
+        
+            # Preparar datos diarios
+            if selected_month:
+                mes_seleccionado = selected_month
+                anio_seleccionado = selected_year
+                mes_num_seleccionado = selected_month_num
+                dia_actual = None
+            else:
+                mes_seleccionado = hoy.strftime('%Y-%m')
+                anio_seleccionado = hoy.year
+                mes_num_seleccionado = hoy.month
+                dia_actual = hoy.day
+        
+            _, dias_en_mes = monthrange(anio_seleccionado, mes_num_seleccionado)
+        
+            daily_labels = []
+            daily_data = []
+        
+            transacciones_mes = [t for t in transacciones if t[0].strftime('%Y-%m') == mes_seleccionado]
+        
+            if transacciones_mes:
+                if selected_month and selected_month != hoy.strftime('%Y-%m'):
+                    transacciones_anteriores = [t for t in transacciones if t[0] < transacciones_mes[0][0]]
+                    balance_inicio_mes = 0
+                    for _, cantidad in transacciones_anteriores:
+                        balance_inicio_mes += cantidad
+                else:
+                    balance_inicio_mes = float(dinero_obj.total_dinero)
+                    for _, cantidad in transacciones_mes:
+                        balance_inicio_mes -= cantidad
+        
+                balance_por_dia = {}
+                balance_acumulado = balance_inicio_mes
+        
+                if selected_month and selected_month != hoy.strftime('%Y-%m'):
+                    for dia in range(1, dias_en_mes + 1):
+                        transacciones_dia = [t for t in transacciones_mes if t[0].day == dia]
+                        for _, cantidad in transacciones_dia:
+                            balance_acumulado += cantidad
+                        if transacciones_dia:
+                            balance_por_dia[dia] = balance_acumulado
+        
+                    for dia in sorted(balance_por_dia.keys()):
+                        daily_labels.append(str(dia))
+                        daily_data.append(round(balance_por_dia[dia], 2))
+                else:
+                    if dia_actual:
+                        for dia in range(1, dia_actual + 1):
+                            transacciones_dia = [t for t in transacciones_mes if t[0].day == dia]
+                            for _, cantidad in transacciones_dia:
+                                balance_acumulado += cantidad
+                            balance_por_dia[dia] = balance_acumulado
+        
+                        for dia in range(1, dia_actual + 1):
+                            daily_labels.append(str(dia))
+                            daily_data.append(round(balance_por_dia.get(dia, balance_inicio_mes), 2))
+        
+            # Crear PDF
+            buffer = io.BytesIO()
+            doc = SimpleDocTemplate(buffer, pagesize=letter)
+            styles = getSampleStyleSheet()
+            story = []
+        
+            # Título
+            title_style = ParagraphStyle(
+                'CustomTitle',
+                parent=styles['Heading1'],
+                fontSize=16,
+                spaceAfter=30,
+            )
+            story.append(Paragraph(f'Reporte de Gráficos - Plan: {plan.nombre}', title_style))
+            story.append(Spacer(1, 12))
+        
+            # Información del período
+            if selected_month:
+                periodo = f"Período: {selected_month}"
+            else:
+                periodo = f"Año: {selected_year}"
+            story.append(Paragraph(periodo, styles['Normal']))
+            story.append(Spacer(1, 20))
+        
+            # Crear gráficos con matplotlib
+            fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 12))
+        
+            # Gráfico diario
+            if daily_labels:
+                ax1.plot(daily_labels, daily_data, marker='o', color='blue')
+                ax1.set_title('Balance Diario del Último Mes')
+                ax1.set_xlabel('Día del Mes')
+                ax1.set_ylabel('Balance ($)')
+                ax1.grid(True, alpha=0.3)
+            else:
+                ax1.text(0.5, 0.5, 'No hay datos disponibles', ha='center', va='center', transform=ax1.transAxes)
+                ax1.set_title('Balance Diario del Último Mes')
+        
+            # Gráfico mensual
+            bars = ax2.bar(monthly_labels, monthly_data, color=['green' if x >= 0 else 'red' for x in monthly_data])
+            ax2.set_title(f'Resumen de {selected_year}')
+            ax2.set_xlabel('Mes')
+            ax2.set_ylabel('Dinero Ganado/Perdido ($)')
+            ax2.grid(True, alpha=0.3)
+        
+            # Ajustar layout
+            plt.tight_layout()
+        
+            # Convertir a imagen para PDF
+            img_buffer = io.BytesIO()
+            plt.savefig(img_buffer, format='png', dpi=150, bbox_inches='tight')
+            img_buffer.seek(0)
+            plt.close()
+        
+            # Agregar imagen al PDF
+            img = Image(img_buffer)
+            img.drawHeight = 6 * inch
+            img.drawWidth = 7 * inch
+            story.append(img)
+        
+            # Generar fecha del reporte
+            story.append(Spacer(1, 20))
+            story.append(Paragraph(f'Reporte generado el: {hoy.strftime("%d/%m/%Y")}', styles['Normal']))
+        
+            # Construir PDF
+            doc.build(story)
+        
+            # Preparar respuesta
+            buffer.seek(0)
+            response = HttpResponse(buffer.getvalue(), content_type='application/pdf')
+            response['Content-Disposition'] = f'attachment; filename="reporte_graficos_{plan.nombre}_{hoy.strftime("%Y%m%d")}.pdf"'
+            return response
 
 
 
