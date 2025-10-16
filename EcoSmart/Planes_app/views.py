@@ -1206,7 +1206,9 @@ def descargar_pdf_graficos(request, plan_id):
             plan, es_miembro = verificar_membresia(request, plan_id)
             if not es_miembro:
                 return HttpResponse('No autorizado', status=403)
-        
+
+            import matplotlib
+            matplotlib.use('Agg')  # Set non-GUI backend
             from reportlab.lib.pagesizes import letter
             from reportlab.lib import colors
             from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
