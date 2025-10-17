@@ -144,6 +144,9 @@ def rechazar_invitacion(request, invitacion_id):
 
 @login_required
 def edit_profile(request):
+    profile_form = ProfileEditForm(instance=request.user)
+    password_form = PasswordChangeFormCustom(request.user)
+
     if request.method == 'POST':
         if 'update_profile' in request.POST:
             profile_form = ProfileEditForm(request.POST, request.FILES, instance=request.user)
@@ -157,9 +160,6 @@ def edit_profile(request):
                 password_form.save()
                 messages.success(request, 'Contraseña cambiada exitosamente.')
                 return redirect('Dashboard')
-    else:
-        profile_form = ProfileEditForm(instance=request.user)
-        password_form = PasswordChangeFormCustom(request.user)
 
     context = {
         'profile_form': profile_form,
