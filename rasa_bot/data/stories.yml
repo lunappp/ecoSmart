@@ -1,0 +1,80 @@
+version: "3.1"
+
+stories:
+
+- story: happy path
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: mood_great
+  - action: utter_happy
+
+- story: sad path 1
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: mood_unhappy
+  - action: utter_cheer_up
+  - action: utter_did_that_help
+  - intent: affirm
+  - action: utter_happy
+
+- story: sad path 2
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: mood_unhappy
+  - action: utter_cheer_up
+  - action: utter_did_that_help
+  - intent: deny
+  - action: utter_goodbye
+
+- story: bot challenge
+  steps:
+  - intent: bot_challenge
+  - action: utter_iamabot
+
+- story: economy explanation
+  steps:
+  - intent: ask_economy
+  - action: utter_economy_info
+
+- story: budget advice
+  steps:
+  - intent: ask_budget
+  - action: utter_budget_tips
+
+- story: savings advice
+  steps:
+  - intent: ask_savings
+  - action: utter_savings_advice
+
+- story: investment tips
+  steps:
+  - intent: ask_investments
+  - action: utter_investment_tips
+
+- story: expense analysis
+  steps:
+  - intent: ask_expenses
+  - action: utter_expense_analysis
+
+- story: income optimization
+  steps:
+  - intent: ask_income
+  - action: utter_income_optimization
+
+- story: goal setting
+  steps:
+  - intent: ask_goals
+  - action: utter_goal_setting
+
+- story: general tips
+  steps:
+  - intent: ask_tips
+  - action: utter_general_tips
+
+- story: goodbye
+  steps:
+  - intent: goodbye
+  - action: utter_goodbye

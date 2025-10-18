@@ -1,0 +1,170 @@
+version: "3.1"
+
+nlu:
+- intent: greet
+  examples: |
+    - hey
+    - hello
+    - hi
+    - hello there
+    - good morning
+    - good evening
+    - moin
+    - hey there
+    - let's go
+    - hey dude
+    - goodmorning
+    - goodevening
+    - good afternoon
+
+- intent: goodbye
+  examples: |
+    - bye
+    - good afternoon
+    - cu
+    - good by
+    - cee you later
+    - good night
+    - bye by
+    - bye bye
+    - see you around
+    - see you later
+    - hasta luego
+    - adios
+
+- intent: affirm
+  examples: |
+    - yes
+    - y
+    - indeed
+    - of course
+    - that sounds good
+    - correct
+    - si
+    - claro
+
+- intent: deny
+  examples: |
+    - no
+    - n
+    - never
+    - I don't think so
+    - don't like that
+    - no way
+    - not really
+    - no gracias
+
+- intent: mood_great
+  examples: |
+    - perfect
+    - great
+    - amazing
+    - feeling like a king
+    - wonderful
+    - I am feeling very good
+    - I am great
+    - I am amazing
+    - I am going to save the world
+    - super stoked
+    - extremely good
+    - so so perfect
+    - so good
+    - so perfect
+
+- intent: mood_unhappy
+  examples: |
+    - my day was horrible
+    - I am sad
+    - I don't feel very well
+    - I am disappointed
+    - super sad
+    - I'm so sad
+    - sad
+    - very sad
+    - unhappy
+    - not good
+    - not very good
+    - extremly sad
+    - so saad
+    - so sad
+
+- intent: bot_challenge
+  examples: |
+    - are you a bot?
+    - are you a human?
+    - am I talking to a bot?
+    - am I talking to a human?
+    - eres un bot?
+    - eres humano?
+
+- intent: ask_economy
+  examples: |
+    - what is economy
+    - tell me about economy
+    - explain economy
+    - que es economia
+    - dime sobre economia
+    - explica economia
+
+- intent: ask_budget
+  examples: |
+    - how to make a budget
+    - budget tips
+    - how to budget
+    - consejos para presupuesto
+    - como hacer presupuesto
+    - tips de presupuesto
+
+- intent: ask_savings
+  examples: |
+    - how to save money
+    - savings tips
+    - how to save
+    - consejos para ahorrar
+    - como ahorrar dinero
+    - tips de ahorro
+
+- intent: ask_investments
+  examples: |
+    - how to invest
+    - investment tips
+    - how to invest money
+    - consejos de inversion
+    - como invertir
+    - tips de inversiones
+
+- intent: ask_expenses
+  examples: |
+    - how to control expenses
+    - expense management
+    - how to reduce spending
+    - controlar gastos
+    - gestionar gastos
+    - reducir gastos
+
+- intent: ask_income
+  examples: |
+    - how to increase income
+    - income optimization
+    - how to earn more
+    - aumentar ingresos
+    - optimizar ingresos
+    - ganar mas
+
+- intent: ask_goals
+  examples: |
+    - how to set financial goals
+    - goal setting
+    - financial objectives
+    - establecer metas financieras
+    - metas financieras
+    - objetivos financieros
+
+- intent: ask_tips
+  examples: |
+    - give me financial tips
+    - money advice
+    - financial advice
+    - consejos financieros
+    - consejos de dinero
+    - consejos economicos

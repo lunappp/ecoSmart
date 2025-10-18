@@ -1,0 +1,90 @@
+version: "3.1"
+
+intents:
+  - greet
+  - goodbye
+  - affirm
+  - deny
+  - mood_great
+  - mood_unhappy
+  - bot_challenge
+  - ask_economy
+  - ask_budget
+  - ask_savings
+  - ask_investments
+  - ask_expenses
+  - ask_income
+  - ask_goals
+  - ask_tips
+
+entities:
+  - plan_id
+
+responses:
+  utter_greet:
+  - text: "¡Hola! Soy tu asistente de EcoSmart. ¿En qué puedo ayudarte hoy?"
+
+  utter_cheer_up:
+  - text: "Aquí tienes algo para animarte:"
+    image: "https://i.imgur.com/nGF1K8f.jpg"
+
+  utter_did_that_help:
+  - text: "¿Te ha ayudado eso?"
+
+  utter_happy:
+  - text: "¡Genial! ¡Me alegra oír eso!"
+
+  utter_goodbye:
+  - text: "¡Adiós! ¡Que tengas un buen día!"
+
+  utter_iamabot:
+  - text: "Soy un bot creado por EcoSmart para ayudarte con tus finanzas."
+
+  utter_economy_info:
+  - text: "La economía es el estudio de cómo las personas y sociedades administran sus recursos limitados. En EcoSmart, te ayudamos a gestionar tu presupuesto, ahorros e inversiones."
+
+  utter_budget_tips:
+  - text: "Para un buen presupuesto: 50% para necesidades, 30% para deseos, 20% para ahorros e inversiones."
+
+  utter_savings_advice:
+  - text: "Recomiendo ahorrar al menos el 20% de tus ingresos. Usa cuentas de ahorro de alto rendimiento."
+
+  utter_investment_tips:
+  - text: "Diversifica tus inversiones. Considera fondos indexados para principiantes."
+
+  utter_expense_analysis:
+  - text: "Analicemos tus gastos. ¿Qué categoría consumes más?"
+
+  utter_income_optimization:
+  - text: "Para optimizar ingresos: busca fuentes adicionales, negocia aumentos, invierte en educación."
+
+  utter_goal_setting:
+  - text: "Establece metas SMART: Específicas, Medibles, Alcanzables, Relevantes, con Tiempo definido."
+
+  utter_general_tips:
+  - text: "Consejo general: Vive por debajo de tus posibilidades y construye riqueza gradualmente."
+
+actions:
+  - utter_greet
+  - utter_cheer_up
+  - utter_did_that_help
+  - utter_happy
+  - utter_goodbye
+  - utter_iamabot
+  - utter_economy_info
+  - utter_budget_tips
+  - utter_savings_advice
+  - utter_investment_tips
+  - utter_expense_analysis
+  - utter_income_optimization
+  - utter_goal_setting
+  - utter_general_tips
+  - action_get_plan_data
+  - action_give_budget_advice
+  - action_analyze_expenses
+  - action_suggest_savings
+  - action_investment_recommendations
+
+session_config:
+  session_expiration_time: 60
+  carry_over_slots_to_new_session: true

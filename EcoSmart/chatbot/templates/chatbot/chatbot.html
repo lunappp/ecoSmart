@@ -3,13 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chatbot EcoSmart</title>
+    <title>Chatbot EcoSmart{% if plan_id %} - Plan {{ plan_id }}{% endif %}</title>
     {% load static %}
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100">
     <div class="container mx-auto p-4">
-        <h1 class="text-2xl font-bold mb-4">Chatbot EcoSmart</h1>
+        <h1 class="text-2xl font-bold mb-4">
+            {% if plan_id %}
+                🤖 Asistente IA del Plan
+            {% else %}
+                Chatbot EcoSmart
+            {% endif %}
+        </h1>
         <div id="chat-window" class="border border-gray-300 rounded p-4 h-96 overflow-y-auto mb-4 bg-white">
             {% for message in messages %}
             <div class="mb-2">
@@ -20,21 +26,25 @@
             </div>
             {% endfor %}
         </div>
-        <form id="chat-form" method="post" action="{% url 'send_message' %}">
+        <form id="chat-form" method="post" action="{% if plan_id %}{% url 'send_message_plan' plan_id=plan_id %}{% else %}{% url 'send_message' %}{% endif %}">
             {% csrf_token %}
             <div class="flex">
                 <input type="text" id="message-input" name="message" class="flex-1 border border-gray-300 rounded-l px-4 py-2" placeholder="Escribe tu mensaje..." required>
                 <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-r">Enviar</button>
             </div>
         </form>
-        <a href="{% url 'Dashboard' %}" class="mt-4 inline-block bg-gray-500 text-white px-4 py-2 rounded">Volver al Dashboard</a>
+        {% if plan_id %}
+            <a href="{% url 'Menu_plan' plan_id=plan_id %}" class="mt-4 inline-block bg-gray-500 text-white px-4 py-2 rounded">← Volver al Plan</a>
+        {% else %}
+            <a href="{% url 'Dashboard' %}" class="mt-4 inline-block bg-gray-500 text-white px-4 py-2 rounded">Volver al Dashboard</a>
+        {% endif %}
     </div>
 
     <script>
     document.getElementById('chat-form').addEventListener('submit', function(e) {
         e.preventDefault();
         const message = document.getElementById('message-input').value;
-        fetch('{% url "send_message" %}', {
+        fetch('{% if plan_id %}{% url "send_message_plan" plan_id=plan_id %}{% else %}{% url "send_message" %}{% endif %}', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
