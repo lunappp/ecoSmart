@@ -78,3 +78,258 @@ stories:
   steps:
   - intent: goodbye
   - action: utter_goodbye
+
+# Conceptos básicos de economía
+- story: what_is_economy
+  steps:
+  - intent: ask_what_is_economy
+  - action: utter_what_is_economy
+
+- story: what_is_scarcity
+  steps:
+  - intent: ask_what_is_scarcity
+  - action: utter_what_is_scarcity
+
+- story: what_are_goods_services
+  steps:
+  - intent: ask_what_are_goods_services
+  - action: utter_what_are_goods_services
+
+- story: what_is_opportunity_cost
+  steps:
+  - intent: ask_what_is_opportunity_cost
+  - action: utter_what_is_opportunity_cost
+
+- story: what_is_supply_demand
+  steps:
+  - intent: ask_what_is_supply_demand
+  - action: utter_what_is_supply_demand
+
+- story: what_is_market
+  steps:
+  - intent: ask_what_is_market
+  - action: utter_what_is_market
+
+# Microeconomía
+- story: what_studies_microeconomics
+  steps:
+  - intent: ask_what_studies_microeconomics
+  - action: utter_what_studies_microeconomics
+
+- story: what_is_demand_elasticity
+  steps:
+  - intent: ask_what_is_demand_elasticity
+  - action: utter_what_is_demand_elasticity
+
+- story: what_is_monopoly
+  steps:
+  - intent: ask_what_is_monopoly
+  - action: utter_what_is_monopoly
+
+- story: what_is_perfect_competition
+  steps:
+  - intent: ask_what_is_perfect_competition
+  - action: utter_what_is_perfect_competition
+
+- story: what_are_fixed_variable_costs
+  steps:
+  - intent: ask_what_are_fixed_variable_costs
+  - action: utter_what_are_fixed_variable_costs
+
+# Macroeconomía
+- story: what_studies_macroeconomics
+  steps:
+  - intent: ask_what_studies_macroeconomics
+  - action: utter_what_studies_macroeconomics
+
+- story: what_is_gdp
+  steps:
+  - intent: ask_what_is_gdp
+  - action: utter_what_is_gdp
+
+- story: what_is_inflation
+  steps:
+  - intent: ask_what_is_inflation
+  - action: utter_what_is_inflation
+
+- story: what_is_deflation
+  steps:
+  - intent: ask_what_is_deflation
+  - action: utter_what_is_deflation
+
+- story: what_is_unemployment
+  steps:
+  - intent: ask_what_is_unemployment
+  - action: utter_what_is_unemployment
+
+- story: what_is_fiscal_policy
+  steps:
+  - intent: ask_what_is_fiscal_policy
+  - action: utter_what_is_fiscal_policy
+
+- story: what_is_monetary_policy
+  steps:
+  - intent: ask_what_is_monetary_policy
+  - action: utter_what_is_monetary_policy
+
+# Finanzas personales
+- story: what_is_personal_budget
+  steps:
+  - intent: ask_what_is_personal_budget
+  - action: utter_what_is_personal_budget
+
+- story: how_to_start_saving
+  steps:
+  - intent: ask_how_to_start_saving
+  - action: utter_how_to_start_saving
+
+- story: what_is_investment
+  steps:
+  - intent: ask_what_is_investment
+  - action: utter_what_is_investment
+
+- story: what_is_compound_interest
+  steps:
+  - intent: ask_what_is_compound_interest
+  - action: utter_what_is_compound_interest
+
+- story: what_is_inflation_and_effect_on_savings
+  steps:
+  - intent: ask_what_is_inflation_and_effect_on_savings
+  - action: utter_what_is_inflation_and_effect_on_savings
+
+# Dinero y banca
+- story: what_is_money
+  steps:
+  - intent: ask_what_is_money
+  - action: utter_what_is_money
+
+- story: what_functions_money
+  steps:
+  - intent: ask_what_functions_money
+  - action: utter_what_functions_money
+
+- story: what_is_central_bank
+  steps:
+  - intent: ask_what_is_central_bank
+  - action: utter_what_is_central_bank
+
+- story: what_is_interest_rate
+  steps:
+  - intent: ask_what_is_interest_rate
+  - action: utter_what_is_interest_rate
+
+- story: what_are_cryptocurrencies
+  steps:
+  - intent: ask_what_are_cryptocurrencies
+  - action: utter_what_are_cryptocurrencies
+
+# Comercio internacional
+- story: what_is_international_trade
+  steps:
+  - intent: ask_what_is_international_trade
+  - action: utter_what_is_international_trade
+
+- story: what_are_exports_imports
+  steps:
+  - intent: ask_what_are_exports_imports
+  - action: utter_what_are_exports_imports
+
+- story: what_are_tariffs
+  steps:
+  - intent: ask_what_are_tariffs
+  - action: utter_what_are_tariffs
+
+- story: what_is_trade_balance
+  steps:
+  - intent: ask_what_is_trade_balance
+  - action: utter_what_is_trade_balance
+
+- story: what_is_economic_globalization
+  steps:
+  - intent: ask_what_is_economic_globalization
+  - action: utter_what_is_economic_globalization
+
+# Economía argentina
+- story: what_causes_inflation_argentina
+  steps:
+  - intent: ask_what_causes_inflation_argentina
+  - action: utter_what_causes_inflation_argentina
+
+- story: what_is_exchange_rate
+  steps:
+  - intent: ask_what_is_exchange_rate
+  - action: utter_what_is_exchange_rate
+
+- story: what_is_fiscal_deficit
+  steps:
+  - intent: ask_what_is_fiscal_deficit
+  - action: utter_what_is_fiscal_deficit
+
+- story: what_is_country_risk
+  steps:
+  - intent: ask_what_is_country_risk
+  - action: utter_what_is_country_risk
+
+- story: why_dollar_rises
+  steps:
+  - intent: ask_why_dollar_rises
+  - action: utter_why_dollar_rises
+
+# Economía conductual y moderna
+- story: what_is_behavioral_economics
+  steps:
+  - intent: ask_what_is_behavioral_economics
+  - action: utter_what_is_behavioral_economics
+
+- story: what_are_cognitive_biases
+  steps:
+  - intent: ask_what_are_cognitive_biases
+  - action: utter_what_are_cognitive_biases
+
+- story: what_is_nudge
+  steps:
+  - intent: ask_what_is_nudge
+  - action: utter_what_is_nudge
+
+# Instituciones y sistemas económicos
+- story: what_types_economic_systems
+  steps:
+  - intent: ask_what_types_economic_systems
+  - action: utter_what_types_economic_systems
+
+- story: what_is_capitalism
+  steps:
+  - intent: ask_what_is_capitalism
+  - action: utter_what_is_capitalism
+
+- story: what_is_socialism
+  steps:
+  - intent: ask_what_is_socialism
+  - action: utter_what_is_socialism
+
+- story: what_is_mixed_economy
+  steps:
+  - intent: ask_what_is_mixed_economy
+  - action: utter_what_is_mixed_economy
+
+# Impuestos y gasto público
+- story: what_are_taxes
+  steps:
+  - intent: ask_what_are_taxes
+  - action: utter_what_are_taxes
+
+- story: what_types_taxes
+  steps:
+  - intent: ask_what_types_taxes
+  - action: utter_what_types_taxes
+
+- story: what_is_public_spending
+  steps:
+  - intent: ask_what_is_public_spending
+  - action: utter_what_is_public_spending
+
+- story: what_is_public_debt
+  steps:
+  - intent: ask_what_is_public_debt
+  - action: utter_what_is_public_debt

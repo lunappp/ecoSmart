@@ -168,3 +168,405 @@ nlu:
     - consejos financieros
     - consejos de dinero
     - consejos economicos
+
+# Conceptos básicos de economía
+- intent: ask_what_is_economy
+  examples: |
+    - ¿Qué es la economía?
+    - qué es economia
+    - explica la economia
+    - dime qué es la economía
+    - what is economy
+
+- intent: ask_what_is_scarcity
+  examples: |
+    - ¿Qué es la escasez?
+    - qué es escasez
+    - explica la escasez
+    - dime qué es la escasez
+    - what is scarcity
+
+- intent: ask_what_are_goods_services
+  examples: |
+    - ¿Qué son los bienes y servicios?
+    - qué son bienes y servicios
+    - explica bienes y servicios
+    - dime qué son los bienes y servicios
+    - what are goods and services
+
+- intent: ask_what_is_opportunity_cost
+  examples: |
+    - ¿Qué es el costo de oportunidad?
+    - qué es costo de oportunidad
+    - explica el costo de oportunidad
+    - dime qué es el costo de oportunidad
+    - what is opportunity cost
+
+- intent: ask_what_is_supply_demand
+  examples: |
+    - ¿Qué es la oferta y la demanda?
+    - qué es oferta y demanda
+    - explica oferta y demanda
+    - dime qué es la oferta y la demanda
+    - what is supply and demand
+
+- intent: ask_what_is_market
+  examples: |
+    - ¿Qué es el mercado?
+    - qué es mercado
+    - explica el mercado
+    - dime qué es el mercado
+    - what is market
+
+# Microeconomía
+- intent: ask_what_studies_microeconomics
+  examples: |
+    - ¿Qué estudia la microeconomía?
+    - qué estudia microeconomia
+    - explica la microeconomía
+    - dime qué estudia la microeconomía
+    - what does microeconomics study
+
+- intent: ask_what_is_demand_elasticity
+  examples: |
+    - ¿Qué es la elasticidad de la demanda?
+    - qué es elasticidad de la demanda
+    - explica elasticidad de la demanda
+    - dime qué es la elasticidad de la demanda
+    - what is demand elasticity
+
+- intent: ask_what_is_monopoly
+  examples: |
+    - ¿Qué es un monopolio?
+    - qué es monopolio
+    - explica el monopolio
+    - dime qué es un monopolio
+    - what is monopoly
+
+- intent: ask_what_is_perfect_competition
+  examples: |
+    - ¿Qué es la competencia perfecta?
+    - qué es competencia perfecta
+    - explica la competencia perfecta
+    - dime qué es la competencia perfecta
+    - what is perfect competition
+
+- intent: ask_what_are_fixed_variable_costs
+  examples: |
+    - ¿Qué son los costos fijos y variables?
+    - qué son costos fijos y variables
+    - explica costos fijos y variables
+    - dime qué son los costos fijos y variables
+    - what are fixed and variable costs
+
+# Macroeconomía
+- intent: ask_what_studies_macroeconomics
+  examples: |
+    - ¿Qué estudia la macroeconomía?
+    - qué estudia macroeconomia
+    - explica la macroeconomía
+    - dime qué estudia la macroeconomía
+    - what does macroeconomics study
+
+- intent: ask_what_is_gdp
+  examples: |
+    - ¿Qué es el PIB?
+    - qué es PIB
+    - explica el PIB
+    - dime qué es el PIB
+    - what is GDP
+
+- intent: ask_what_is_inflation
+  examples: |
+    - ¿Qué es la inflación?
+    - qué es inflacion
+    - explica la inflación
+    - dime qué es la inflación
+    - what is inflation
+
+- intent: ask_what_is_deflation
+  examples: |
+    - ¿Qué es la deflación?
+    - qué es deflacion
+    - explica la deflación
+    - dime qué es la deflación
+    - what is deflation
+
+- intent: ask_what_is_unemployment
+  examples: |
+    - ¿Qué es el desempleo?
+    - qué es desempleo
+    - explica el desempleo
+    - dime qué es el desempleo
+    - what is unemployment
+
+- intent: ask_what_is_fiscal_policy
+  examples: |
+    - ¿Qué es la política fiscal?
+    - qué es politica fiscal
+    - explica la política fiscal
+    - dime qué es la política fiscal
+    - what is fiscal policy
+
+- intent: ask_what_is_monetary_policy
+  examples: |
+    - ¿Qué es la política monetaria?
+    - qué es politica monetaria
+    - explica la política monetaria
+    - dime qué es la política monetaria
+    - what is monetary policy
+
+# Finanzas personales
+- intent: ask_what_is_personal_budget
+  examples: |
+    - ¿Qué es un presupuesto personal?
+    - qué es presupuesto personal
+    - explica el presupuesto personal
+    - dime qué es un presupuesto personal
+    - what is personal budget
+
+- intent: ask_how_to_start_saving
+  examples: |
+    - ¿Cómo puedo empezar a ahorrar?
+    - como empezar a ahorrar
+    - consejos para empezar a ahorrar
+    - dime cómo ahorrar
+    - how to start saving
+
+- intent: ask_what_is_investment
+  examples: |
+    - ¿Qué es una inversión?
+    - qué es inversion
+    - explica la inversión
+    - dime qué es una inversión
+    - what is investment
+
+- intent: ask_what_is_compound_interest
+  examples: |
+    - ¿Qué es el interés compuesto?
+    - qué es interes compuesto
+    - explica el interés compuesto
+    - dime qué es el interés compuesto
+    - what is compound interest
+
+- intent: ask_what_is_inflation_and_effect_on_savings
+  examples: |
+    - ¿Qué es la inflación y cómo afecta mis ahorros?
+    - qué es inflacion y como afecta ahorros
+    - explica inflación y ahorros
+    - dime qué es la inflación y cómo afecta mis ahorros
+    - what is inflation and how it affects savings
+
+# Dinero y banca
+- intent: ask_what_is_money
+  examples: |
+    - ¿Qué es el dinero?
+    - qué es dinero
+    - explica el dinero
+    - dime qué es el dinero
+    - what is money
+
+- intent: ask_what_functions_money
+  examples: |
+    - ¿Qué funciones cumple el dinero?
+    - qué funciones cumple el dinero
+    - explica funciones del dinero
+    - dime qué funciones cumple el dinero
+    - what functions does money perform
+
+- intent: ask_what_is_central_bank
+  examples: |
+    - ¿Qué es un banco central?
+    - qué es banco central
+    - explica el banco central
+    - dime qué es un banco central
+    - what is central bank
+
+- intent: ask_what_is_interest_rate
+  examples: |
+    - ¿Qué es una tasa de interés?
+    - qué es tasa de interes
+    - explica la tasa de interés
+    - dime qué es una tasa de interés
+    - what is interest rate
+
+- intent: ask_what_are_cryptocurrencies
+  examples: |
+    - ¿Qué son las criptomonedas?
+    - qué son criptomonedas
+    - explica las criptomonedas
+    - dime qué son las criptomonedas
+    - what are cryptocurrencies
+
+# Comercio internacional
+- intent: ask_what_is_international_trade
+  examples: |
+    - ¿Qué es el comercio internacional?
+    - qué es comercio internacional
+    - explica el comercio internacional
+    - dime qué es el comercio internacional
+    - what is international trade
+
+- intent: ask_what_are_exports_imports
+  examples: |
+    - ¿Qué son las exportaciones e importaciones?
+    - qué son exportaciones e importaciones
+    - explica exportaciones e importaciones
+    - dime qué son las exportaciones e importaciones
+    - what are exports and imports
+
+- intent: ask_what_are_tariffs
+  examples: |
+    - ¿Qué son los aranceles?
+    - qué son aranceles
+    - explica los aranceles
+    - dime qué son los aranceles
+    - what are tariffs
+
+- intent: ask_what_is_trade_balance
+  examples: |
+    - ¿Qué es la balanza comercial?
+    - qué es balanza comercial
+    - explica la balanza comercial
+    - dime qué es la balanza comercial
+    - what is trade balance
+
+- intent: ask_what_is_economic_globalization
+  examples: |
+    - ¿Qué es la globalización económica?
+    - qué es globalizacion economica
+    - explica la globalización económica
+    - dime qué es la globalización económica
+    - what is economic globalization
+
+# Economía argentina
+- intent: ask_what_causes_inflation_argentina
+  examples: |
+    - ¿Qué causa la inflación en Argentina?
+    - qué causa inflacion en argentina
+    - explica causas de inflación en Argentina
+    - dime qué causa la inflación en Argentina
+    - what causes inflation in Argentina
+
+- intent: ask_what_is_exchange_rate
+  examples: |
+    - ¿Qué es el tipo de cambio?
+    - qué es tipo de cambio
+    - explica el tipo de cambio
+    - dime qué es el tipo de cambio
+    - what is exchange rate
+
+- intent: ask_what_is_fiscal_deficit
+  examples: |
+    - ¿Qué es el déficit fiscal?
+    - qué es deficit fiscal
+    - explica el déficit fiscal
+    - dime qué es el déficit fiscal
+    - what is fiscal deficit
+
+- intent: ask_what_is_country_risk
+  examples: |
+    - ¿Qué es el riesgo país?
+    - qué es riesgo pais
+    - explica el riesgo país
+    - dime qué es el riesgo país
+    - what is country risk
+
+- intent: ask_why_dollar_rises
+  examples: |
+    - ¿Por qué sube el dólar?
+    - por qué sube el dolar
+    - explica por qué sube el dólar
+    - dime por qué sube el dólar
+    - why does the dollar rise
+
+# Economía conductual y moderna
+- intent: ask_what_is_behavioral_economics
+  examples: |
+    - ¿Qué es la economía conductual?
+    - qué es economia conductual
+    - explica la economía conductual
+    - dime qué es la economía conductual
+    - what is behavioral economics
+
+- intent: ask_what_are_cognitive_biases
+  examples: |
+    - ¿Qué son los sesgos cognitivos?
+    - qué son sesgos cognitivos
+    - explica los sesgos cognitivos
+    - dime qué son los sesgos cognitivos
+    - what are cognitive biases
+
+- intent: ask_what_is_nudge
+  examples: |
+    - ¿Qué es el "nudge" o empujón?
+    - qué es nudge
+    - explica el nudge
+    - dime qué es el nudge
+    - what is nudge
+
+# Instituciones y sistemas económicos
+- intent: ask_what_types_economic_systems
+  examples: |
+    - ¿Qué tipos de sistemas económicos existen?
+    - qué tipos de sistemas economicos existen
+    - explica sistemas económicos
+    - dime qué tipos de sistemas económicos existen
+    - what types of economic systems exist
+
+- intent: ask_what_is_capitalism
+  examples: |
+    - ¿Qué es el capitalismo?
+    - qué es capitalismo
+    - explica el capitalismo
+    - dime qué es el capitalismo
+    - what is capitalism
+
+- intent: ask_what_is_socialism
+  examples: |
+    - ¿Qué es el socialismo?
+    - qué es socialismo
+    - explica el socialismo
+    - dime qué es el socialismo
+    - what is socialism
+
+- intent: ask_what_is_mixed_economy
+  examples: |
+    - ¿Qué es una economía mixta?
+    - qué es economia mixta
+    - explica la economía mixta
+    - dime qué es una economía mixta
+    - what is mixed economy
+
+# Impuestos y gasto público
+- intent: ask_what_are_taxes
+  examples: |
+    - ¿Qué son los impuestos?
+    - qué son impuestos
+    - explica los impuestos
+    - dime qué son los impuestos
+    - what are taxes
+
+- intent: ask_what_types_taxes
+  examples: |
+    - ¿Qué tipos de impuestos existen?
+    - qué tipos de impuestos existen
+    - explica tipos de impuestos
+    - dime qué tipos de impuestos existen
+    - what types of taxes exist
+
+- intent: ask_what_is_public_spending
+  examples: |
+    - ¿Qué es el gasto público?
+    - qué es gasto publico
+    - explica el gasto público
+    - dime qué es el gasto público
+    - what is public spending
+
+- intent: ask_what_is_public_debt
+  examples: |
+    - ¿Qué es la deuda pública?
+    - qué es deuda publica
+    - explica la deuda pública
+    - dime qué es la deuda pública
+    - what is public debt

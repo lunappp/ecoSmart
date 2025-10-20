@@ -16,6 +16,55 @@ intents:
   - ask_income
   - ask_goals
   - ask_tips
+  - ask_what_is_economy
+  - ask_what_is_scarcity
+  - ask_what_are_goods_services
+  - ask_what_is_opportunity_cost
+  - ask_what_is_supply_demand
+  - ask_what_is_market
+  - ask_what_studies_microeconomics
+  - ask_what_is_demand_elasticity
+  - ask_what_is_monopoly
+  - ask_what_is_perfect_competition
+  - ask_what_are_fixed_variable_costs
+  - ask_what_studies_macroeconomics
+  - ask_what_is_gdp
+  - ask_what_is_inflation
+  - ask_what_is_deflation
+  - ask_what_is_unemployment
+  - ask_what_is_fiscal_policy
+  - ask_what_is_monetary_policy
+  - ask_what_is_personal_budget
+  - ask_how_to_start_saving
+  - ask_what_is_investment
+  - ask_what_is_compound_interest
+  - ask_what_is_inflation_and_effect_on_savings
+  - ask_what_is_money
+  - ask_what_functions_money
+  - ask_what_is_central_bank
+  - ask_what_is_interest_rate
+  - ask_what_are_cryptocurrencies
+  - ask_what_is_international_trade
+  - ask_what_are_exports_imports
+  - ask_what_are_tariffs
+  - ask_what_is_trade_balance
+  - ask_what_is_economic_globalization
+  - ask_what_causes_inflation_argentina
+  - ask_what_is_exchange_rate
+  - ask_what_is_fiscal_deficit
+  - ask_what_is_country_risk
+  - ask_why_dollar_rises
+  - ask_what_is_behavioral_economics
+  - ask_what_are_cognitive_biases
+  - ask_what_is_nudge
+  - ask_what_types_economic_systems
+  - ask_what_is_capitalism
+  - ask_what_is_socialism
+  - ask_what_is_mixed_economy
+  - ask_what_are_taxes
+  - ask_what_types_taxes
+  - ask_what_is_public_spending
+  - ask_what_is_public_debt
 
 entities:
   - plan_id
@@ -64,6 +113,163 @@ responses:
   utter_general_tips:
   - text: "Consejo general: Vive por debajo de tus posibilidades y construye riqueza gradualmente."
 
+  # Conceptos básicos de economía
+  utter_what_is_economy:
+  - text: "La economía es la ciencia que estudia cómo las personas, empresas y gobiernos utilizan los recursos limitados para satisfacer necesidades ilimitadas."
+
+  utter_what_is_scarcity:
+  - text: "Es la situación en la que los recursos disponibles son insuficientes para cubrir todas las necesidades humanas."
+
+  utter_what_are_goods_services:
+  - text: "Los bienes son objetos materiales que satisfacen necesidades (como ropa o comida), y los servicios son actividades que también lo hacen (como transporte o educación)."
+
+  utter_what_is_opportunity_cost:
+  - text: "Es el valor de la mejor alternativa que se pierde cuando se elige una opción."
+
+  utter_what_is_supply_demand:
+  - text: "La oferta representa la cantidad de bienes que los productores están dispuestos a vender, y la demanda, la cantidad que los consumidores desean comprar."
+
+  utter_what_is_market:
+  - text: "Es el lugar físico o virtual donde se intercambian bienes y servicios entre compradores y vendedores."
+
+  # Microeconomía
+  utter_what_studies_microeconomics:
+  - text: "Analiza el comportamiento individual de consumidores, empresas y mercados específicos."
+
+  utter_what_is_demand_elasticity:
+  - text: "Es la medida de cómo cambia la cantidad demandada de un bien ante un cambio en su precio."
+
+  utter_what_is_monopoly:
+  - text: "Es una situación donde una sola empresa domina la oferta de un producto o servicio sin competencia."
+
+  utter_what_is_perfect_competition:
+  - text: "Es un mercado donde hay muchos compradores y vendedores, productos idénticos y libre entrada o salida de empresas."
+
+  utter_what_are_fixed_variable_costs:
+  - text: "Los costos fijos no cambian con la producción (como el alquiler), y los variables sí cambian (como materias primas)."
+
+  # Macroeconomía
+  utter_what_studies_macroeconomics:
+  - text: "Analiza la economía en su conjunto: crecimiento, inflación, desempleo, política fiscal y monetaria."
+
+  utter_what_is_gdp:
+  - text: "El Producto Interno Bruto mide el valor total de bienes y servicios finales producidos en un país durante un período."
+
+  utter_what_is_inflation:
+  - text: "Es el aumento sostenido y generalizado de los precios de bienes y servicios en una economía."
+
+  utter_what_is_deflation:
+  - text: "Es la disminución general de los precios en una economía."
+
+  utter_what_is_unemployment:
+  - text: "Es la situación en la que personas que buscan trabajo activamente no consiguen empleo."
+
+  utter_what_is_fiscal_policy:
+  - text: "Es el uso del gasto público y los impuestos por parte del gobierno para influir en la economía."
+
+  utter_what_is_monetary_policy:
+  - text: "Es la regulación de la cantidad de dinero y las tasas de interés, generalmente a cargo del banco central."
+
+  # Finanzas personales
+  utter_what_is_personal_budget:
+  - text: "Es una herramienta que permite planificar ingresos y gastos para mantener un equilibrio financiero."
+
+  utter_how_to_start_saving:
+  - text: "Establecé metas claras, registrá tus gastos, eliminá los innecesarios y destiná un porcentaje fijo de tus ingresos al ahorro."
+
+  utter_what_is_investment:
+  - text: "Es el uso de dinero para adquirir activos que puedan generar ganancias futuras."
+
+  utter_what_is_compound_interest:
+  - text: "Es el interés que se calcula sobre el capital inicial más los intereses acumulados anteriormente."
+
+  utter_what_is_inflation_and_effect_on_savings:
+  - text: "La inflación reduce el poder adquisitivo del dinero, por lo que tus ahorros valen menos con el tiempo si no se invierten."
+
+  # Dinero y banca
+  utter_what_is_money:
+  - text: "Es un medio de intercambio aceptado para comprar bienes y servicios y pagar deudas."
+
+  utter_what_functions_money:
+  - text: "Sirve como medio de intercambio, unidad de cuenta y reserva de valor."
+
+  utter_what_is_central_bank:
+  - text: "Es la institución encargada de emitir moneda, controlar la inflación y regular el sistema financiero."
+
+  utter_what_is_interest_rate:
+  - text: "Es el costo del dinero, expresado como porcentaje del monto prestado o invertido."
+
+  utter_what_are_cryptocurrencies:
+  - text: "Son monedas digitales descentralizadas que usan criptografía para asegurar transacciones, como Bitcoin o Ethereum."
+
+  # Comercio internacional
+  utter_what_is_international_trade:
+  - text: "Es el intercambio de bienes y servicios entre países."
+
+  utter_what_are_exports_imports:
+  - text: "Exportar es vender productos al extranjero, e importar es comprarlos desde otro país."
+
+  utter_what_are_tariffs:
+  - text: "Son impuestos aplicados a productos importados para proteger la producción nacional."
+
+  utter_what_is_trade_balance:
+  - text: "Es la diferencia entre el valor de las exportaciones y las importaciones de un país."
+
+  utter_what_is_economic_globalization:
+  - text: "Es la creciente interconexión de las economías del mundo mediante el comercio, la inversión y la tecnología."
+
+  # Economía argentina
+  utter_what_causes_inflation_argentina:
+  - text: "Factores como el exceso de emisión monetaria, déficit fiscal, aumento de costos y expectativas inflacionarias."
+
+  utter_what_is_exchange_rate:
+  - text: "Es el valor de una moneda nacional en relación con otra, por ejemplo, cuántos pesos cuesta un dólar."
+
+  utter_what_is_fiscal_deficit:
+  - text: "Es cuando los gastos del Estado superan sus ingresos."
+
+  utter_what_is_country_risk:
+  - text: "Es un indicador que mide la probabilidad de que un país no cumpla con sus obligaciones financieras."
+
+  utter_why_dollar_rises:
+  - text: "Puede deberse a mayor demanda de dólares, inestabilidad económica o pérdida de confianza en la moneda local."
+
+  # Economía conductual y moderna
+  utter_what_is_behavioral_economics:
+  - text: "Es una rama que estudia cómo las emociones y la psicología influyen en las decisiones económicas."
+
+  utter_what_are_cognitive_biases:
+  - text: "Son errores sistemáticos en la toma de decisiones, como el exceso de confianza o el miedo a perder."
+
+  utter_what_is_nudge:
+  - text: "Es una estrategia que modifica el entorno para influir en las decisiones sin imponer reglas."
+
+  # Instituciones y sistemas económicos
+  utter_what_types_economic_systems:
+  - text: "Capitalismo, socialismo, comunismo y economías mixtas."
+
+  utter_what_is_capitalism:
+  - text: "Sistema donde los medios de producción son privados y las decisiones se toman a través del mercado."
+
+  utter_what_is_socialism:
+  - text: "Sistema donde el Estado controla o regula los medios de producción para garantizar igualdad."
+
+  utter_what_is_mixed_economy:
+  - text: "Es una combinación de mercado libre y control estatal."
+
+  # Impuestos y gasto público
+  utter_what_are_taxes:
+  - text: "Son aportes obligatorios que los ciudadanos pagan al Estado para financiar servicios públicos."
+
+  utter_what_types_taxes:
+  - text: "Directos (como el impuesto a la renta) e indirectos (como el IVA)."
+
+  utter_what_is_public_spending:
+  - text: "Es el dinero que el Estado usa para proveer servicios como educación, salud y seguridad."
+
+  utter_what_is_public_debt:
+  - text: "Es el dinero que el Estado debe a acreedores nacionales o extranjeros."
+
 actions:
   - utter_greet
   - utter_cheer_up
@@ -79,6 +285,55 @@ actions:
   - utter_income_optimization
   - utter_goal_setting
   - utter_general_tips
+  - utter_what_is_economy
+  - utter_what_is_scarcity
+  - utter_what_are_goods_services
+  - utter_what_is_opportunity_cost
+  - utter_what_is_supply_demand
+  - utter_what_is_market
+  - utter_what_studies_microeconomics
+  - utter_what_is_demand_elasticity
+  - utter_what_is_monopoly
+  - utter_what_is_perfect_competition
+  - utter_what_are_fixed_variable_costs
+  - utter_what_studies_macroeconomics
+  - utter_what_is_gdp
+  - utter_what_is_inflation
+  - utter_what_is_deflation
+  - utter_what_is_unemployment
+  - utter_what_is_fiscal_policy
+  - utter_what_is_monetary_policy
+  - utter_what_is_personal_budget
+  - utter_how_to_start_saving
+  - utter_what_is_investment
+  - utter_what_is_compound_interest
+  - utter_what_is_inflation_and_effect_on_savings
+  - utter_what_is_money
+  - utter_what_functions_money
+  - utter_what_is_central_bank
+  - utter_what_is_interest_rate
+  - utter_what_are_cryptocurrencies
+  - utter_what_is_international_trade
+  - utter_what_are_exports_imports
+  - utter_what_are_tariffs
+  - utter_what_is_trade_balance
+  - utter_what_is_economic_globalization
+  - utter_what_causes_inflation_argentina
+  - utter_what_is_exchange_rate
+  - utter_what_is_fiscal_deficit
+  - utter_what_is_country_risk
+  - utter_why_dollar_rises
+  - utter_what_is_behavioral_economics
+  - utter_what_are_cognitive_biases
+  - utter_what_is_nudge
+  - utter_what_types_economic_systems
+  - utter_what_is_capitalism
+  - utter_what_is_socialism
+  - utter_what_is_mixed_economy
+  - utter_what_are_taxes
+  - utter_what_types_taxes
+  - utter_what_is_public_spending
+  - utter_what_is_public_debt
   - action_get_plan_data
   - action_give_budget_advice
   - action_analyze_expenses

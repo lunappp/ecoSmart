@@ -6,38 +6,118 @@
     <title>Chatbot EcoSmart{% if plan_id %} - Plan {{ plan_id }}{% endif %}</title>
     {% load static %}
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .chat-bubble-user {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 18px 18px 4px 18px;
+            padding: 12px 16px;
+            margin: 8px 0;
+            max-width: 70%;
+            margin-left: auto;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .chat-bubble-bot {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border-radius: 18px 18px 18px 4px;
+            padding: 12px 16px;
+            margin: 8px 0;
+            max-width: 70%;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .chat-container {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .chat-window {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+        .message-input {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 25px;
+            padding: 12px 20px;
+            color: #333;
+        }
+        .send-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 25px;
+            padding: 12px 24px;
+            color: white;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        .send-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .back-button {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            border: none;
+            border-radius: 25px;
+            padding: 12px 24px;
+            color: white;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+    </style>
 </head>
-<body class="bg-gray-100">
-    <div class="container mx-auto p-4">
-        <h1 class="text-2xl font-bold mb-4">
-            {% if plan_id %}
-                🤖 Asistente IA del Plan
-            {% else %}
-                Chatbot EcoSmart
-            {% endif %}
-        </h1>
-        <div id="chat-window" class="border border-gray-300 rounded p-4 h-96 overflow-y-auto mb-4 bg-white">
-            {% for message in messages %}
-            <div class="mb-2">
-                <strong>Tú:</strong> {{ message.user_message }}
-            </div>
-            <div class="mb-2">
-                <strong>Bot:</strong> {{ message.bot_response }}
-            </div>
-            {% endfor %}
+<body class="chat-container">
+    <div class="container mx-auto max-w-4xl">
+        <div class="text-center mb-6">
+            <h1 class="text-3xl font-bold text-white mb-2">
+                {% if plan_id %}
+                    💬 Asistente Financiero Personal
+                {% else %}
+                    🤖 Chatbot EcoSmart
+                {% endif %}
+            </h1>
+            <p class="text-white/80">Tu compañero de finanzas inteligente</p>
         </div>
+
+        <div class="chat-window p-6 mb-6">
+            <div id="chat-window" class="h-96 overflow-y-auto space-y-4">
+                {% for message in messages %}
+                <div class="chat-bubble-user">
+                    <strong class="opacity-90">Tú:</strong><br>
+                    {{ message.user_message }}
+                </div>
+                <div class="chat-bubble-bot">
+                    <strong class="opacity-90">🤖 EcoSmart:</strong><br>
+                    {{ message.bot_response|linebreaksbr }}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
         <form id="chat-form" method="post" action="{% if plan_id %}{% url 'send_message_plan' plan_id=plan_id %}{% else %}{% url 'send_message' %}{% endif %}">
             {% csrf_token %}
-            <div class="flex">
-                <input type="text" id="message-input" name="message" class="flex-1 border border-gray-300 rounded-l px-4 py-2" placeholder="Escribe tu mensaje..." required>
-                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-r">Enviar</button>
+            <div class="flex gap-3">
+                <input type="text" id="message-input" name="message" class="message-input flex-1" placeholder="¿Qué quieres saber sobre tus finanzas? 💭" required>
+                <button type="submit" class="send-button">Enviar 🚀</button>
             </div>
         </form>
-        {% if plan_id %}
-            <a href="{% url 'Menu_plan' plan_id=plan_id %}" class="mt-4 inline-block bg-gray-500 text-white px-4 py-2 rounded">← Volver al Plan</a>
-        {% else %}
-            <a href="{% url 'Dashboard' %}" class="mt-4 inline-block bg-gray-500 text-white px-4 py-2 rounded">Volver al Dashboard</a>
-        {% endif %}
+
+        <div class="text-center mt-6">
+            {% if plan_id %}
+                <a href="{% url 'Menu_plan' plan_id=plan_id %}" class="back-button">← Volver al Plan</a>
+            {% else %}
+                <a href="{% url 'Dashboard' %}" class="back-button">Volver al Dashboard</a>
+            {% endif %}
+        </div>
     </div>
 
     <script>
@@ -56,12 +136,24 @@
         .then(data => {
             if (data.response) {
                 const chatWindow = document.getElementById('chat-window');
-                chatWindow.innerHTML += '<div class="mb-2"><strong>Tú:</strong> ' + message + '</div>';
-                chatWindow.innerHTML += '<div class="mb-2"><strong>Bot:</strong> ' + data.response + '</div>';
+                chatWindow.innerHTML += '<div class="chat-bubble-user"><strong class="opacity-90">Tú:</strong><br>' + message + '</div>';
+                chatWindow.innerHTML += '<div class="chat-bubble-bot"><strong class="opacity-90">🤖 EcoSmart:</strong><br>' + data.response.replace(/\n/g, '<br>') + '</div>';
                 document.getElementById('message-input').value = '';
                 chatWindow.scrollTop = chatWindow.scrollHeight;
             }
         });
+    });
+
+    // Auto-scroll to bottom when new messages arrive
+    const chatWindow = document.getElementById('chat-window');
+    chatWindow.scrollTop = chatWindow.scrollHeight;
+
+    // Add typing animation effect
+    document.getElementById('message-input').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            document.getElementById('chat-form').dispatchEvent(new Event('submit'));
+        }
     });
     </script>
 </body>
