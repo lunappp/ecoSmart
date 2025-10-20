@@ -23,7 +23,7 @@ def verificar_membresia(request, plan_id):
 
 @login_required
 def menu_plan(request, plan_id):
-    """Muestra el menú principal del plan y realiza la verificación de membresía."""
+    """Redirige directamente a las estadísticas del plan."""
     try:
         plan, es_miembro = verificar_membresia(request, plan_id)
     except:
@@ -34,50 +34,8 @@ def menu_plan(request, plan_id):
         messages.error(request, 'No tienes acceso a este plan.')
         return redirect('Dashboard')
 
-    # Determinar si el usuario es admin
-    es_admin = (plan.creador == request.user or
-                Suscripcion.objects.filter(plan=plan, usuario=request.user, rol='admin').exists())
-
-    if request.method == 'POST' and es_admin:
-        if 'user_id' in request.POST:
-            # Handle invitation
-            user_id = request.POST.get('user_id')
-            user = get_object_or_404(User, pk=user_id)
-            if Suscripcion.objects.filter(plan=plan, usuario=user).exists():
-                messages.error(request, 'El usuario ya es miembro del plan.')
-            else:
-                existing = Invitacion.objects.filter(plan=plan, invitado=user).first()
-                if existing:
-                    if existing.estado == 'pendiente':
-                        messages.error(request, 'Ya existe una invitación pendiente para este usuario.')
-                    else:
-                        existing.estado = 'pendiente'
-                        existing.invitador = request.user
-                        existing.fecha_invitacion = timezone.now()
-                        existing.save()
-                        messages.success(request, f'Invitación reenviada a {user.username}.')
-                else:
-                    Invitacion.objects.create(plan=plan, invitado=user, invitador=request.user)
-                    messages.success(request, f'Invitación enviada a {user.username}.')
-        elif 'suscripcion_id' in request.POST:
-            # Handle member deletion
-            suscripcion_id = request.POST.get('suscripcion_id')
-            suscripcion = get_object_or_404(Suscripcion, pk=suscripcion_id, plan=plan)
-            if suscripcion.usuario != request.user:
-                username = suscripcion.usuario.username
-                suscripcion.delete()
-                messages.success(request, f'Miembro {username} eliminado del plan.')
-            else:
-                messages.error(request, 'No puedes eliminarte a ti mismo.')
-
-    dinero_info, created = Dinero.objects.get_or_create(plan=plan)
-
-    context = {
-        'plan': plan,
-        'dinero_info': dinero_info,
-        'es_admin': es_admin,
-    }
-    return render(request, 'menu_plan.html', context)
+    # Redirigir directamente a estadísticas
+    return redirect('estadisticas', plan_id=plan.id)
 
 
 @login_required
@@ -504,7 +462,7 @@ def estadisticas(request, plan_id):
     plan, es_miembro = verificar_membresia(request, plan_id)
     if not es_miembro: return redirect('dashboard')
 
-    dinero_obj = get_object_or_404(Dinero, plan=plan)
+    dinero_obj, created = Dinero.objects.get_or_create(plan=plan, defaults={'total_dinero': 0, 'gasto_total': 0, 'ingreso_total': 0})
 
     ingresos_por_tipo = Ingreso.objects.filter(dinero=dinero_obj).values('tipo_ingreso').annotate(total=Sum('cantidad'))
     gastos_por_tipo = Gasto.objects.filter(dinero=dinero_obj).values('tipo_gasto').annotate(total=Sum('cantidad'))
