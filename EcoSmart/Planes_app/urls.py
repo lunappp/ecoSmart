@@ -17,6 +17,7 @@ urlpatterns = [
     path('<int:plan_id>/estadisticas/', views.estadisticas, name='estadisticas'),
     path('<int:plan_id>/historiales/', views.historiales, name='historiales'),
     path('<int:plan_id>/historiales/pdf/', views.descargar_pdf_graficos, name='descargar_pdf_graficos'),
+    path('<int:plan_id>/historiales/pdf/<str:tipo>/', views.descargar_pdf_historial, name='descargar_pdf_historial'),
 
     path('<int:plan_id>/objetivos/', views.objetivos, name='objetivos'),
     path('<int:plan_id>/objetivos/agregar/', views.agregar_objetivo, name='agregar_objetivo'),
