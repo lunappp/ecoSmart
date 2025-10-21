@@ -85,19 +85,19 @@ function initializeChatbot() {
   // Abrir/cerrar chat
   toggle.addEventListener("click", (e) => {
     e.stopPropagation();
-    chat.classList.toggle("hidden");
+    chat.classList.toggle("active");
     if (notification) notification.style.display = "none";
   });
 
   close?.addEventListener("click", (e) => {
     e.preventDefault();
     e.stopPropagation();
-    chat.classList.add("hidden");
+    chat.classList.remove("active");
   });
 
   document.addEventListener("click", (e) => {
     if (!toggle.contains(e.target) && !chat.contains(e.target))
-      chat.classList.add("hidden");
+      chat.classList.remove("active");
   });
 
   // Enviar mensaje

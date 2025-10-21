@@ -22,8 +22,11 @@
         <h1 class="header-logo">EcoSmart</h1>
       </div>
       <div class="header-right">
-        <nav class="header-nav">
-        </nav>
+        <div class="user-menu-container">
+          <button class="user-menu-btn">
+            <i class="fas fa-user-circle"></i>
+          </button>
+          <div class="user-dropdown">
             <a href="{% url 'edit_profile' %}" class="dropdown-item">
               <span class="dropdown-icon">👤</span>
               Editar Perfil
@@ -99,7 +102,7 @@
       <span class="chatbot-badge" id="chatbot-notification">?</span>
     </button>
 
-    <div id="chatbot-chat" class="chatbot-chat hidden">
+    <div id="chatbot-chat" class="chatbot-chat">
       <div class="chatbot-header">
         <div class="chatbot-header-info">
           <div class="chatbot-avatar">🤖</div>
