@@ -7,26 +7,34 @@
     <link rel="stylesheet" href="{% static 'planes/crear_plan.css' %}">
 </head>
 <body>
+
+    <!-- Botón Volver fuera del contenedor -->
+    <a href="{% url 'Dashboard' %}" class="btn-volver">← Volver</a>
+
     <div class="crear-plan-container">
-        <h1>Crear Nuevo Plan</h1>
+        <h1>Crear Plan</h1>
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
 
             {% for field in form %}
                 {% if field.name != 'imagen' %}
-                <div class="field-wrapper">
-                    <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ field.label }}</label>
-                    {{ field }}
-                    {% if field.errors %}
-                        <p class="text-red-500 text-xs mt-1">{{ field.errors }}</p>
-                    {% endif %}
-                </div>
+                    <div class="field-wrapper">
+                        <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                            {{ field.label }}
+                        </label>
+                        {{ field }}
+                        {% if field.errors %}
+                            <p class="text-red-500 text-xs mt-1">{{ field.errors }}</p>
+                        {% endif %}
+                    </div>
                 {% endif %}
             {% endfor %}
 
             <!-- Campo de imagen separado -->
             <div class="field-wrapper">
-                <label for="{{ form.imagen.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ form.imagen.label }}</label>
+                <label for="{{ form.imagen.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                    {{ form.imagen.label }}
+                </label>
                 {{ form.imagen }}
                 {% if form.imagen.errors %}
                     <p class="text-red-500 text-xs mt-1">{{ form.imagen.errors }}</p>
@@ -35,8 +43,7 @@
 
             <button type="submit" class="btn-crear">Crear Plan</button>
         </form>
-        <a href="{% url 'Dashboard' %}" class="btn-volver">← Volver al Dashboard</a>
-
     </div>
+
 </body>
 </html>
