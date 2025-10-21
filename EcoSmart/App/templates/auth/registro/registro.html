@@ -10,7 +10,7 @@
 </head>
 <body>
   <main class="registro">
-    <h2>Registro</h2>
+    <h2>Registrate</h2>
     <form method="POST" enctype="multipart/form-data">
       {% csrf_token %}
       {% for campo in registerForm %}
@@ -28,7 +28,7 @@
     </form>
 
     <p class="redirect">
-      ¿Ya tienes cuenta? <a href="http://127.0.0.1:8000/Login/">Inicia sesión acá</a>
+      ¿Ya tienes cuenta? <a href="http://127.0.0.1:8000/Login/">Inicia sesión</a>
     </p>
   </main>
 </body>

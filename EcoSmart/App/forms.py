@@ -5,7 +5,6 @@ from .models import Profile, Plan
 
 class RegisterForm(UserCreationForm):
     email = forms.EmailField(required=True)
-    profile_picture = forms.ImageField(required=False)
 
     class Meta:
         model = User
