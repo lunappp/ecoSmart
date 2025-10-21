@@ -42,7 +42,7 @@ urlpatterns = [
     #----------------- menu principal -----------------#
     path('Inicio/',App.views.Inicio, name= 'Inicio'),
     path('transacciones/',App.views.transacciones, name= 'transacciones'),
-    #path('Estadisticas/',App.views.Estadisticas, name= 'Estadisticas'),
+    path('Estadisticas/',App.views.Estadisticas, name= 'Estadisticas'),
     
     #----------------------planes-----------------------#
     path('planes/', include('Planes_app.urls')),

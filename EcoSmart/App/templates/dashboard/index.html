@@ -20,6 +20,24 @@
         main.classList.toggle('sidebar-collapsed');
       });
 
+      // User dropdown toggle
+      const userMenuBtn = document.querySelector('.user-menu-btn');
+      const userDropdown = document.querySelector('.user-dropdown');
+
+      if (userMenuBtn && userDropdown) {
+        userMenuBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          userDropdown.classList.toggle('active');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+          if (!userMenuBtn.contains(e.target) && !userDropdown.contains(e.target)) {
+            userDropdown.classList.remove('active');
+          }
+        });
+      }
+
       // Menu item active state
       const menuItems = document.querySelectorAll('.menu-item');
       const currentPath = window.location.pathname;
@@ -180,6 +198,7 @@
       <a href="#" class="menu-item active"><i>🏠</i><span>Inicio</span></a>
       <a href="#planes" class="menu-item"><i>📦</i><span>Mis Planes</span></a>
       <a href="{% url 'crear_plan' %}" class="menu-item"><i>➕</i><span>Crear Plan</span></a>
+      <a href="{% url 'Estadisticas' %}" class="menu-item"><i>📊</i><span>Estadísticas</span></a>
       <a href="#invitaciones" class="menu-item"><i>✉️</i><span>Invitaciones</span></a>
       <a href="#configuracion" class="menu-item"><i>⚙️</i><span>Configuración</span></a>
     </nav>
@@ -190,15 +209,28 @@
   <main>
     <div class="header">
       <div class="user-info">
-        {% if request.user.profile.profile_picture %}
-          <img src="{{ request.user.profile.profile_picture.url }}" alt="Foto de {{ request.user.username }}" class="user-avatar">
-        {% else %}
-          <div class="user-avatar">{{ request.user.username|first|upper }}</div>
-        {% endif %}
-        <form method="post" action="{% url 'logout' %}" style="display: inline;">
-          {% csrf_token %}
-          <button type="submit" class="btn-logout">Cerrar Sesión</button>
-        </form>
+        <div class="user-menu">
+          <button class="user-menu-btn">
+            {% if request.user.profile.profile_picture %}
+              <img src="{{ request.user.profile.profile_picture.url }}" alt="Foto de {{ request.user.username }}" class="user-avatar">
+            {% else %}
+              <div class="user-avatar">{{ request.user.username|first|upper }}</div>
+            {% endif %}
+          </button>
+          <div class="user-dropdown">
+            <a href="{% url 'edit_profile' %}" class="dropdown-item">
+              <span class="dropdown-icon">👤</span>
+              Editar Perfil
+            </a>
+            <form method="post" action="{% url 'logout' %}">
+              {% csrf_token %}
+              <button type="submit" class="dropdown-item">
+                <span class="dropdown-icon">🚪</span>
+                Cerrar Sesión
+              </button>
+            </form>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -208,7 +240,7 @@
         <div class="welcome-left">
           <div class="welcome-text">
             <h2>¡Hola, {{ request.user.username }}!</h2>
-            <p>Bienvenido de vuelta. <a href="{% url 'edit_profile' %}" style="color: var(--primary);">Editar perfil</a></p>
+            <p>Bienvenido de vuelta. </p>
           </div>
           <div class="card">
             <p>Comienza un plan financiero para organizar tus finanzas.</p>
@@ -249,18 +281,7 @@
 
    
 
-    <!-- Configuración -->
-<h3 class="section-title" id="configuracion">Configuración</h3>
-<section class="config-section" style="background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);padding:2rem;margin-bottom:2rem;">
- <h4 style="color:var(--primary-dark);margin-bottom:1rem;">Opciones de Cuenta</h4>
- <div style="display:flex;gap:1rem;flex-wrap:wrap;">
-   <a href="{% url 'edit_profile' %}" style="background:var(--primary);color:white;padding:0.75rem 1.5rem;border-radius:var(--radius);text-decoration:none;transition:var(--transition);">
-     Editar Perfil
-   </a>
-   <a href="#" style="background:var(--secondary);color:white;padding:0.75rem 1.5rem;border-radius:var(--radius);text-decoration:none;transition:var(--transition);">
-     Cambiar Contraseña
-   </a>
- </div>
+
 
 
 </section>
