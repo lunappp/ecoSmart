@@ -56,18 +56,21 @@ def get_ai_response(message, plan, user):
         - Si no tienes suficiente información, pide más detalles
         - Sé amable y profesional
         - Responde en español ya que el usuario está en Argentina
+        - Mantén las respuestas concisas y directas, sin texto innecesario
+        - Limita las respuestas a 2-3 párrafos máximo
+        - Evita explicaciones largas, ve al grano
 
         Si el usuario pregunta sobre sus finanzas específicas, usa los datos del plan para dar consejos relevantes."""
 
         # Create chat completion
         response = client.chat.complete(
-            model="mistral-large-latest",
+            model="open-mistral-7b",
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": message}
             ],
             temperature=0.7,
-            max_tokens=1000
+            max_tokens=300
         )
 
         return response.choices[0].message.content

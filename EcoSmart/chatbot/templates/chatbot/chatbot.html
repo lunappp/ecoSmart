@@ -1,39 +1,230 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chatbot EcoSmart - {{ plan.nombre }}</title>
-    {% load static %}
+    <title>Chatbot IA - {{ plan.nombre }}</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>">
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --primary: #a855f7;
+            --primary-light: #c084fc;
+            --primary-dark: #9333ea;
+            --secondary: #8b5cf6;
+            --success: #a78bfa;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --background: #faf5ff;
+            --surface: #ffffff;
+            --text: #581c87;
+            --text-light: #6b7280;
+            --border: #e5e7eb;
+            --radius: 12px;
+            --shadow: 0 4px 12px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 20px rgba(0,0,0,0.15);
+            --transition: 0.3s;
+        }
+
+        *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI', system-ui,sans-serif;}
+
+        body{display:flex;min-height:100vh;background:var(--background);color:var(--text);}
+
+        /* ===== SIDEBAR ===== */
+        .sidebar{
+          width:260px;
+          background:var(--surface);
+          box-shadow:var(--shadow);
+          display:flex;
+          flex-direction:column;
+          position:fixed;
+          height:100vh;
+          transition:width var(--transition);
+        }
+        .sidebar.collapsed{width:80px;}
+        .sidebar-header{display:flex;align-items:center;justify-content:space-between;padding:1rem;border-bottom:1px solid var(--border);}
+        .logo{display:flex;align-items:center;gap:0.75rem;}
+        .logo-icon{width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,var(--primary),var(--primary-light));display:flex;align-items:center;justify-content:center;color:white;font-weight:bold;}
+        .logo-text{font-size:1.4rem;font-weight:700;transition:opacity var(--transition);}
+        .sidebar.collapsed .logo-text{opacity:0;pointer-events:none;}
+        .toggle-btn{background:none;border:none;font-size:1.4rem;cursor:pointer;color:var(--text);}
+        .menu{flex:1;padding:1rem 0;}
+        .menu-item{display:flex;align-items:center;gap:1rem;padding:0.75rem 1.5rem;color:var(--text-light);text-decoration:none;transition:all var(--transition);font-weight:500;border-radius:var(--radius);}
+        .menu-item:hover{background:var(--primary-light);color:white;}
+        .menu-item.active{background:var(--primary);color:white;}
+        .menu-item i{min-width:24px;text-align:center;}
+        .sidebar.collapsed .menu-item span{display:none;}
+        .sidebar-footer{padding:1rem;border-top:1px solid var(--border);text-align:center;font-size:0.85rem;color:var(--text-light);}
+
+        /* ===== MAIN ===== */
+        main{flex:1;margin-left:260px;padding:2rem;transition:margin-left var(--transition);}
+        .sidebar.collapsed + main{margin-left:80px;}
+        .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;}
+        .header h1{font-size:1.8rem;color:var(--text);}
+        .user-info{display:flex;align-items:center;gap:1rem;}
+        .user-avatar{width:40px;height:40px;border-radius:50%;background:var(--primary);color:white;display:flex;align-items:center;justify-content:center;font-weight:600;}
+        .btn-logout{padding:0.4rem 0.8rem;background:var(--primary);color:white;border:none;border-radius:var(--radius);cursor:pointer;transition:var(--transition);}
+        .btn-logout:hover{opacity:0.85;}
+
+        /* ===== RESPONSIVE ===== */
+        @media(max-width:768px){
+          .sidebar{position:fixed;z-index:1000;transform:translateX(-100%);}
+          .sidebar.active{transform:translateX(0);}
+          main{margin-left:0;padding:1rem;}
+        }
+
+        /* Chat Styles */
+        .chat-container{max-width:800px;margin:0 auto;}
+        .chat-messages{background:white;border-radius:var(--radius);box-shadow:var(--shadow);padding:1.5rem;margin-bottom:1.5rem;max-height:500px;overflow-y:auto;}
+        .message{margin-bottom:1rem;padding:1rem;border-radius:8px;}
+        .message.user{background:var(--primary);color:white;margin-left:2rem;}
+        .message.bot{background:var(--surface);border:1px solid var(--border);margin-right:2rem;}
+        .message-header{font-weight:600;margin-bottom:0.5rem;}
+        .chat-form{display:flex;gap:1rem;}
+        .chat-input{flex:1;padding:0.75rem;border:1px solid var(--border);border-radius:var(--radius);font-size:1rem;}
+        .chat-input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(168,85,247,0.1);}
+        .btn-send{background:var(--primary);color:white;border:none;padding:0.75rem 1.5rem;border-radius:var(--radius);cursor:pointer;font-weight:600;transition:var(--transition);}
+        .btn-send:hover{background:var(--primary-dark);}
+        .typing-indicator{display:none;margin:1rem 0;font-style:italic;color:var(--text-light);}
+    </style>
 </head>
-<body class="bg-gray-100">
-    <div class="container mx-auto p-4">
-        <h1 class="text-2xl font-bold mb-4">Chatbot EcoSmart - Plan: {{ plan.nombre }}</h1>
-        <div id="chat-window" class="border border-gray-300 rounded p-4 h-96 overflow-y-auto mb-4 bg-white">
-            {% for message in messages %}
-            <div class="mb-2">
-                <strong>Tú:</strong> {{ message.user_message }}
-            </div>
-            <div class="mb-2">
-                <strong>Bot:</strong> {{ message.bot_response }}
-            </div>
-            {% endfor %}
-        </div>
-        <form id="chat-form" method="post" action="{% url 'send_message' plan.id %}">
-            {% csrf_token %}
-            <div class="flex">
-                <input type="text" id="message-input" name="message" class="flex-1 border border-gray-300 rounded-l px-4 py-2" placeholder="Pregunta sobre economía o tus finanzas..." required>
-                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-r">Enviar</button>
-            </div>
-        </form>
-        <a href="{% url 'menu_plan' plan.id %}" class="mt-4 inline-block bg-gray-500 text-white px-4 py-2 rounded">Volver al Plan</a>
+<body>
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">
+        <div class="logo-icon">E</div>
+        <span class="logo-text">EcoSmart</span>
+      </div>
+      <button class="toggle-btn" id="toggle-btn">☰</button>
     </div>
+    <nav class="menu">
+      <a href="#" class="menu-item" data-view="estadisticas" onclick="loadView('estadisticas', {{ plan.id }})"><i>📊</i><span>Estadísticas</span></a>
+      <a href="#" class="menu-item" data-view="ingresos" onclick="loadView('ingresos', {{ plan.id }})"><i>💰</i><span>Ingresos</span></a>
+      <a href="#" class="menu-item" data-view="gastos" onclick="loadView('gastos', {{ plan.id }})"><i>💸</i><span>Gastos</span></a>
+      <a href="#" class="menu-item" data-view="objetivos" onclick="loadView('objetivos', {{ plan.id }})"><i>🎯</i><span>Objetivos</span></a>
+      <a href="#" class="menu-item" data-view="tareas" onclick="loadView('tareas', {{ plan.id }})"><i>📝</i><span>Tareas</span></a>
+      <a href="#" class="menu-item" data-view="historiales" onclick="loadView('historiales', {{ plan.id }})"><i>📈</i><span>Historiales</span></a>
+      <a href="#" class="menu-item active"><i>🤖</i><span>Chatbot IA</span></a>
+      {% if plan.tipo_plan == 'grupal' %}
+      <a href="#" class="menu-item" data-view="ajustes" onclick="loadView('ajustes', {{ plan.id }})"><i>👥</i><span>Miembros</span></a>
+      {% endif %}
+      <a href="{% url 'Dashboard' %}" class="menu-item"><i>🏠</i><span>Dashboard</span></a>
+    </nav>
+    <div class="sidebar-footer">© 2025 EcoSmart</div>
+  </aside>
+
+  <!-- Main -->
+  <main>
+    <div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+        <div class="flex justify-between items-center mb-6 border-b pb-2">
+            <h1 class="text-3xl font-extrabold text-gray-900">
+                🤖 Chatbot IA - Plan: {{ plan.nombre }}
+            </h1>
+        </div>
+
+        <div class="chat-container">
+            <div id="chat-messages" class="chat-messages">
+                {% for message in messages %}
+                <div class="message user">
+                    <div class="message-header">Tú</div>
+                    <div>{{ message.user_message }}</div>
+                </div>
+                <div class="message bot">
+                    <div class="message-header">🤖 EcoSmart AI</div>
+                    <div>{{ message.bot_response }}</div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div id="typing-indicator" class="typing-indicator">
+                🤖 EcoSmart AI está escribiendo...
+            </div>
+
+            <form id="chat-form" class="chat-form">
+                {% csrf_token %}
+                <input type="text" id="message-input" class="chat-input" placeholder="Pregunta sobre economía o tus finanzas..." required>
+                <button type="submit" class="btn-send">Enviar</button>
+            </form>
+        </div>
+    </div>
+  </main>
 
     <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Toggle sidebar
+      const toggleBtn = document.getElementById('toggle-btn');
+      const sidebar = document.getElementById('sidebar');
+      const main = document.querySelector('main');
+
+      toggleBtn.addEventListener('click', function() {
+        sidebar.classList.toggle('collapsed');
+        main.classList.toggle('sidebar-collapsed');
+      });
+
+      // Menu item active state
+      const menuItems = document.querySelectorAll('.menu-item');
+      const currentPath = window.location.pathname;
+
+      menuItems.forEach(item => {
+        const href = item.getAttribute('href');
+        if (href && (currentPath === href || (href !== '#' && currentPath.startsWith(href)))) {
+          item.classList.add('active');
+        } else {
+          item.classList.remove('active');
+        }
+      });
+    });
+
+    function loadView(view, planId) {
+      fetch(`/planes/${planId}/${view}/`, {
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest'
+        }
+      })
+      .then(response => response.text())
+      .then(html => {
+        document.querySelector('main').innerHTML = html;
+        // update active menu
+        document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
+        document.querySelector(`[data-view="${view}"]`).classList.add('active');
+        // execute scripts
+        const scripts = document.querySelector('main').querySelectorAll('script');
+        scripts.forEach(script => {
+          if (script.textContent) {
+            eval(script.textContent);
+          }
+        });
+      });
+    }
+
     document.getElementById('chat-form').addEventListener('submit', function(e) {
         e.preventDefault();
-        const message = document.getElementById('message-input').value;
+        const message = document.getElementById('message-input').value.trim();
+        if (!message) return;
+
+        // Add user message
+        const chatMessages = document.getElementById('chat-messages');
+        const userMessageDiv = document.createElement('div');
+        userMessageDiv.className = 'message user';
+        userMessageDiv.innerHTML = `
+            <div class="message-header">Tú</div>
+            <div>${message}</div>
+        `;
+        chatMessages.appendChild(userMessageDiv);
+
+        // Show typing indicator
+        const typingIndicator = document.getElementById('typing-indicator');
+        typingIndicator.style.display = 'block';
+
+        // Clear input
+        document.getElementById('message-input').value = '';
+
+        // Scroll to bottom
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+
         fetch('{% url "send_message" plan.id %}', {
             method: 'POST',
             headers: {
@@ -44,13 +235,41 @@
         })
         .then(response => response.json())
         .then(data => {
+            // Hide typing indicator
+            typingIndicator.style.display = 'none';
+
             if (data.response) {
-                const chatWindow = document.getElementById('chat-window');
-                chatWindow.innerHTML += '<div class="mb-2"><strong>Tú:</strong> ' + message + '</div>';
-                chatWindow.innerHTML += '<div class="mb-2"><strong>Bot:</strong> ' + data.response + '</div>';
-                document.getElementById('message-input').value = '';
-                chatWindow.scrollTop = chatWindow.scrollHeight;
+                const botMessageDiv = document.createElement('div');
+                botMessageDiv.className = 'message bot';
+                botMessageDiv.innerHTML = `
+                    <div class="message-header">🤖 EcoSmart AI</div>
+                    <div>${data.response}</div>
+                `;
+                chatMessages.appendChild(botMessageDiv);
+
+                // Scroll to bottom
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            } else if (data.error) {
+                const errorMessageDiv = document.createElement('div');
+                errorMessageDiv.className = 'message bot';
+                errorMessageDiv.innerHTML = `
+                    <div class="message-header">🤖 EcoSmart AI</div>
+                    <div style="color: #ef4444;">${data.error}</div>
+                `;
+                chatMessages.appendChild(errorMessageDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
             }
+        })
+        .catch(error => {
+            typingIndicator.style.display = 'none';
+            const errorMessageDiv = document.createElement('div');
+            errorMessageDiv.className = 'message bot';
+            errorMessageDiv.innerHTML = `
+                <div class="message-header">🤖 EcoSmart AI</div>
+                <div style="color: #ef4444;">Error de conexión. Inténtalo de nuevo.</div>
+            `;
+            chatMessages.appendChild(errorMessageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
         });
     });
     </script>
