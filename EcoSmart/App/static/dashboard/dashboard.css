@@ -1,344 +1,415 @@
-/* ===============================
-   DASHBOARD PROFESIONAL ECOSMART
-   =============================== */
+ :root {
+    /* ===== COLORES Y VARIABLES GLOBALES ===== */
+    --primary: #a855f7;
+    --primary-light: #c084fc;
+    --primary-dark: #9333ea;
+    --secondary: #8b5cf6;
+    --success: #a78bfa;
+    --danger: #ef4444;
+    --warning: #f59e0b;
+    --background: #faf5ff;
+    --surface: #ffffff;
+    --text: #581c87;
+    --text-light: #6b7280;
+    --border: #e5e7eb;
 
-/* RESET Y BASE */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Segoe UI', system-ui, sans-serif;
+    /* ===== ESTILOS GLOBALES ===== */
+    --radius: 12px;
+    --shadow: 0 4px 12px rgba(0,0,0,0.1);
+    --shadow-lg: 0 10px 20px rgba(0,0,0,0.15);
+    --transition: 0.3s;
 }
 
-:root {
-  --primary: #a855f7;
-  --primary-light: #c084fc;
-  --primary-dark: #7e22ce;
-  --secondary: #8b5cf6;
-  --success: #a78bfa;
-  --danger: #ef4444;
-  --warning: #f59e0b;
-  --background: #f4ebff;
-  --surface: #ffffff;
-  --surface-alt: #fdfcff;
-  --text: #3b0764;
-  --text-light: #6b7280;
-  --border: #e2e8f0;
-  --radius: 12px;
-  --shadow: 0 4px 12px rgba(168, 85, 247, 0.15);
-  --shadow-lg: 0 10px 25px rgba(168, 85, 247, 0.25);
-  --transition: all 0.25s ease;
+/* ===== RESET & TIPOGRAFÍA ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', system-ui, sans-serif;
 }
 
 body {
-  background-color: var(--background);
-  color: var(--text);
-  line-height: 1.6;
-  min-height: 100vh;
+    display: flex;
+    min-height: 100vh;
+    background: var(--background);
+    color: var(--text);
 }
 
-/* ===============================
-   HEADER
-   =============================== */
 
-header {
-  background: linear-gradient(90deg, var(--primary-dark), var(--primary));
-  box-shadow: var(--shadow);
-  padding: 1rem 0;
-  position: sticky;
-  top: 0;
-  z-index: 1000;
+/* ###################################################################### */
+/* SIDEBAR (Barra Lateral)                        */
+/* ###################################################################### */
+
+.sidebar {
+    width: 260px;
+    background: var(--surface);
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    height: 100vh;
+    transition: width var(--transition);
 }
 
-.header-content {
-  width: 95%;
-  max-width: 1200px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  color: white;
+.sidebar.collapsed {
+    width: 80px;
+}
+
+/* --- Sidebar Header & Logo --- */
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+    border-bottom: 1px solid var(--border);
 }
 
 .logo {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
 }
 
 .logo-icon {
-  width: 40px;
-  height: 40px;
-  background: white;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--primary-dark);
-  font-weight: bold;
-  font-size: 1.1rem;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
 }
 
 .logo-text {
-  font-size: 1.5rem;
-  font-weight: 700;
+    font-size: 1.4rem;
+    font-weight: 700;
+    transition: opacity var(--transition);
 }
 
+.sidebar.collapsed .logo-text {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.toggle-btn {
+    background: none;
+    border: none;
+    font-size: 1.4rem;
+    cursor: pointer;
+    color: var(--text);
+}
+
+/* --- Sidebar Menu --- */
+.menu {
+    flex: 1;
+    padding: 1rem 0;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem 1.5rem;
+    color: var(--text-light);
+    text-decoration: none;
+    transition: all var(--transition);
+    font-weight: 500;
+    border-radius: var(--radius);
+}
+
+.menu-item:hover {
+    background: var(--primary-light);
+    color: white;
+}
+
+.menu-item.active {
+    background: var(--primary);
+    color: white;
+}
+
+.menu-item i {
+    min-width: 24px;
+    text-align: center;
+}
+
+.sidebar.collapsed .menu-item span {
+    display: none;
+}
+
+.sidebar.collapsed .menu-item i {
+    margin: 0 auto;
+}
+
+.sidebar-footer {
+    padding: 1rem;
+    border-top: 1px solid var(--border);
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--text-light);
+}
+
+
+/* ###################################################################### */
+/* MAIN CONTENT                             */
+/* ###################################################################### */
+
+/* --- Main Structure --- */
+main {
+    flex: 1;
+    margin-left: 260px;
+    padding: 2rem;
+    transition: margin-left var(--transition);
+    padding-top: 6rem; /* Espacio para el header fijo */
+}
+
+/* AJUSTE PARA MAIN (CONTENIDO PRINCIPAL) */
+main {
+    flex: 1;
+    margin-left: 260px; /* Tamaño por defecto (sidebar expandido) */
+    /* ... otras propiedades del main ... */
+    transition: margin-left var(--transition);
+}
+
+.sidebar.collapsed + main {
+    /* Ajusta el margen cuando el sidebar está colapsado */
+    margin-left: 80px;
+}
+
+/* --- Header Fijo --- */
+.header {
+    position: fixed;
+    top: 0;
+    left: 260px; /* Tamaño por defecto (sidebar expandido) */
+    right: 0;
+    background: var(--background);
+    padding: 1rem 2rem;
+    z-index: 999;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: left var(--transition); /* Permite que el header se deslice */
+}
+
+.sidebar.collapsed + .header {
+    /* Ajusta la posición de inicio (left) cuando el sidebar está colapsado */
+    left: 80px;
+}
+.header h1 {
+    font-size: 1.8rem;
+    color: var(--text);
+    margin: 0;
+    flex: 1;
+}
+
+/* --- User Info & Logout --- */
 .user-info {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-left: auto;
 }
 
 .user-avatar {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  background-color: var(--surface);
-  color: var(--primary-dark);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  border: 2px solid var(--primary-light);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
 }
 
 .btn-logout {
-  background: white;
-  color: var(--primary-dark);
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: var(--radius);
-  font-weight: 600;
-  cursor: pointer;
-  transition: var(--transition);
+    padding: 0.4rem 0.8rem;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: opacity var(--transition);
 }
 
 .btn-logout:hover {
-  background: var(--primary-dark);
-  color: white;
+    opacity: 0.85;
 }
 
-/* ===============================
-   SECCIÓN BIENVENIDA
-   =============================== */
 
+/* ###################################################################### */
+/* COMPONENTES UI                             */
+/* ###################################################################### */
+
+/* --- Welcome/Greeting Section --- */
 .welcome-section {
-  background: var(--surface);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  padding: 2rem;
-  text-align: center;
-  margin: 2rem auto 1rem;
-  width: 95%;
-  max-width: 1000px;
+    background: var(--surface);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 2rem;
+    text-align: center;
+    margin-bottom: 2rem;
 }
 
 .welcome-section h2 {
-  font-size: 2rem;
-  font-weight: 700;
-  color: var(--primary-dark);
-  margin-bottom: 0.5rem;
+    font-size: 2rem;
+    color: var(--primary-dark);
+    margin-bottom: 0.5rem;
 }
 
 .welcome-section p {
-  font-size: 1.1rem;
-  color: var(--text-light);
+    color: var(--text-light);
+    font-size: 1.1rem;
 }
 
-/* ===============================
-   TARJETAS Y GRID
-   =============================== */
 
+/* --- Dashboard General Cards --- */
 .dashboard-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 1.8rem;
-  padding: 1rem 2rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
 }
 
 .card {
-  background-color: var(--surface);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  padding: 1.75rem;
-  transition: var(--transition);
-  border-top: 4px solid var(--primary);
+    background: var(--surface);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 1.5rem;
+    transition: transform var(--transition), box-shadow var(--transition);
 }
 
 .card:hover {
-  transform: translateY(-6px);
-  box-shadow: var(--shadow-lg);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
 }
 
-.card-header {
-  display: flex;
-  align-items: center;
-  margin-bottom: 1.25rem;
+.card h3 {
+    color: var(--primary-dark);
+    margin-bottom: 0.5rem;
 }
 
-.card-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: var(--radius);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: 1.4rem;
-  margin-right: 0.8rem;
+.card p {
+    color: var(--text-light);
+    font-size: 0.95rem;
 }
 
-.card-icon.primary { background: var(--primary); }
-.card-icon.secondary { background: var(--secondary); }
-.card-icon.success { background: var(--success); }
 
-.card-title {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: var(--text);
-}
-
-/* BOTONES */
-.btn {
-  display: inline-block;
-  padding: 0.75rem 1.5rem;
-  border-radius: var(--radius);
-  font-weight: 600;
-  cursor: pointer;
-  transition: var(--transition);
-  border: none;
-  text-align: center;
-}
-
-.btn-primary {
-  background: var(--primary);
-  color: white;
-}
-
-.btn-primary:hover {
-  background: var(--primary-dark);
-  box-shadow: var(--shadow);
-}
-
-.btn-success {
-  background: var(--success);
-  color: white;
-}
-
-.btn-danger {
-  background: var(--danger);
-  color: white;
-}
-
-.btn-success:hover, .btn-danger:hover {
-  opacity: 0.9;
-}
-
-/* ===============================
-   SECCIONES DE PLANES
-   =============================== */
-
-.section-title {
-  font-size: 1.6rem;
-  font-weight: 700;
-  color: var(--primary-dark);
-  margin: 2rem 2rem 1rem;
-}
-
+/* --- Plan Cards (Mis Planes) --- */
 .plans-section {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
-  gap: 1.5rem;
-  padding: 0 2rem 2rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
 }
 
 .plan-card {
-  background: var(--surface);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  text-decoration: none;
-  color: var(--text);
-  overflow: hidden;
-  transition: var(--transition);
+    background: var(--surface);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    text-decoration: none;
+    color: var(--text);
+    padding: 1rem;
+    transition: all var(--transition);
 }
 
 .plan-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
 }
 
 .plan-card img {
-  width: 100%;
-  height: 100px;
-  object-fit: cover;
+    width: 100%;
+    height: 80px;
+    object-fit: cover;
+    border-radius: var(--radius);
+    margin-bottom: 0.75rem;
 }
 
 .plan-title {
-  font-weight: 600;
-  padding: 0.75rem 1rem 0.25rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    font-size: 1rem;
 }
 
 .plan-type {
-  font-size: 0.9rem;
-  color: var(--text-light);
-  padding: 0 1rem 1rem;
+    color: var(--text-light);
+    font-size: 0.85rem;
 }
 
-/* ===============================
-   INVITACIONES
-   =============================== */
-
+/* --- Invitaciones Pendientes --- */
 .invites-section {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  padding: 0 2rem 3rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
 }
 
 .invite-card {
-  background: var(--surface);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  padding: 1.25rem 1.75rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.invite-text p strong {
-  color: var(--primary-dark);
+    background: var(--surface);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 1.25rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .invite-actions {
-  display: flex;
-  gap: 0.75rem;
+    display: flex;
+    gap: 0.5rem;
+}
+
+.invite-actions .btn {
+    flex: 1;
+    /* Se asume que .btn tendrá estilos definidos */
 }
 
 .empty-state {
-  text-align: center;
-  color: var(--text-light);
-  font-style: italic;
-  padding: 1rem;
+    text-align: center;
+    color: var(--text-light);
+    font-style: italic;
+    padding: 1rem;
 }
 
-/* ===============================
-   RESPONSIVE
-   =============================== */
-@media (max-width: 768px) {
-  .header-content {
-    flex-direction: column;
-    gap: 1rem;
-  }
 
-  .dashboard-grid, .plans-section {
-    grid-template-columns: 1fr;
-    padding: 1rem;
-  }
+/* ###################################################################### */
+/* RESPONSIVE                              */
+/* ###################################################################### */
 
-  .invite-card {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.75rem;
-  }
+@media(max-width: 768px) {
+    .sidebar {
+        position: fixed;
+        z-index: 1000;
+        transform: translateX(-100%);
+        box-shadow: var(--shadow-lg); /* Mejor sombra para menú móvil */
+    }
+
+    .sidebar.active {
+        transform: translateX(0);
+    }
+
+    main {
+        margin-left: 0;
+        padding: 1rem;
+        padding-top: 6rem;
+    }
+
+    .header {
+        left: 0;
+        right: 0;
+        padding: 1rem;
+        z-index: 1001;
+    }
+
+    /* Columnas únicas para móvil */
+    .dashboard-grid,
+    .plans-section {
+        grid-template-columns: 1fr;
+    }
+
+    .invite-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
 }
