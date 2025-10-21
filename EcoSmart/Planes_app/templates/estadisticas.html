@@ -94,6 +94,7 @@
       <a href="#" class="menu-item" data-view="objetivos" onclick="loadView('objetivos', {{ plan.id }})"><i>🎯</i><span>Objetivos</span></a>
       <a href="#" class="menu-item" data-view="tareas" onclick="loadView('tareas', {{ plan.id }})"><i>📝</i><span>Tareas</span></a>
       <a href="#" class="menu-item" data-view="historiales" onclick="loadView('historiales', {{ plan.id }})"><i>📈</i><span>Historiales</span></a>
+      <a href="{% url 'chatbot_redirect' plan.id %}" class="menu-item"><i>🤖</i><span>Chatbot IA</span></a>
       {% if plan.tipo_plan == 'grupal' %}
       <a href="#" class="menu-item" data-view="ajustes" onclick="loadView('ajustes', {{ plan.id }})"><i>👥</i><span>Miembros</span></a>
       {% endif %}

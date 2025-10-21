@@ -37,6 +37,22 @@ def menu_plan(request, plan_id):
     # Redirigir directamente a estadísticas
     return redirect('estadisticas', plan_id=plan.id)
 
+@login_required
+def chatbot_redirect(request, plan_id):
+    """Redirige al chatbot del plan."""
+    try:
+        plan, es_miembro = verificar_membresia(request, plan_id)
+    except:
+        messages.error(request, 'El plan solicitado no existe.')
+        return redirect('dashboard')
+
+    if not es_miembro:
+        messages.error(request, 'No tienes acceso a este plan.')
+        return redirect('Dashboard')
+
+    # Redirigir al chatbot del plan
+    return redirect('chatbot', plan_id=plan.id)
+
 
 @login_required
 def editar_plan(request, plan_id):
