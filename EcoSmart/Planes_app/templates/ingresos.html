@@ -9,8 +9,97 @@
 {% load static %}
 
 <link rel="stylesheet" href="{% static 'ingresos/ingresos.css' %}">
+<style>
+    :root {
+        --primary: #a855f7;
+        --primary-light: #c084fc;
+        --primary-dark: #9333ea;
+        --secondary: #8b5cf6;
+        --success: #a78bfa;
+        --danger: #ef4444;
+        --warning: #f59e0b;
+        --background: #faf5ff;
+        --surface: #ffffff;
+        --text: #581c87;
+        --text-light: #6b7280;
+        --border: #e5e7eb;
+        --radius: 12px;
+        --shadow: 0 4px 12px rgba(0,0,0,0.1);
+        --shadow-lg: 0 10px 20px rgba(0,0,0,0.15);
+        --transition: 0.3s;
+    }
+
+    *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI', system-ui,sans-serif;}
+
+    body{display:flex;min-height:100vh;background:var(--background);color:var(--text);}
+
+    /* ===== SIDEBAR ===== */
+    .sidebar{
+      width:260px;
+      background:var(--surface);
+      box-shadow:var(--shadow);
+      display:flex;
+      flex-direction:column;
+      position:fixed;
+      height:100vh;
+      transition:width var(--transition);
+    }
+    .sidebar.collapsed{width:80px;}
+    .sidebar-header{display:flex;align-items:center;justify-content:space-between;padding:1rem;border-bottom:1px solid var(--border);}
+    .logo{display:flex;align-items:center;gap:0.75rem;}
+    .logo-icon{width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,var(--primary),var(--primary-light));display:flex;align-items:center;justify-content:center;color:white;font-weight:bold;}
+    .logo-text{font-size:1.4rem;font-weight:700;transition:opacity var(--transition);}
+    .sidebar.collapsed .logo-text{opacity:0;pointer-events:none;}
+    .toggle-btn{background:none;border:none;font-size:1.4rem;cursor:pointer;color:var(--text);}
+    .menu{flex:1;padding:1rem 0;}
+    .menu-item{display:flex;align-items:center;gap:1rem;padding:0.75rem 1.5rem;color:var(--text-light);text-decoration:none;transition:all var(--transition);font-weight:500;border-radius:var(--radius);}
+    .menu-item:hover{background:var(--primary-light);color:white;}
+    .menu-item.active{background:var(--primary);color:white;}
+    .menu-item i{min-width:24px;text-align:center;}
+    .sidebar.collapsed .menu-item span{display:none;}
+    .sidebar-footer{padding:1rem;border-top:1px solid var(--border);text-align:center;font-size:0.85rem;color:var(--text-light);}
+
+    /* ===== MAIN ===== */
+    main{flex:1;margin-left:260px;padding:2rem;transition:margin-left var(--transition);}
+    .sidebar.collapsed + main{margin-left:80px;}
+
+    /* ===== RESPONSIVE ===== */
+    @media(max-width:768px){
+      .sidebar{position:fixed;z-index:1000;transform:translateX(-100%);}
+      .sidebar.active{transform:translateX(0);}
+      main{margin-left:0;padding:1rem;}
+    }
+</style>
 </head>
-<body class="bg-gray-100 p-8">
+<body>
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">
+        <div class="logo-icon">E</div>
+        <span class="logo-text">EcoSmart</span>
+      </div>
+      <button class="toggle-btn" id="toggle-btn">☰</button>
+    </div>
+    <nav class="menu">
+      <a href="{% url 'estadisticas' plan_id=plan.id %}" class="menu-item"><i>📊</i><span>Estadísticas</span></a>
+      <a href="{% url 'ingresos' plan_id=plan.id %}" class="menu-item active"><i>💰</i><span>Ingresos</span></a>
+      <a href="{% url 'gastos' plan_id=plan.id %}" class="menu-item"><i>💸</i><span>Gastos</span></a>
+      <a href="{% url 'objetivos' plan_id=plan.id %}" class="menu-item"><i>🎯</i><span>Objetivos</span></a>
+      <a href="{% url 'tareas' plan_id=plan.id %}" class="menu-item"><i>📝</i><span>Tareas</span></a>
+      <a href="{% url 'historiales' plan_id=plan.id %}" class="menu-item"><i>📈</i><span>Historiales</span></a>
+      {% if plan.tipo_plan == 'grupal' %}
+      <a href="{% url 'ajustes' plan_id=plan.id %}" class="menu-item"><i>👥</i><span>Miembros</span></a>
+      {% endif %}
+      <a href="{% url 'Menu_plan' plan_id=plan.id %}" class="menu-item"><i>📋</i><span>Menú del Plan</span></a>
+      <a href="{% url 'Dashboard' %}" class="menu-item"><i>🏠</i><span>Dashboard</span></a>
+    </nav>
+    <div class="sidebar-footer">© 2025 EcoSmart</div>
+  </aside>
+
+  <!-- Main -->
+  <main>
     <div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
         <h1 class="text-3xl font-extrabold text-gray-900 mb-6 border-b pb-2">
             💰 Ingresos del Plan: {{ plan.nombre }}
@@ -76,16 +165,19 @@
             </div>
         </div>
         
-        <div class="mt-8 text-center">
-            <a href="{% url 'Menu_plan' plan_id=plan.id %}" class="inline-flex items-center text-indigo-600 hover:text-indigo-800 font-medium">
-                <!-- Icono de flecha de retorno (lucide-react, usamos un SVG simple) -->
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-1">
-                    <path d="m15 18-6-6 6-6"/>
-                </svg>
-                Volver al Menú del Plan
-            </a>
-        </div>
-    
     </div>
+  </main>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Toggle sidebar
+      const toggleBtn = document.getElementById('toggle-btn');
+      const sidebar = document.getElementById('sidebar');
+
+      toggleBtn.addEventListener('click', function() {
+        sidebar.classList.toggle('collapsed');
+      });
+    });
+  </script>
 </body>
 </html>
