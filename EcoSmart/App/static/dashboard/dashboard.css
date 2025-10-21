@@ -189,7 +189,11 @@ main {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    transition: left var(--transition); /* Permite que el header se deslice */
+    transition: left var(--transition), transform 0.3s ease; /* Permite que el header se deslice y se oculte */
+}
+
+.header.hidden {
+    transform: translateY(-100%);
 }
 
 .sidebar.collapsed + .header {

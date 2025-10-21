@@ -1,0 +1,84 @@
+{% extends 'dashboard/index.html' %}
+{% load static %}
+
+{% block title %}Inicio{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="mb-4">🏠 Inicio</h1>
+            <p class="lead">Bienvenido a tu panel de control financiero</p>
+        </div>
+    </div>
+    
+    <!-- Resumen rápido -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card bg-light">
+                <div class="card-body text-center">
+                    <i class="fas fa-wallet fa-3x text-primary mb-3"></i>
+                    <h5>Planes Activos</h5>
+                    <h3 class="text-primary">0</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-light">
+                <div class="card-body text-center">
+                    <i class="fas fa-chart-line fa-3x text-success mb-3"></i>
+                    <h5>Objetivos Completados</h5>
+                    <h3 class="text-success">0</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-light">
+                <div class="card-body text-center">
+                    <i class="fas fa-tasks fa-3x text-warning mb-3"></i>
+                    <h5>Tareas Pendientes</h5>
+                    <h3 class="text-warning">0</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Acciones rápidas -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5>🚀 Acciones Rápidas</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'crear_plan' %}" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Crear Nuevo Plan
+                        </a>
+                        <a href="{% url 'transacciones' %}" class="btn btn-outline-primary">
+                            <i class="fas fa-exchange-alt"></i> Ver Transacciones
+                        </a>
+                        <a href="{% url 'Estadisticas' %}" class="btn btn-outline-success">
+                            <i class="fas fa-chart-bar"></i> Ver Estadísticas
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5>📋 Actividad Reciente</h5>
+                </div>
+                <div class="card-body">
+                    <div class="text-center text-muted">
+                        <i class="fas fa-inbox fa-3x mb-3"></i>
+                        <p>No hay actividad reciente</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
