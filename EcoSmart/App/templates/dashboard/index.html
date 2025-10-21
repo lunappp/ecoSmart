@@ -205,66 +205,49 @@
     <!-- Bienvenida -->
     <section class="welcome-section">
       <div class="welcome-content">
-        <div class="welcome-text">
-          <h2>¡Hola, {{ request.user.username }}!</h2>
-          <p>¡Comencemos a ordenar tus finanzas!. <a href="{% url 'edit_profile' %}" style="color: var(--primary);">Editar perfil</a></p>
-        </div>
-        <div class="welcome-actions">
+        <div class="welcome-left">
+          <div class="welcome-text">
+            <h2>¡Hola, {{ request.user.username }}!</h2>
+            <p>Bienvenido de vuelta. <a href="{% url 'edit_profile' %}" style="color: var(--primary);">Editar perfil</a></p>
+          </div>
           <div class="card">
             <p>Comienza un plan financiero para organizar tus finanzas.</p>
             <a href="{% url 'crear_plan' %}" class="btn-action">
-              <i>➕</i>
               <span>Crear Plan</span>
             </a>
+          </div>
+          <div class="plans-preview">
+            <h4>Mis Planes Financieros</h4>
+            <div class="plans-grid">
+              {% for suscripcion in mis_planes %}
+                <a href="{% url 'Menu_plan' suscripcion.plan.id %}" class="plan-card">
+                  {% if suscripcion.plan.imagen %}
+                    <img src="{{ suscripcion.plan.imagen.url }}" alt="{{ suscripcion.plan.nombre }}">
+                  {% else %}
+                    <div style="width:100%;height:60px;background-color:var(--border);display:flex;align-items:center;justify-content:center;border-radius:var(--radius);margin-bottom:0.5rem;">
+                      <span style="color:var(--text-light);font-weight:500;font-size:0.8rem;">Sin imagen</span>
+                    </div>
+                  {% endif %}
+                  <h5 class="plan-title">{{ suscripcion.plan.nombre }}</h5>
+                  <p class="plan-type">{{ suscripcion.plan.get_tipo_plan_display }}</p>
+                </a>
+              {% empty %}
+                <p class="empty-state">Aún no estás en ningún plan financiero.</p>
+              {% endfor %}
+            </div>
+          </div>
         </div>
+        <div class="welcome-right">
+           <div class="placeholder-content">
+             <img src="https://img.freepik.com/vector-gratis/empleado-que-trabaja-interior-oficina-lugar-trabajo-ilustracion-vectorial-plana_1150-37453.jpg?semt=ais_incoming&w=740&q=80" alt="Imagen de ejemplo" class="placeholder-image">
+             <p class="placeholder-text">¡No te olvides de revisar tus estadisticas!</p>
+           </div>
+         </div>
       </div>
-    <!-- Mis Planes -->
-<!-- Mis Planes -->
-<h3 class="section-title" id="planes">Mis Planes Financieros</h3>
-<section class="plans-section">
- {% for suscripcion in mis_planes %}
-   <a href="{% url 'Menu_plan' suscripcion.plan.id %}" class="plan-card">
-     {% if suscripcion.plan.imagen %}
-       <img src="{{ suscripcion.plan.imagen.url }}" alt="{{ suscripcion.plan.nombre }}">
-     {% else %}
-       <div style="width:100%;height:80px;background-color:var(--border);display:flex;align-items:center;justify-content:center;border-radius:var(--radius);margin-bottom:0.75rem;">
-         <span style="color:var(--text-light);font-weight:500;font-size:0.9rem;">Sin imagen</span>
-       </div>
-     {% endif %}
-     <h4 class="plan-title">{{ suscripcion.plan.nombre }}</h4>
-     <p class="plan-type">{{ suscripcion.plan.get_tipo_plan_display }}</p>
-   </a>
- {% empty %}
-   <p class="empty-state">Aún no estás en ningún plan financiero.</p>
- {% endfor %}
-</section>
     </section>
 
 
-    <!-- Invitaciones -->
-<h3 class="section-title" id="invitaciones">Invitaciones Pendientes</h3>
-<section class="invites-section">
- {% for invitacion in invitaciones_pendientes %}
-   <div class="invite-card">
-     <div>
-       <strong>{{ invitacion.plan.nombre }}</strong>
-       <p>Invitado por: {{ invitacion.invitador.username }}</p>
-     </div>
-     <div class="invite-actions">
-       <form method="post" action="{% url 'aceptar_invitacion' invitacion.id %}" style="display: inline;">
-         {% csrf_token %}
-         <button type="submit" class="btn btn-success" style="background: var(--success); color: white; border: none; padding: 0.5rem 1rem; border-radius: var(--radius); cursor: pointer;">Aceptar</button>
-       </form>
-       <form method="post" action="{% url 'rechazar_invitacion' invitacion.id %}" style="display: inline;">
-         {% csrf_token %}
-         <button type="submit" class="btn btn-danger" style="background: var(--danger); color: white; border: none; padding: 0.5rem 1rem; border-radius: var(--radius); cursor: pointer;">Rechazar</button>
-       </form>
-     </div>
-   </div>
- {% empty %}
-   <p class="empty-state">No tienes invitaciones pendientes.</p>
- {% endfor %}
-</section>
+   
 
     <!-- Configuración -->
 <h3 class="section-title" id="configuracion">Configuración</h3>
