@@ -5,32 +5,305 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>EcoSmart Finanzas - Dashboard</title>
   {% load static %}
-  <link rel="stylesheet" href="{% static 'dashboard/dashboard.css' %}">
+  <style>
+    :root {
+      --primary: #a855f7;
+      --primary-light: #c084fc;
+      --primary-dark: #9333ea;
+      --secondary: #8b5cf6;
+      --success: #a78bfa;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --background: #faf5ff;
+      --surface: #ffffff;
+      --text: #581c87;
+      --text-light: #6b7280;
+      --border: #e5e7eb;
+      --radius: 12px;
+      --shadow: 0 4px 12px rgba(0,0,0,0.1);
+      --shadow-lg: 0 10px 20px rgba(0,0,0,0.15);
+      --transition: 0.3s;
+    }
+
+    *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI', system-ui,sans-serif;}
+
+    body{display:flex;min-height:100vh;background:var(--background);color:var(--text);}
+
+    /* ===== SIDEBAR ===== */
+    .sidebar{
+      width:260px;
+      background:var(--surface);
+      box-shadow:var(--shadow);
+      display:flex;
+      flex-direction:column;
+      position:fixed;
+      height:100vh;
+      transition:width var(--transition);
+    }
+    .sidebar.collapsed{width:80px;}
+    .sidebar-header{display:flex;align-items:center;justify-content:space-between;padding:1rem;border-bottom:1px solid var(--border);}
+    .logo{display:flex;align-items:center;gap:0.75rem;}
+    .logo-icon{width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,var(--primary),var(--primary-light));display:flex;align-items:center;justify-content:center;color:white;font-weight:bold;}
+    .logo-text{font-size:1.4rem;font-weight:700;transition:opacity var(--transition);}
+    .sidebar.collapsed .logo-text{opacity:0;pointer-events:none;}
+    .toggle-btn{background:none;border:none;font-size:1.4rem;cursor:pointer;color:var(--text);}
+    .menu{flex:1;padding:1rem 0;}
+    .menu-item{display:flex;align-items:center;gap:1rem;padding:0.75rem 1.5rem;color:var(--text-light);text-decoration:none;transition:all var(--transition);font-weight:500;border-radius:var(--radius);}
+    .menu-item:hover{background:var(--primary-light);color:white;}
+    .menu-item.active{background:var(--primary);color:white;}
+    .menu-item i{min-width:24px;text-align:center;}
+    .sidebar.collapsed .menu-item span{display:none;}
+    .sidebar-footer{padding:1rem;border-top:1px solid var(--border);text-align:center;font-size:0.85rem;color:var(--text-light);}
+
+    /* ===== MAIN ===== */
+    main{flex:1;margin-left:260px;padding:2rem;transition:margin-left var(--transition);}
+    .sidebar.collapsed + main{margin-left:80px;}
+    .header{display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;}
+    .header h1{font-size:1.8rem;color:var(--text);}
+    .user-info{display:flex;align-items:center;gap:1rem;}
+    .user-avatar{width:40px;height:40px;border-radius:50%;background:var(--primary);color:white;display:flex;align-items:center;justify-content:center;font-weight:600;}
+    .btn-logout{padding:0.4rem 0.8rem;background:var(--primary);color:white;border:none;border-radius:var(--radius);cursor:pointer;transition:var(--transition);}
+    .btn-logout:hover{opacity:0.85;}
+
+    /* ===== DASHBOARD CARDS ===== */
+    .dashboard-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;margin-bottom:2rem;}
+    .card{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);padding:1.5rem;transition:transform var(--transition),box-shadow var(--transition);}
+    .card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg);}
+    .card h3{color:var(--primary-dark);margin-bottom:0.5rem;}
+    .card p{color:var(--text-light);font-size:0.95rem;}
+
+    /* ===== PLAN CARDS ===== */
+    .plans-section{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem;}
+    .plan-card{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);text-decoration:none;color:var(--text);padding:1rem;transition:all var(--transition);}
+    .plan-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg);}
+    .plan-card img{width:100%;height:80px;object-fit:cover;border-radius:var(--radius);margin-bottom:0.75rem;}
+    .plan-title{font-weight:600;margin-bottom:0.25rem;font-size:1rem;}
+    .plan-type{color:var(--text-light);font-size:0.85rem;}
+
+    /* ===== INVITACIONES ===== */
+    .invites-section{display:flex;flex-direction:column;gap:1rem;}
+    .invite-card{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);padding:1.25rem;display:flex;justify-content:space-between;align-items:center;}
+    .invite-actions{display:flex;gap:0.5rem;}
+    .invite-actions .btn{flex:1;}
+    .empty-state{text-align:center;color:var(--text-light);font-style:italic;padding:1rem;}
+
+    /* ===== WELCOME ===== */
+    .welcome-section{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);padding:2rem;text-align:center;margin-bottom:2rem;}
+    .welcome-section h2{font-size:2rem;color:var(--primary-dark);margin-bottom:0.5rem;}
+    .welcome-section p{color:var(--text-light);font-size:1.1rem;}
+
+    /* ===== RESPONSIVE ===== */
+    @media(max-width:768px){
+      .sidebar{position:fixed;z-index:1000;transform:translateX(-100%);}
+      .sidebar.active{transform:translateX(0);}
+      main{margin-left:0;padding:1rem;}
+      .dashboard-grid,.plans-section{grid-template-columns:1fr;}
+      .invite-card{flex-direction:column;align-items:flex-start;gap:0.5rem;}
+    }
+  </style>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Toggle sidebar
+      const toggleBtn = document.getElementById('toggle-btn');
+      const sidebar = document.getElementById('sidebar');
+      const main = document.querySelector('main');
+
+      toggleBtn.addEventListener('click', function() {
+        sidebar.classList.toggle('collapsed');
+        main.classList.toggle('sidebar-collapsed');
+      });
+
+      // Menu item active state
+      const menuItems = document.querySelectorAll('.menu-item');
+      const currentPath = window.location.pathname;
+
+      menuItems.forEach(item => {
+        const href = item.getAttribute('href');
+        if (href && (currentPath === href || (href !== '#' && currentPath.startsWith(href)))) {
+          item.classList.add('active');
+        } else {
+          item.classList.remove('active');
+        }
+      });
+
+      // Smooth scroll for anchor links
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute('href'));
+          if (target) {
+            target.scrollIntoView({
+              behavior: 'smooth'
+            });
+          }
+        });
+      });
+
+      // Chatbot functionality
+      const chatbotBubble = document.getElementById('chatbot-bubble');
+      const chatbotToggle = document.getElementById('chatbot-toggle');
+      const chatbotModal = document.getElementById('chatbot-modal');
+      const closeChatbot = document.getElementById('close-chatbot');
+      const chatInput = document.getElementById('chat-input');
+      const sendMessage = document.getElementById('send-message');
+      const chatMessages = document.getElementById('chat-messages');
+      const chatbotWelcome = document.getElementById('chatbot-welcome');
+      const chatbotNotification = document.getElementById('chatbot-notification');
+
+      // Show welcome message after 3 seconds
+      setTimeout(() => {
+        chatbotWelcome.classList.remove('hidden');
+        setTimeout(() => {
+          chatbotWelcome.classList.add('hidden');
+        }, 5000); // Hide after 5 seconds
+      }, 3000);
+
+      // Toggle chatbot modal
+      chatbotToggle.addEventListener('click', () => {
+        chatbotModal.classList.remove('hidden');
+        chatbotWelcome.classList.add('hidden'); // Hide welcome message
+        chatbotNotification.style.display = 'none'; // Hide notification
+      });
+
+      closeChatbot.addEventListener('click', () => {
+        chatbotModal.classList.add('hidden');
+      });
+
+      // Close modal when clicking outside
+      chatbotModal.addEventListener('click', (e) => {
+        if (e.target === chatbotModal) {
+          chatbotModal.classList.add('hidden');
+        }
+      });
+
+      // Send message function
+      function sendChatMessage() {
+        const message = chatInput.value.trim();
+        if (!message) return;
+
+        // Add user message
+        addMessage(message, 'user');
+        chatInput.value = '';
+
+        // Simulate bot response (you can replace this with actual API call)
+        setTimeout(() => {
+          const botResponse = getBotResponse(message);
+          addMessage(botResponse, 'bot');
+        }, 1000);
+      }
+
+      // Add message to chat
+      function addMessage(text, sender) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `flex gap-3 mb-4 ${sender === 'user' ? 'justify-end' : ''}`;
+
+        if (sender === 'bot') {
+          messageDiv.innerHTML = `
+            <div class="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center text-white text-sm">
+              🤖
+            </div>
+            <div class="bg-white p-3 rounded-lg shadow-sm max-w-xs">
+              <p class="text-gray-800 text-sm">${text}</p>
+            </div>
+          `;
+        } else {
+          messageDiv.innerHTML = `
+            <div class="bg-purple-600 p-3 rounded-lg shadow-sm max-w-xs">
+              <p class="text-white text-sm">${text}</p>
+            </div>
+          `;
+        }
+
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      }
+
+      // Bot response logic
+      function getBotResponse(message) {
+        const lowerMessage = message.toLowerCase();
+
+        if (lowerMessage.includes('hola') || lowerMessage.includes('buenos') || lowerMessage.includes('saludos')) {
+          return '¡Hola! 👋 Soy tu asistente financiero de EcoSmart. ¿En qué puedo ayudarte hoy?';
+        }
+
+        if (lowerMessage.includes('plan') || lowerMessage.includes('planes')) {
+          return '📊 Puedes crear y gestionar tus planes financieros desde el dashboard. Cada plan te ayuda a organizar tus ingresos, gastos y objetivos.';
+        }
+
+        if (lowerMessage.includes('gasto') || lowerMessage.includes('gastos')) {
+          return '💸 Los gastos se registran en cada plan. Puedes categorizarlos y ver estadísticas detalladas de tus finanzas.';
+        }
+
+        if (lowerMessage.includes('ingreso') || lowerMessage.includes('ingresos')) {
+          return '💰 Registra tus ingresos en los planes correspondientes. Esto te ayudará a tener un balance completo de tus finanzas.';
+        }
+
+        if (lowerMessage.includes('objetivo') || lowerMessage.includes('objetivos')) {
+          return '🎯 Los objetivos te permiten ahorrar para metas específicas. Puedes aportar dinero periódicamente y hacer seguimiento del progreso.';
+        }
+
+        if (lowerMessage.includes('estadística') || lowerMessage.includes('estadísticas')) {
+          return '📈 Las estadísticas muestran gráficos y resúmenes de tus finanzas. Incluyen desgloses por categoría y por miembro.';
+        }
+
+        if (lowerMessage.includes('ayuda') || lowerMessage.includes('help')) {
+          return '🤖 Estoy aquí para ayudarte con:\n• Crear y gestionar planes financieros\n• Registrar ingresos y gastos\n• Configurar objetivos de ahorro\n• Ver estadísticas y reportes\n• Gestionar miembros en planes grupales\n\n¿Sobre qué tema específico necesitas ayuda?';
+        }
+
+        return '🤔 No estoy seguro de cómo ayudarte con eso. ¿Puedes ser más específico sobre tu consulta financiera? También puedes explorar las diferentes secciones del dashboard.';
+      }
+
+      // Event listeners
+      sendMessage.addEventListener('click', sendChatMessage);
+      chatInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          sendChatMessage();
+        }
+      });
+
+    });
+  </script>
 </head>
 <body>
-  <header>
-    <div class="container">
-      <div class="header-content">
-        <div class="logo">
-          <div class="logo-icon">E</div>
-          <div class="logo-text">EcoSmart Finanzas</div>
-        </div>
-        <div class="user-info">
-          {% if request.user.profile.profile_picture %}
-            <img src="{{ request.user.profile.profile_picture.url }}" alt="Foto de {{ request.user.username }}" class="user-avatar" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
-          {% else %}
-            <div class="user-avatar">{{ request.user.username|first|upper }}</div>
-          {% endif %}
-          <form method="post" action="{% url 'logout' %}">
-            {% csrf_token %}
-            <button type="submit" class="btn-logout">Cerrar Sesión</button>
-          </form>
-        </div>
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">
+        <div class="logo-icon">E</div>
+        <span class="logo-text">EcoSmart</span>
+      </div>
+      <button class="toggle-btn" id="toggle-btn">☰</button>
+    </div>
+    <nav class="menu">
+      <a href="#" class="menu-item active"><i>🏠</i><span>Inicio</span></a>
+      <a href="#planes" class="menu-item"><i>📦</i><span>Mis Planes</span></a>
+      <a href="{% url 'crear_plan' %}" class="menu-item"><i>➕</i><span>Crear Plan</span></a>
+      <a href="#invitaciones" class="menu-item"><i>✉️</i><span>Invitaciones</span></a>
+      <a href="#configuracion" class="menu-item"><i>⚙️</i><span>Configuración</span></a>
+    </nav>
+    <div class="sidebar-footer">© 2025 EcoSmart</div>
+  </aside>
+
+  <!-- Main -->
+  <main>
+    <div class="header">
+      <h1>Dashboard</h1>
+      <div class="user-info">
+        {% if request.user.profile.profile_picture %}
+          <img src="{{ request.user.profile.profile_picture.url }}" alt="Foto de {{ request.user.username }}" class="user-avatar">
+        {% else %}
+          <div class="user-avatar">{{ request.user.username|first|upper }}</div>
+        {% endif %}
+        <form method="post" action="{% url 'logout' %}" style="display: inline;">
+          {% csrf_token %}
+          <button type="submit" class="btn-logout">Cerrar Sesión</button>
+        </form>
       </div>
     </div>
-  </header>
 
-  <main class="container">
     <!-- Bienvenida -->
     <section class="welcome-section">
       <h2>¡Hola, {{ request.user.username }}!</h2>
@@ -38,72 +311,147 @@
     </section>
 
     <!-- Acciones principales -->
-    <div class="dashboard-grid" style="justify-content: center;">
-      <div class="card" style="max-width: 400px;">
-        <div class="card-header">
-          <div class="card-icon primary">
-            <span>+</span>
-          </div>
-          <h3 class="card-title">Crear un Nuevo Plan Financiero</h3>
-        </div>
-        <a href="{% url 'crear_plan' %}" class="btn btn-primary" style="display: inline-block; text-align: center; text-decoration: none;">Crear Plan</a>
+    <div class="dashboard-grid">
+      <div class="card">
+        <h3>Crear un Nuevo Plan Financiero</h3>
+        <p>Comienza un plan financiero para organizar tus finanzas.</p>
+        <a href="{% url 'crear_plan' %}" class="btn btn-primary">Crear Plan</a>
       </div>
     </div>
 
     <!-- Mis Planes -->
-    <h3 class="section-title">Mis Planes Financieros</h3>
-    <section class="plans-section" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem;">
-      {% for suscripcion in mis_planes %}
-        <a href="{% url 'Menu_plan' suscripcion.plan.id %}" class="plan-card" style="padding: 1rem; margin-bottom: 0;">
-          {% if suscripcion.plan.imagen %}
-            <img src="{{ suscripcion.plan.imagen.url }}" alt="Imagen de {{ suscripcion.plan.nombre }}" style="width: 100%; height: 80px; object-fit: cover; border-radius: var(--radius); margin-bottom: 0.75rem;">
-          {% else %}
-            <div style="width: 100%; height: 80px; background-color: var(--border); border-radius: var(--radius); margin-bottom: 0.75rem; display: flex; align-items: center; justify-content: center;">
-              <span style="color: var(--text-light); font-weight: 500; font-size: 0.9rem;">Sin imagen</span>
-            </div>
-          {% endif %}
-          <h4 class="plan-title" style="font-size: 1rem; margin-bottom: 0.25rem;">{{ suscripcion.plan.nombre }}</h4>
-          <p class="plan-type" style="font-size: 0.85rem;">{{ suscripcion.plan.get_tipo_plan_display }}</p>
-        </a>
-      {% empty %}
-        <p class="empty-state">Aún no estás en ningún plan financiero.</p>
-      {% endfor %}
-    </section>
+<!-- Mis Planes -->
+<h3 class="section-title" id="planes">Mis Planes Financieros</h3>
+<section class="plans-section">
+ {% for suscripcion in mis_planes %}
+   <a href="{% url 'Menu_plan' suscripcion.plan.id %}" class="plan-card">
+     {% if suscripcion.plan.imagen %}
+       <img src="{{ suscripcion.plan.imagen.url }}" alt="{{ suscripcion.plan.nombre }}">
+     {% else %}
+       <div style="width:100%;height:80px;background-color:var(--border);display:flex;align-items:center;justify-content:center;border-radius:var(--radius);margin-bottom:0.75rem;">
+         <span style="color:var(--text-light);font-weight:500;font-size:0.9rem;">Sin imagen</span>
+       </div>
+     {% endif %}
+     <h4 class="plan-title">{{ suscripcion.plan.nombre }}</h4>
+     <p class="plan-type">{{ suscripcion.plan.get_tipo_plan_display }}</p>
+   </a>
+ {% empty %}
+   <p class="empty-state">Aún no estás en ningún plan financiero.</p>
+ {% endfor %}
+</section>
 
-    <!-- Invitaciones Pendientes -->
-    <h3 class="section-title">Invitaciones Pendientes</h3>
-    <section class="invites-section">
-      {% for i in invitaciones_pendientes %}
-        <div class="invite-card">
-          <div class="invite-text">
-            <p><strong>{{ i.invitador.username }}</strong> te invitó al plan financiero <strong>{{ i.plan.nombre }}</strong></p>
+    <!-- Invitaciones -->
+<h3 class="section-title" id="invitaciones">Invitaciones Pendientes</h3>
+<section class="invites-section">
+ {% for invitacion in invitaciones_pendientes %}
+   <div class="invite-card">
+     <div>
+       <strong>{{ invitacion.plan.nombre }}</strong>
+       <p>Invitado por: {{ invitacion.invitador.username }}</p>
+     </div>
+     <div class="invite-actions">
+       <form method="post" action="{% url 'aceptar_invitacion' invitacion.id %}" style="display: inline;">
+         {% csrf_token %}
+         <button type="submit" class="btn btn-success" style="background: var(--success); color: white; border: none; padding: 0.5rem 1rem; border-radius: var(--radius); cursor: pointer;">Aceptar</button>
+       </form>
+       <form method="post" action="{% url 'rechazar_invitacion' invitacion.id %}" style="display: inline;">
+         {% csrf_token %}
+         <button type="submit" class="btn btn-danger" style="background: var(--danger); color: white; border: none; padding: 0.5rem 1rem; border-radius: var(--radius); cursor: pointer;">Rechazar</button>
+       </form>
+     </div>
+   </div>
+ {% empty %}
+   <p class="empty-state">No tienes invitaciones pendientes.</p>
+ {% endfor %}
+</section>
+
+    <!-- Configuración -->
+<h3 class="section-title" id="configuracion">Configuración</h3>
+<section class="config-section" style="background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);padding:2rem;margin-bottom:2rem;">
+ <h4 style="color:var(--primary-dark);margin-bottom:1rem;">Opciones de Cuenta</h4>
+ <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+   <a href="{% url 'edit_profile' %}" style="background:var(--primary);color:white;padding:0.75rem 1.5rem;border-radius:var(--radius);text-decoration:none;transition:var(--transition);">
+     Editar Perfil
+   </a>
+   <a href="#" style="background:var(--secondary);color:white;padding:0.75rem 1.5rem;border-radius:var(--radius);text-decoration:none;transition:var(--transition);">
+     Cambiar Contraseña
+   </a>
+ </div>
+
+
+</section>
+<!-- Chatbot Bubble -->
+<div id="chatbot-bubble" class="fixed bottom-6 right-6 z-50">
+  <div class="relative">
+    <button id="chatbot-toggle" class="bg-gradient-to-r from-purple-600 to-purple-800 text-white p-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-110">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+      </svg>
+    </button>
+
+    <!-- Notification Badge -->
+    <div id="chatbot-notification" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center font-bold animate-pulse">
+      ?
+    </div>
+
+    <!-- Welcome Message -->
+    <div id="chatbot-welcome" class="absolute bottom-full right-0 mb-3 bg-white rounded-lg shadow-lg p-4 max-w-xs hidden">
+      <div class="flex items-start gap-3">
+        <div class="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center text-white text-sm">
+          🤖
+        </div>
+        <div>
+          <p class="text-gray-800 text-sm font-medium">¡Hola! Soy tu asistente financiero</p>
+          <p class="text-gray-600 text-xs mt-1">¿En qué puedo ayudarte hoy?</p>
+        </div>
+      </div>
+      <div class="absolute top-full right-6 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-white"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Chatbot Modal -->
+<div id="chatbot-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+  <div class="flex items-center justify-center min-h-screen p-4">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md h-[600px] flex flex-col">
+      <!-- Chatbot Header -->
+      <div class="bg-gradient-to-r from-purple-600 to-purple-800 text-white p-4 rounded-t-2xl flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+            🤖
           </div>
-          <div class="invite-actions">
-            <form method="post" action="{% url 'aceptar_invitacion' i.id %}" style="display: inline;">
-              {% csrf_token %}
-              <button type="submit" class="btn btn-success">Aceptar</button>
-            </form>
-            <form method="post" action="{% url 'rechazar_invitacion' i.id %}" style="display: inline;">
-              {% csrf_token %}
-              <button type="submit" class="btn btn-danger">Rechazar</button>
-            </form>
+          <div>
+            <h3 class="font-semibold">EcoSmart Assistant</h3>
+            <p class="text-sm opacity-90">Tu asistente financiero</p>
           </div>
         </div>
-      {% empty %}
-        <p class="empty-state">No tienes invitaciones pendientes.</p>
-      {% endfor %}
-    </section>
-  </main>
+        <button id="close-chatbot" class="text-white hover:text-gray-200 text-xl">✕</button>
+      </div>
 
-  <script>
-    // Simulación opcional para datos dinámicos (no afecta la funcionalidad Django)
-    document.addEventListener('DOMContentLoaded', function() {
-      // El nombre de usuario ya se renderiza con Django, pero esto es para fallback
-      const userNameElement = document.querySelector('.welcome-section h2');
-      if (userNameElement && !userNameElement.textContent.includes('¡Hola,')) {
-        userNameElement.textContent = '¡Hola, Usuario Demo!';
-      }
-    });
-  </script>
-</body>
-</html>
+      <!-- Chat Messages -->
+      <div id="chat-messages" class="flex-1 p-4 overflow-y-auto bg-gray-50">
+        <div class="flex gap-3 mb-4">
+          <div class="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center text-white text-sm">
+            🤖
+          </div>
+          <div class="bg-white p-3 rounded-lg shadow-sm max-w-xs">
+            <p class="text-gray-800 text-sm">¡Hola! Soy tu asistente financiero de EcoSmart. ¿En qué puedo ayudarte hoy?</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chat Input -->
+      <div class="p-4 border-t bg-white rounded-b-2xl">
+        <div class="flex gap-2">
+          <input type="text" id="chat-input" placeholder="Escribe tu mensaje..." class="flex-1 px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+          <button id="send-message" class="bg-purple-600 text-white p-2 rounded-full hover:bg-purple-700 transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

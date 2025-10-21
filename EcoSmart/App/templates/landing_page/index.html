@@ -110,5 +110,217 @@
   <footer>
     <p>© 2025 EcoSmart. Todos los derechos reservados</p>
   </footer>
+
+  <!-- Chatbot Bubble -->
+  <div id="chatbot-bubble" class="fixed bottom-6 right-6 z-50">
+    <div class="relative">
+      <button id="chatbot-toggle" class="bg-gradient-to-r from-purple-600 to-purple-800 text-white p-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-110">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+        </svg>
+      </button>
+
+      <!-- Notification Badge -->
+      <div id="chatbot-notification" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center font-bold animate-pulse">
+        ?
+      </div>
+
+      <!-- Welcome Message -->
+      <div id="chatbot-welcome" class="absolute bottom-full right-0 mb-3 bg-white rounded-lg shadow-lg p-4 max-w-xs hidden">
+        <div class="flex items-start gap-3">
+          <div class="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center text-white text-sm">
+            🤖
+          </div>
+          <div>
+            <p class="text-gray-800 text-sm font-medium">¡Hola! Soy tu asistente financiero</p>
+            <p class="text-gray-600 text-xs mt-1">¿En qué puedo ayudarte hoy?</p>
+          </div>
+        </div>
+        <div class="absolute top-full right-6 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-white"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chatbot Modal -->
+  <div id="chatbot-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+    <div class="flex items-center justify-center min-h-screen p-4">
+      <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md h-[600px] flex flex-col">
+        <!-- Chatbot Header -->
+        <div class="bg-gradient-to-r from-purple-600 to-purple-800 text-white p-4 rounded-t-2xl flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+              🤖
+            </div>
+            <div>
+              <h3 class="font-semibold">EcoSmart Assistant</h3>
+              <p class="text-sm opacity-90">Tu asistente financiero</p>
+            </div>
+          </div>
+          <button id="close-chatbot" class="text-white hover:text-gray-200 text-xl">✕</button>
+        </div>
+
+        <!-- Chat Messages -->
+        <div id="chat-messages" class="flex-1 p-4 overflow-y-auto bg-gray-50">
+          <div class="flex gap-3 mb-4">
+            <div class="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center text-white text-sm">
+              🤖
+            </div>
+            <div class="bg-white p-3 rounded-lg shadow-sm max-w-xs">
+              <p class="text-gray-800 text-sm">¡Hola! Soy tu asistente financiero de EcoSmart. ¿En qué puedo ayudarte hoy?</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chat Input -->
+        <div class="p-4 border-t bg-white rounded-b-2xl">
+          <div class="flex gap-2">
+            <input type="text" id="chat-input" placeholder="Escribe tu mensaje..." class="flex-1 px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+            <button id="send-message" class="bg-purple-600 text-white p-2 rounded-full hover:bg-purple-700 transition-colors">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Chatbot functionality
+      const chatbotBubble = document.getElementById('chatbot-bubble');
+      const chatbotToggle = document.getElementById('chatbot-toggle');
+      const chatbotModal = document.getElementById('chatbot-modal');
+      const closeChatbot = document.getElementById('close-chatbot');
+      const chatInput = document.getElementById('chat-input');
+      const sendMessage = document.getElementById('send-message');
+      const chatMessages = document.getElementById('chat-messages');
+      const chatbotWelcome = document.getElementById('chatbot-welcome');
+      const chatbotNotification = document.getElementById('chatbot-notification');
+
+      // Show welcome message after 3 seconds
+      setTimeout(() => {
+        chatbotWelcome.classList.remove('hidden');
+        setTimeout(() => {
+          chatbotWelcome.classList.add('hidden');
+        }, 5000); // Hide after 5 seconds
+      }, 3000);
+
+      // Toggle chatbot modal
+      chatbotToggle.addEventListener('click', () => {
+        chatbotModal.classList.remove('hidden');
+        chatbotWelcome.classList.add('hidden'); // Hide welcome message
+        chatbotNotification.style.display = 'none'; // Hide notification
+      });
+
+      closeChatbot.addEventListener('click', () => {
+        chatbotModal.classList.add('hidden');
+      });
+
+      // Close modal when clicking outside
+      chatbotModal.addEventListener('click', (e) => {
+        if (e.target === chatbotModal) {
+          chatbotModal.classList.add('hidden');
+        }
+      });
+
+      // Send message function
+      function sendChatMessage() {
+        const message = chatInput.value.trim();
+        if (!message) return;
+
+        // Add user message
+        addMessage(message, 'user');
+        chatInput.value = '';
+
+        // Simulate bot response (you can replace this with actual API call)
+        setTimeout(() => {
+          const botResponse = getBotResponse(message);
+          addMessage(botResponse, 'bot');
+        }, 1000);
+      }
+
+      // Add message to chat
+      function addMessage(text, sender) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `flex gap-3 mb-4 ${sender === 'user' ? 'justify-end' : ''}`;
+
+        if (sender === 'bot') {
+          messageDiv.innerHTML = `
+            <div class="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center text-white text-sm">
+              🤖
+            </div>
+            <div class="bg-white p-3 rounded-lg shadow-sm max-w-xs">
+              <p class="text-gray-800 text-sm">${text}</p>
+            </div>
+          `;
+        } else {
+          messageDiv.innerHTML = `
+            <div class="bg-purple-600 p-3 rounded-lg shadow-sm max-w-xs">
+              <p class="text-white text-sm">${text}</p>
+            </div>
+          `;
+        }
+
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      }
+
+      // Bot response logic
+      function getBotResponse(message) {
+        const lowerMessage = message.toLowerCase();
+
+        if (lowerMessage.includes('hola') || lowerMessage.includes('buenos') || lowerMessage.includes('saludos')) {
+          return '¡Hola! 👋 Soy tu asistente financiero de EcoSmart. ¿En qué puedo ayudarte con la organización de tus finanzas familiares?';
+        }
+
+        if (lowerMessage.includes('registro') || lowerMessage.includes('registrar') || lowerMessage.includes('crear cuenta')) {
+          return '¡Excelente decisión! Para registrarte en EcoSmart, haz clic en el botón "Registrarse" en la parte superior. Podrás crear tu cuenta y comenzar a organizar tus finanzas familiares.';
+        }
+
+        if (lowerMessage.includes('login') || lowerMessage.includes('iniciar') || lowerMessage.includes('entrar')) {
+          return 'Para iniciar sesión, haz clic en "Iniciar sesión" en la barra de navegación. Ingresa tus credenciales y accede a tu dashboard personal.';
+        }
+
+        if (lowerMessage.includes('plan') || lowerMessage.includes('planes')) {
+          return '📊 Los planes financieros te permiten organizar tus ingresos, gastos y objetivos. Una vez registrado, podrás crear planes individuales o grupales para compartir con tu familia.';
+        }
+
+        if (lowerMessage.includes('gasto') || lowerMessage.includes('gastos')) {
+          return '💸 EcoSmart te permite registrar y categorizar todos tus gastos. Podrás ver estadísticas detalladas y controlar mejor tu presupuesto familiar.';
+        }
+
+        if (lowerMessage.includes('ingreso') || lowerMessage.includes('ingresos')) {
+          return '💰 Registra todos tus ingresos y visualiza el balance completo de tus finanzas. Perfecto para planificar y ahorrar.';
+        }
+
+        if (lowerMessage.includes('tarea') || lowerMessage.includes('tareas')) {
+          return '📝 Asigna y gestiona tareas familiares dentro de tus planes. Mantén a toda la familia organizada y productiva.';
+        }
+
+        if (lowerMessage.includes('objetivo') || lowerMessage.includes('objetivos') || lowerMessage.includes('ahorro')) {
+          return '🎯 Establece objetivos de ahorro y haz seguimiento del progreso. EcoSmart te ayuda a alcanzar tus metas financieras.';
+        }
+
+        if (lowerMessage.includes('ayuda') || lowerMessage.includes('help') || lowerMessage.includes('funciona')) {
+          return '🤖 EcoSmart es tu asistente para organizar finanzas familiares:\n• Control de ingresos y gastos\n• Gestión de tareas domésticas\n• Seguimiento de objetivos de ahorro\n• Planes individuales y grupales\n• Reportes y estadísticas\n\n¿Te gustaría registrarte para probarlo?';
+        }
+
+        return '¡Qué buena pregunta! EcoSmart está diseñado para ayudarte a organizar tanto tus finanzas como las tareas familiares. ¿Te gustaría saber más sobre alguna funcionalidad específica o prefieres registrarte para probar la aplicación?';
+      }
+
+      // Event listeners
+      sendMessage.addEventListener('click', sendChatMessage);
+      chatInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          sendChatMessage();
+        }
+      });
+    });
+  </script>
 </body>
 </html>

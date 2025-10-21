@@ -23,7 +23,7 @@ def verificar_membresia(request, plan_id):
 
 @login_required
 def menu_plan(request, plan_id):
-    """Muestra el menú principal del plan y realiza la verificación de membresía."""
+    """Redirige directamente a las estadísticas del plan."""
     try:
         plan, es_miembro = verificar_membresia(request, plan_id)
     except:
@@ -34,50 +34,8 @@ def menu_plan(request, plan_id):
         messages.error(request, 'No tienes acceso a este plan.')
         return redirect('Dashboard')
 
-    # Determinar si el usuario es admin
-    es_admin = (plan.creador == request.user or
-                Suscripcion.objects.filter(plan=plan, usuario=request.user, rol='admin').exists())
-
-    if request.method == 'POST' and es_admin:
-        if 'user_id' in request.POST:
-            # Handle invitation
-            user_id = request.POST.get('user_id')
-            user = get_object_or_404(User, pk=user_id)
-            if Suscripcion.objects.filter(plan=plan, usuario=user).exists():
-                messages.error(request, 'El usuario ya es miembro del plan.')
-            else:
-                existing = Invitacion.objects.filter(plan=plan, invitado=user).first()
-                if existing:
-                    if existing.estado == 'pendiente':
-                        messages.error(request, 'Ya existe una invitación pendiente para este usuario.')
-                    else:
-                        existing.estado = 'pendiente'
-                        existing.invitador = request.user
-                        existing.fecha_invitacion = timezone.now()
-                        existing.save()
-                        messages.success(request, f'Invitación reenviada a {user.username}.')
-                else:
-                    Invitacion.objects.create(plan=plan, invitado=user, invitador=request.user)
-                    messages.success(request, f'Invitación enviada a {user.username}.')
-        elif 'suscripcion_id' in request.POST:
-            # Handle member deletion
-            suscripcion_id = request.POST.get('suscripcion_id')
-            suscripcion = get_object_or_404(Suscripcion, pk=suscripcion_id, plan=plan)
-            if suscripcion.usuario != request.user:
-                username = suscripcion.usuario.username
-                suscripcion.delete()
-                messages.success(request, f'Miembro {username} eliminado del plan.')
-            else:
-                messages.error(request, 'No puedes eliminarte a ti mismo.')
-
-    dinero_info, created = Dinero.objects.get_or_create(plan=plan)
-
-    context = {
-        'plan': plan,
-        'dinero_info': dinero_info,
-        'es_admin': es_admin,
-    }
-    return render(request, 'menu_plan.html', context)
+    # Redirigir directamente a estadísticas
+    return redirect('estadisticas', plan_id=plan.id)
 
 
 @login_required
@@ -258,6 +216,10 @@ def ajustes(request, plan_id):
         'es_admin': es_admin,
         'es_admin_real': es_admin_real,
     }
+
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return render(request, 'ajustes_partial.html', context)
+
     return render(request, 'ajustes.html', context)
 
 
@@ -288,12 +250,18 @@ def ingresos(request, plan_id):
 
     ingresos_list = Ingreso.objects.filter(dinero=dinero_obj).order_by('-fecha_guardado')
 
+    # Calcular estadísticas adicionales
+    ingresos_por_tipo = Ingreso.objects.filter(dinero=dinero_obj).values('tipo_ingreso').annotate(total=Sum('cantidad')).order_by('-total')
+
     context = {
         'plan': plan,
         'form': form,
         'ingresos_list': ingresos_list,
         'dinero_info': dinero_obj,
+        'ingresos_por_tipo': ingresos_por_tipo,
     }
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return render(request, 'ingresos_partial.html', context)
     return render(request, 'ingresos.html', context)
 
 
@@ -406,12 +374,18 @@ def gastos(request, plan_id):
 
     gastos_list = Gasto.objects.filter(dinero=dinero_obj).order_by('-fecha_guardado')
 
+    # Calcular estadísticas adicionales
+    gastos_por_tipo = Gasto.objects.filter(dinero=dinero_obj).values('tipo_gasto').annotate(total=Sum('cantidad')).order_by('-total')
+
     context = {
         'plan': plan,
         'form': form,
         'gastos_list': gastos_list,
         'dinero_info': dinero_obj,
+        'gastos_por_tipo': gastos_por_tipo,
     }
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return render(request, 'gastos_partial.html', context)
     return render(request, 'gastos.html', context)
 
 
@@ -504,7 +478,7 @@ def estadisticas(request, plan_id):
     plan, es_miembro = verificar_membresia(request, plan_id)
     if not es_miembro: return redirect('dashboard')
 
-    dinero_obj = get_object_or_404(Dinero, plan=plan)
+    dinero_obj, created = Dinero.objects.get_or_create(plan=plan, defaults={'total_dinero': 0, 'gasto_total': 0, 'ingreso_total': 0})
 
     ingresos_por_tipo = Ingreso.objects.filter(dinero=dinero_obj).values('tipo_ingreso').annotate(total=Sum('cantidad'))
     gastos_por_tipo = Gasto.objects.filter(dinero=dinero_obj).values('tipo_gasto').annotate(total=Sum('cantidad'))
@@ -527,6 +501,8 @@ def estadisticas(request, plan_id):
         'ingresos_list': ingresos_list,
         'gastos_list': gastos_list,
     }
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return render(request, 'estadisticas_partial.html', context)
     return render(request, 'estadisticas.html', context)
 
 
@@ -563,6 +539,10 @@ def historiales(request, plan_id):
         selected_month_num = None
 
     dinero_obj = get_object_or_404(Dinero, plan=plan)
+
+    # Estadísticas por tipo
+    ingresos_por_tipo = Ingreso.objects.filter(dinero=dinero_obj).values('tipo_ingreso').annotate(total=Sum('cantidad'))
+    gastos_por_tipo = Gasto.objects.filter(dinero=dinero_obj).values('tipo_gasto').annotate(total=Sum('cantidad'))
 
     # Listas completas de ingresos y gastos con usuario
     ingresos_list = Ingreso.objects.filter(dinero=dinero_obj).select_related('user').order_by('-fecha_guardado')
@@ -732,6 +712,8 @@ def historiales(request, plan_id):
     meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
     context = {
         'plan': plan,
+        'ingresos_por_tipo': ingresos_por_tipo,
+        'gastos_por_tipo': gastos_por_tipo,
         'ingresos_list': ingresos_list,
         'gastos_list': gastos_list,
         'current_year': anio_actual,
@@ -748,6 +730,8 @@ def historiales(request, plan_id):
         'yearly_labels_json': json.dumps(yearly_labels),
         'yearly_data_json': json.dumps(yearly_data),
     }
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return render(request, 'historiales_partial.html', context)
     return render(request, 'historiales.html', context)
 
 
@@ -826,6 +810,8 @@ def objetivos(request, plan_id):
         'show_completed': show_completed,
         'es_admin': es_admin,
     }
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return render(request, 'objetivos_partial.html', context)
     return render(request, 'objetivos.html', context)
 
 @login_required
@@ -1078,6 +1064,8 @@ def tareas(request, plan_id):
         'tarea_form': TareaForm(plan=plan),
         'es_admin': es_admin,
     }
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return render(request, 'tareas_partial.html', context)
     return render(request, 'tareas.html', context)
 
 
@@ -1410,6 +1398,100 @@ def descargar_pdf_graficos(request, plan_id):
             return response
 
 
+@login_required
+def descargar_pdf_historial(request, plan_id, tipo):
+    """Genera y descarga un PDF con el historial de ingresos o gastos."""
+    plan, es_miembro = verificar_membresia(request, plan_id)
+    if not es_miembro:
+        return HttpResponse('No autorizado', status=403)
+
+    if tipo not in ['ingresos', 'gastos']:
+        return HttpResponse('Tipo inválido', status=400)
+
+    from reportlab.lib.pagesizes import letter
+    from reportlab.lib import colors
+    from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+    from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+    from reportlab.lib.units import inch
+    import io
+
+    dinero_obj = get_object_or_404(Dinero, plan=plan)
+
+    if tipo == 'ingresos':
+        transacciones = Ingreso.objects.filter(dinero=dinero_obj).select_related('user').order_by('-fecha_guardado')
+        titulo = f'Historial de Ingresos - Plan: {plan.nombre}'
+    else:
+        transacciones = Gasto.objects.filter(dinero=dinero_obj).select_related('user').order_by('-fecha_guardado')
+        titulo = f'Historial de Gastos - Plan: {plan.nombre}'
+
+    # Crear PDF
+    buffer = io.BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=letter)
+    styles = getSampleStyleSheet()
+    story = []
+
+    # Título
+    title_style = ParagraphStyle(
+        'CustomTitle',
+        parent=styles['Heading1'],
+        fontSize=16,
+        spaceAfter=30,
+    )
+    story.append(Paragraph(titulo, title_style))
+    story.append(Spacer(1, 12))
+
+    # Fecha del reporte
+    from django.utils import timezone
+    hoy = timezone.now().date()
+    story.append(Paragraph(f'Reporte generado el: {hoy.strftime("%d/%m/%Y")}', styles['Normal']))
+    story.append(Spacer(1, 20))
+
+    if transacciones:
+        # Crear tabla de datos
+        data = [['Nombre', 'Descripción', 'Tipo', 'Usuario', 'Cantidad', 'Fecha']]
+
+        for transaccion in transacciones:
+            if tipo == 'ingresos':
+                tipo_display = transaccion.get_tipo_ingreso_display()
+                cantidad = f'+${transaccion.cantidad:.2f}'
+            else:
+                tipo_display = transaccion.get_tipo_gasto_display()
+                cantidad = f'-${transaccion.cantidad:.2f}'
+
+            data.append([
+                transaccion.nombre,
+                transaccion.descripcion or 'Sin descripción',
+                tipo_display,
+                transaccion.user.username,
+                cantidad,
+                transaccion.fecha_guardado.strftime('%d/%m/%Y %H:%M')
+            ])
+
+        # Crear tabla
+        table = Table(data)
+        table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, 0), 14),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+            ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+            ('GRID', (0, 0), (-1, -1), 1, colors.black)
+        ]))
+
+        story.append(table)
+    else:
+        story.append(Paragraph(f'No hay {tipo} registrados.', styles['Normal']))
+
+    # Construir PDF
+    doc.build(story)
+
+    # Preparar respuesta
+    buffer.seek(0)
+    response = HttpResponse(buffer.getvalue(), content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="historial_{tipo}_{plan.nombre}_{hoy.strftime("%Y%m%d")}.pdf"'
+    return response
 
 
 @login_required

@@ -1,0 +1,310 @@
+<div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+
+    <div class="flex justify-between items-center mb-6 border-b pb-2">
+        <h1 class="text-3xl font-extrabold text-gray-900">
+            📊 Estadísticas del Plan: {{ plan.nombre }}
+        </h1>
+        <a href="{% url 'historiales' plan_id=plan.id %}" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-150">
+            Ver Historiales Completos
+        </a>
+    </div>
+
+    <!-- Resumen Financiero -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <!-- Saldo Total -->
+        <div class="bg-gradient-to-r from-indigo-50 to-indigo-100 p-6 rounded-xl shadow-lg border border-indigo-200 hover:shadow-xl transition-shadow">
+            <div class="flex items-center mb-2">
+                <svg class="w-8 h-8 text-indigo-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                </svg>
+                <p class="text-sm font-medium text-indigo-700">Saldo Actual</p>
+            </div>
+            <p class="text-4xl font-extrabold text-indigo-900">${{ dinero_info.total_dinero|floatformat:2 }}</p>
+        </div>
+        <!-- Total Ingresos -->
+        <div class="bg-gradient-to-r from-green-50 to-green-100 p-6 rounded-xl shadow-lg border border-green-200 hover:shadow-xl transition-shadow">
+            <div class="flex items-center mb-2">
+                <svg class="w-8 h-8 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                </svg>
+                <p class="text-sm font-medium text-green-700">Total Ingresos</p>
+            </div>
+            <p class="text-4xl font-extrabold text-green-900">${{ dinero_info.ingreso_total|floatformat:2 }}</p>
+        </div>
+        <!-- Total Gastos -->
+        <div class="bg-gradient-to-r from-red-50 to-red-100 p-6 rounded-xl shadow-lg border border-red-200 hover:shadow-xl transition-shadow">
+            <div class="flex items-center mb-2">
+                <svg class="w-8 h-8 text-red-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"></path>
+                </svg>
+                <p class="text-sm font-medium text-red-700">Total Gastos</p>
+            </div>
+            <p class="text-4xl font-extrabold text-red-900">${{ dinero_info.gasto_total|floatformat:2 }}</p>
+        </div>
+    </div>
+
+    <!-- Gráficos y Desglose por Categoría -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+        <!-- Desglose de Ingresos por Tipo -->
+        <div class="bg-white p-6 rounded-xl shadow-2xl">
+            <h2 class="text-2xl font-bold mb-4 text-green-700 border-b pb-2">📈 Desglose de Ingresos por Tipo</h2>
+
+            {% if ingresos_por_tipo %}
+            <div class="mb-4">
+                <canvas id="ingresosTipoChart" width="400" height="200"></canvas>
+            </div>
+            <ul class="space-y-3">
+                {% for item in ingresos_por_tipo %}
+                <li class="flex justify-between items-center p-3 rounded-lg bg-green-50">
+                    <span class="font-semibold text-gray-800">{{ item.tipo_ingreso }}</span>
+                    <span class="text-lg font-bold text-green-600">${{ item.total|floatformat:2 }}</span>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+                <p class="text-gray-500 p-8 bg-gray-50 rounded-lg text-center">No hay ingresos para analizar categorías.</p>
+            {% endif %}
+        </div>
+
+        <!-- Desglose de Gastos por Tipo -->
+        <div class="bg-white p-6 rounded-xl shadow-2xl">
+            <h2 class="text-2xl font-bold mb-4 text-red-700 border-b pb-2">📉 Desglose de Gastos por Tipo</h2>
+
+            {% if gastos_por_tipo %}
+            <div class="mb-4">
+                <canvas id="gastosTipoChart" width="400" height="200"></canvas>
+            </div>
+            <ul class="space-y-3">
+                {% for item in gastos_por_tipo %}
+                <li class="flex justify-between items-center p-3 rounded-lg bg-red-50">
+                    <span class="font-semibold text-gray-800">{{ item.tipo_gasto }}</span>
+                    <span class="text-lg font-bold text-red-600">${{ item.total|floatformat:2 }}</span>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+                <p class="text-gray-500 p-8 bg-gray-50 rounded-lg text-center">No hay gastos para analizar categorías.</p>
+            {% endif %}
+        </div>
+    
+    
+    </div>
+    
+    <script>
+        // Datos para gráficos
+        const ingresosTipoData = {
+            labels: [{% for item in ingresos_por_tipo %}'{{ item.tipo_ingreso }}',{% endfor %}],
+            datasets: [{
+                label: 'Ingresos por Tipo',
+                data: [{% for item in ingresos_por_tipo %}{{ item.total }},{% endfor %}],
+                backgroundColor: [
+                    'rgba(34, 197, 94, 0.8)',
+                    'rgba(59, 130, 246, 0.8)',
+                    'rgba(168, 85, 247, 0.8)',
+                    'rgba(251, 191, 36, 0.8)',
+                    'rgba(239, 68, 68, 0.8)',
+                ],
+                borderColor: [
+                    'rgba(34, 197, 94, 1)',
+                    'rgba(59, 130, 246, 1)',
+                    'rgba(168, 85, 247, 1)',
+                    'rgba(251, 191, 36, 1)',
+                    'rgba(239, 68, 68, 1)',
+                ],
+                borderWidth: 1
+            }]
+        };
+    
+        const gastosTipoData = {
+            labels: [{% for item in gastos_por_tipo %}'{{ item.tipo_gasto }}',{% endfor %}],
+            datasets: [{
+                label: 'Gastos por Tipo',
+                data: [{% for item in gastos_por_tipo %}{{ item.total }},{% endfor %}],
+                backgroundColor: [
+                    'rgba(239, 68, 68, 0.8)',
+                    'rgba(251, 191, 36, 0.8)',
+                    'rgba(168, 85, 247, 0.8)',
+                    'rgba(59, 130, 246, 0.8)',
+                    'rgba(34, 197, 94, 0.8)',
+                ],
+                borderColor: [
+                    'rgba(239, 68, 68, 1)',
+                    'rgba(251, 191, 36, 1)',
+                    'rgba(168, 85, 247, 1)',
+                    'rgba(59, 130, 246, 1)',
+                    'rgba(34, 197, 94, 1)',
+                ],
+                borderWidth: 1
+            }]
+        };
+    
+        // Configuración de gráficos
+        const configIngresos = {
+            type: 'pie',
+            data: ingresosTipoData,
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.label + ': $' + context.parsed.toFixed(2);
+                            }
+                        }
+                    }
+                }
+            }
+        };
+    
+        const configGastos = {
+            type: 'pie',
+            data: gastosTipoData,
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.label + ': $' + context.parsed.toFixed(2);
+                            }
+                        }
+                    }
+                }
+            }
+        };
+    
+        // Crear gráficos
+        {% if ingresos_por_tipo %}
+        new Chart(document.getElementById('ingresosTipoChart'), configIngresos);
+        {% endif %}
+    
+        {% if gastos_por_tipo %}
+        new Chart(document.getElementById('gastosTipoChart'), configGastos);
+        {% endif %}
+    
+        // Conversor de Monedas
+        document.getElementById('convertBtn').addEventListener('click', async function() {
+            const amount = parseFloat(document.getElementById('amount').value);
+            const currency = document.getElementById('currency').value;
+            const resultDiv = document.getElementById('result');
+            const resultText = document.getElementById('resultText');
+    
+            if (!amount || amount <= 0) {
+                resultText.textContent = 'Por favor, ingresa un monto válido.';
+                resultDiv.classList.remove('hidden');
+                resultDiv.classList.add('bg-red-50', 'border', 'border-red-200');
+                resultDiv.classList.remove('bg-gray-50');
+                return;
+            }
+    
+            try {
+                const response = await fetch('https://api.exchangerate-api.com/v4/latest/ARS');
+                const data = await response.json();
+                const rate = data.rates[currency];
+    
+                if (rate) {
+                    const converted = amount * rate;
+                    resultText.textContent = `${amount.toFixed(2)} ARS = ${converted.toFixed(2)} ${currency}`;
+                    resultDiv.classList.remove('hidden');
+                    resultDiv.classList.add('bg-green-50', 'border', 'border-green-200');
+                    resultDiv.classList.remove('bg-red-50', 'border-red-200', 'bg-gray-50');
+                } else {
+                    resultText.textContent = 'Error al obtener la tasa de cambio.';
+                    resultDiv.classList.remove('hidden');
+                    resultDiv.classList.add('bg-red-50', 'border', 'border-red-200');
+                    resultDiv.classList.remove('bg-gray-50');
+                }
+            } catch (error) {
+                resultText.textContent = 'Error de conexión. Inténtalo de nuevo.';
+                resultDiv.classList.remove('hidden');
+                resultDiv.classList.add('bg-red-50', 'border', 'border-red-200');
+                resultDiv.classList.remove('bg-gray-50');
+            }
+        });
+    
+    </script>
+    <!-- Desglose por Miembro -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
+
+        <!-- Desglose de Ingresos por Miembro -->
+        <div class="bg-white p-6 rounded-xl shadow-2xl">
+            <h2 class="text-2xl font-bold mb-4 text-blue-700 border-b pb-2">Desglose de Ingresos por Miembro</h2>
+
+            {% if ingresos_por_usuario %}
+            <ul class="space-y-3">
+                {% for item in ingresos_por_usuario %}
+                <li class="flex justify-between items-center p-3 rounded-lg bg-blue-50">
+                    <span class="font-semibold text-gray-800">{{ item.user__username|default:"Usuario Desconocido" }}</span>
+                    <span class="text-lg font-bold text-blue-600">${{ item.total|floatformat:2 }}</span>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+                <p class="text-gray-500 p-8 bg-gray-50 rounded-lg text-center">No hay ingresos registrados por miembros.</p>
+            {% endif %}
+        </div>
+
+        <!-- Desglose de Gastos por Miembro -->
+        <div class="bg-white p-6 rounded-xl shadow-2xl">
+            <h2 class="text-2xl font-bold mb-4 text-orange-700 border-b pb-2">Desglose de Gastos por Miembro</h2>
+
+            {% if gastos_por_usuario %}
+            <ul class="space-y-3">
+                {% for item in gastos_por_usuario %}
+                <li class="flex justify-between items-center p-3 rounded-lg bg-orange-50">
+                    <span class="font-semibold text-gray-800">{{ item.user__username|default:"Usuario Desconocido" }}</span>
+                    <span class="text-lg font-bold text-orange-600">${{ item.total|floatformat:2 }}</span>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+                <p class="text-gray-500 p-8 bg-gray-50 rounded-lg text-center">No hay gastos registrados por miembros.</p>
+            {% endif %}
+        </div>
+
+    </div>
+
+    <!-- Conversor de Monedas -->
+    <div class="mt-8 bg-white p-6 rounded-xl shadow-2xl">
+        <h2 class="text-2xl font-bold mb-4 text-purple-700 border-b pb-2">💱 Conversor de Monedas</h2>
+        <p class="text-gray-600 mb-4">Convierte tus pesos argentinos a otras monedas del mundo.</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label for="amount" class="block text-sm font-medium text-gray-700 mb-2">Monto en Pesos Argentinos (ARS)</label>
+                <input type="number" id="amount" placeholder="Ingresa el monto" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" min="0" step="0.01">
+            </div>
+            <div>
+                <label for="currency" class="block text-sm font-medium text-gray-700 mb-2">Moneda Destino</label>
+                <select id="currency" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                    <option value="USD">Dólar Estadounidense (USD)</option>
+                    <option value="EUR">Euro (EUR)</option>
+                    <option value="GBP">Libra Esterlina (GBP)</option>
+                    <option value="JPY">Yen Japonés (JPY)</option>
+                    <option value="CAD">Dólar Canadiense (CAD)</option>
+                    <option value="AUD">Dólar Australiano (AUD)</option>
+                    <option value="CHF">Franco Suizo (CHF)</option>
+                    <option value="CNY">Yuan Chino (CNY)</option>
+                    <option value="BRL">Real Brasileño (BRL)</option>
+                    <option value="MXN">Peso Mexicano (MXN)</option>
+                </select>
+            </div>
+        </div>
+
+        <button id="convertBtn" class="mt-4 w-full bg-purple-600 text-white py-3 px-4 rounded-xl font-semibold hover:bg-purple-700 transition duration-150 shadow-lg">
+            Convertir
+        </button>
+
+        <div id="result" class="mt-4 p-4 bg-gray-50 rounded-lg hidden">
+            <p id="resultText" class="text-lg font-semibold text-gray-800"></p>
+        </div>
+    </div>
+
+</div>
