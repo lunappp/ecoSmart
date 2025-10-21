@@ -1,0 +1,470 @@
+/* ===== EDITAR PERFIL - ESTILO MODERNO CON VIOLETA PREDOMINANTE ===== */
+
+/* Variables CSS - Violeta como color predominante */
+:root {
+  --violeta: #6a0dad;
+  --violeta-light: #8b5cf6;
+  --violeta-dark: #4c1d95;
+  --violeta-accent: #a855f7;
+  --negro: #1a1a1a;
+  --gris: #f5f5f5;
+  --gris-medium: #e5e7eb;
+  --gris-dark: #6b7280;
+  --blanco: #fff;
+  --success: #10b981;
+  --danger: #ef4444;
+  --warning: #f59e0b;
+  --shadow: 0 4px 20px rgba(106, 13, 173, 0.08);
+  --shadow-lg: 0 20px 40px rgba(106, 13, 173, 0.12);
+  --shadow-xl: 0 32px 64px rgba(106, 13, 173, 0.15);
+  --border-radius: 16px;
+  --border-radius-lg: 20px;
+  --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ===== RESET Y FUENTE MODERNA ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #e2e8f0 100%);
+  min-height: 100vh;
+  color: var(--negro);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ===== CONTENEDOR PRINCIPAL ===== */
+.max-w-7xl {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+/* ===== TÍTULO PRINCIPAL ===== */
+h1 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--violeta);
+  margin-bottom: 2rem;
+  text-align: center;
+  position: relative;
+  letter-spacing: -0.025em;
+}
+
+h1::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px;
+  height: 4px;
+  background: linear-gradient(90deg, var(--violeta), var(--violeta-accent));
+  border-radius: 2px;
+  box-shadow: 0 2px 8px rgba(106, 13, 173, 0.3);
+}
+
+/* ===== MENSAJES ===== */
+.mb-4 {
+  margin-bottom: 1.5rem;
+}
+
+.p-3 {
+  padding: 1rem;
+}
+
+.rounded-lg {
+  border-radius: var(--border-radius);
+}
+
+.text-sm {
+  font-size: 0.875rem;
+}
+
+/* Colores de mensajes */
+.bg-green-100 { background-color: rgba(16, 185, 129, 0.1); }
+.text-green-700 { color: var(--success); }
+.bg-red-100 { background-color: rgba(239, 68, 68, 0.1); }
+.text-red-700 { color: var(--danger); }
+.bg-blue-100 { background-color: rgba(59, 130, 246, 0.1); }
+.text-blue-700 { color: #2563eb; }
+
+/* ===== GRID LAYOUT ===== */
+.grid {
+  display: grid;
+  gap: 2rem;
+}
+
+.grid-cols-1 {
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+
+@media (min-width: 1024px) {
+  .lg\\:grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* ===== CARDS ===== */
+.bg-white {
+  background-color: var(--blanco);
+}
+
+.p-6 {
+  padding: 1.5rem;
+}
+
+.rounded-xl {
+  border-radius: var(--border-radius-lg);
+}
+
+.shadow-2xl {
+  box-shadow: var(--shadow-xl);
+}
+
+.h-fit {
+  height: fit-content;
+}
+
+/* ===== TÍTULOS DE SECCIONES ===== */
+h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--violeta);
+  margin-bottom: 1.5rem;
+  position: relative;
+  letter-spacing: -0.025em;
+}
+
+h2::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--violeta), var(--violeta-accent));
+  border-radius: 2px;
+}
+
+/* ===== FORMULARIOS ===== */
+.space-y-4 > * + * {
+  margin-top: 1rem;
+}
+
+/* ===== CAMPOS DEL FORMULARIO ===== */
+.field-wrapper {
+  margin-bottom: 1.5rem;
+}
+
+.block {
+  display: block;
+}
+
+.text-sm {
+  font-size: 0.875rem;
+}
+
+.font-medium {
+  font-weight: 500;
+}
+
+.text-gray-700 {
+  color: var(--gris-dark);
+}
+
+/* ===== INPUTS ===== */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="file"],
+textarea,
+select {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  border: 2px solid var(--gris-medium);
+  border-radius: var(--border-radius);
+  background-color: var(--blanco);
+  color: var(--negro);
+  font-size: 1rem;
+  font-family: inherit;
+  transition: all var(--transition);
+  outline: none;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--violeta);
+  box-shadow: 0 0 0 3px rgba(106, 13, 173, 0.1);
+  transform: translateY(-1px);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--gris-dark);
+  opacity: 0.7;
+}
+
+/* ===== IMAGEN DE PERFIL ===== */
+.w-20 {
+  width: 5rem;
+}
+
+.h-20 {
+  height: 5rem;
+}
+
+.rounded-full {
+  border-radius: 50%;
+}
+
+.object-cover {
+  object-fit: cover;
+}
+
+.border-2 {
+  border-width: 2px;
+}
+
+.border-gray-300 {
+  border-color: var(--gris-medium);
+}
+
+.mb-2 {
+  margin-bottom: 0.5rem;
+}
+
+.text-gray-500 {
+  color: var(--gris-dark);
+}
+
+/* ===== ERRORES ===== */
+.text-red-500 {
+  color: var(--danger);
+}
+
+.text-xs {
+  font-size: 0.75rem;
+}
+
+.mt-1 {
+  margin-top: 0.25rem;
+}
+
+/* ===== BOTONES ===== */
+.w-full {
+  width: 100%;
+}
+
+.py-3 {
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+}
+
+.px-4 {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.rounded-xl {
+  border-radius: var(--border-radius-lg);
+}
+
+.font-semibold {
+  font-weight: 600;
+}
+
+.transition {
+  transition: all var(--transition);
+}
+
+.duration-150 {
+  transition-duration: 150ms;
+}
+
+.shadow-lg {
+  box-shadow: var(--shadow-lg);
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.position-relative {
+  position: relative;
+}
+
+.overflow-hidden {
+  overflow: hidden;
+}
+
+/* ===== BOTÓN ACTUALIZAR PERFIL ===== */
+.bg-blue-600 {
+  background: linear-gradient(135deg, var(--violeta) 0%, var(--violeta-dark) 100%);
+  border: none;
+}
+
+.bg-blue-600:hover {
+  background: linear-gradient(135deg, var(--violeta-dark) 0%, var(--violeta) 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(106, 13, 173, 0.3);
+}
+
+/* ===== BOTÓN CAMBIAR CONTRASEÑA ===== */
+.bg-red-600 {
+  background: linear-gradient(135deg, var(--danger) 0%, #dc2626 100%);
+  border: none;
+}
+
+.bg-red-600:hover {
+  background: linear-gradient(135deg, #dc2626 0%, var(--danger) 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3);
+}
+
+/* ===== ENLACE VOLVER ===== */
+.mt-8 {
+  margin-top: 2rem;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.inline-flex {
+  display: inline-flex;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.text-indigo-600 {
+  color: var(--violeta);
+}
+
+.hover\\:text-indigo-800:hover {
+  color: var(--violeta-dark);
+}
+
+.font-medium {
+  font-weight: 500;
+}
+
+.mr-1 {
+  margin-right: 0.25rem;
+}
+
+/* ===== ICONO SVG ===== */
+svg {
+  width: 1.125rem;
+  height: 1.125rem;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 640px) {
+  .max-w-7xl {
+    padding: 1rem;
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+
+  .p-6 {
+    padding: 1.25rem;
+  }
+
+  .grid {
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  h1 {
+    font-size: 1.75rem;
+  }
+
+  h2 {
+    font-size: 1.25rem;
+  }
+
+  .p-6 {
+    padding: 1rem;
+  }
+}
+
+/* ===== ANIMACIONES ===== */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.bg-white {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.bg-white:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.bg-white:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+/* ===== DETALLES VISUALES ===== */
+input[type="file"] {
+  padding: 0.5rem;
+  border: 2px dashed var(--gris-medium);
+  background: rgba(106, 13, 173, 0.02);
+}
+
+input[type="file"]:hover {
+  border-color: var(--violeta);
+  background: rgba(106, 13, 173, 0.05);
+}
+
+input[type="file"]:focus {
+  border-color: var(--violeta);
+  background: rgba(106, 13, 173, 0.05);
+}
+
+/* Mejorar apariencia de selects */
+select {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 0.75rem center;
+  background-repeat: no-repeat;
+  background-size: 1rem;
+  padding-right: 2.5rem;
+}
+
+/* Focus states mejorados */
+button:focus,
+a:focus {
+  outline: 2px solid var(--violeta);
+  outline-offset: 2px;
+}
+
+/* Loading state para botones */
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
