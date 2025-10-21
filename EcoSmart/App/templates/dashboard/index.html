@@ -204,19 +204,20 @@
 
     <!-- Bienvenida -->
     <section class="welcome-section">
-      <h2>¡Hola, {{ request.user.username }}!</h2>
-      <p>Bienvenido de vuelta. <a href="{% url 'edit_profile' %}" style="color: var(--primary);">Editar perfil</a></p>
-    </section>
-
-    <!-- Acciones principales -->
-    <div class="dashboard-grid">
-      <div class="card">
-        <h3>Crear un Nuevo Plan Financiero</h3>
-        <p>Comienza un plan financiero para organizar tus finanzas.</p>
-        <a href="{% url 'crear_plan' %}" class="btn btn-primary">Crear Plan</a>
+      <div class="welcome-content">
+        <div class="welcome-text">
+          <h2>¡Hola, {{ request.user.username }}!</h2>
+          <p>¡Comencemos a ordenar tus finanzas!. <a href="{% url 'edit_profile' %}" style="color: var(--primary);">Editar perfil</a></p>
+        </div>
+        <div class="welcome-actions">
+          <div class="card">
+            <p>Comienza un plan financiero para organizar tus finanzas.</p>
+            <a href="{% url 'crear_plan' %}" class="btn-action">
+              <i>➕</i>
+              <span>Crear Plan</span>
+            </a>
+        </div>
       </div>
-    </div>
-
     <!-- Mis Planes -->
 <!-- Mis Planes -->
 <h3 class="section-title" id="planes">Mis Planes Financieros</h3>
@@ -237,6 +238,8 @@
    <p class="empty-state">Aún no estás en ningún plan financiero.</p>
  {% endfor %}
 </section>
+    </section>
+
 
     <!-- Invitaciones -->
 <h3 class="section-title" id="invitaciones">Invitaciones Pendientes</h3>
