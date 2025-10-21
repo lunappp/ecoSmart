@@ -6,295 +6,115 @@
   <title>EcoSmart Finanzas - Dashboard</title>
   {% load static %}
   <link rel="stylesheet" href="{% static 'dashboard/dashboard.css' %}">
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      // Toggle sidebar
-      const toggleBtn = document.getElementById('toggle-btn');
-      const sidebar = document.getElementById('sidebar');
-      const main = document.querySelector('main');
-
-      toggleBtn.addEventListener('click', function() {
-        sidebar.classList.toggle('collapsed');
-        main.classList.toggle('sidebar-collapsed');
-      });
-
-      // User dropdown toggle
-      const userMenuBtn = document.querySelector('.user-menu-btn');
-      const userDropdown = document.querySelector('.user-dropdown');
-
-      if (userMenuBtn && userDropdown) {
-        userMenuBtn.addEventListener('click', function(e) {
-          e.stopPropagation();
-          userDropdown.classList.toggle('active');
-        });
-
-        // Close dropdown when clicking outside
-        document.addEventListener('click', function(e) {
-          if (!userMenuBtn.contains(e.target) && !userDropdown.contains(e.target)) {
-            userDropdown.classList.remove('active');
-          }
-        });
-      }
-
-      // Menu item active state
-      const menuItems = document.querySelectorAll('.menu-item');
-      const currentPath = window.location.pathname;
-
-      menuItems.forEach(item => {
-        const href = item.getAttribute('href');
-        if (href && (currentPath === href || (href !== '#' && currentPath.startsWith(href)))) {
-          item.classList.add('active');
-        } else {
-          item.classList.remove('active');
-        }
-      });
-
-      // Header hide on scroll down, show on scroll up
-      let lastScrollTop = 0;
-      const header = document.querySelector('.header');
-
-      window.addEventListener('scroll', function() {
-        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-
-        if (scrollTop > lastScrollTop && scrollTop > 100) {
-          // Scroll down - hide header
-          header.classList.add('hidden');
-        } else {
-          // Scroll up - show header
-          header.classList.remove('hidden');
-        }
-
-        lastScrollTop = scrollTop <= 0 ? 0 : scrollTop; // For Mobile or negative scrolling
-      });
-
-      // Smooth scroll for anchor links
-      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-          e.preventDefault();
-          const target = document.querySelector(this.getAttribute('href'));
-          if (target) {
-            target.scrollIntoView({
-              behavior: 'smooth'
-            });
-          }
-        });
-      });
-
-      // Chatbot functionality
-      const chatbotBubble = document.getElementById('chatbot-bubble');
-      const chatbotToggle = document.getElementById('chatbot-toggle');
-      const chatbotModal = document.getElementById('chatbot-modal');
-      const closeChatbot = document.getElementById('close-chatbot');
-      const chatInput = document.getElementById('chat-input');
-      const sendMessage = document.getElementById('send-message');
-      const chatMessages = document.getElementById('chat-messages');
-      const chatbotWelcome = document.getElementById('chatbot-welcome');
-      const chatbotNotification = document.getElementById('chatbot-notification');
-
-      // Show welcome message after 3 seconds
-      setTimeout(() => {
-        chatbotWelcome.classList.remove('hidden');
-        setTimeout(() => {
-          chatbotWelcome.classList.add('hidden');
-        }, 5000); // Hide after 5 seconds
-      }, 3000);
-
-      // Toggle chatbot modal
-      chatbotToggle.addEventListener('click', () => {
-        chatbotModal.classList.remove('hidden');
-        chatbotWelcome.classList.add('hidden'); // Hide welcome message
-        chatbotNotification.style.display = 'none'; // Hide notification
-      });
-
-      closeChatbot.addEventListener('click', () => {
-        chatbotModal.classList.add('hidden');
-      });
-
-      // Close modal when clicking outside
-      chatbotModal.addEventListener('click', (e) => {
-        if (e.target === chatbotModal) {
-          chatbotModal.classList.add('hidden');
-        }
-      });
-
-      // Send message function
-      function sendChatMessage() {
-        const message = chatInput.value.trim();
-        if (!message) return;
-
-        // Add user message
-        addMessage(message, 'user');
-        chatInput.value = '';
-
-        // Simulate bot response (you can replace this with actual API call)
-        setTimeout(() => {
-          const botResponse = getBotResponse(message);
-          addMessage(botResponse, 'bot');
-        }, 1000);
-      }
-
-      // Add message to chat
-      function addMessage(text, sender) {
-        const messageDiv = document.createElement('div');
-        messageDiv.className = `flex gap-3 mb-4 ${sender === 'user' ? 'justify-end' : ''}`;
-
-        if (sender === 'bot') {
-          messageDiv.innerHTML = `
-            <div class="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center text-white text-sm">
-              🤖
-            </div>
-            <div class="bg-white p-3 rounded-lg shadow-sm max-w-xs">
-              <p class="text-gray-800 text-sm">${text}</p>
-            </div>
-          `;
-        } else {
-          messageDiv.innerHTML = `
-            <div class="bg-purple-600 p-3 rounded-lg shadow-sm max-w-xs">
-              <p class="text-white text-sm">${text}</p>
-            </div>
-          `;
-        }
-
-        chatMessages.appendChild(messageDiv);
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-      }
-
-      // Bot response logic
-      function getBotResponse(message) {
-        const lowerMessage = message.toLowerCase();
-
-        if (lowerMessage.includes('hola') || lowerMessage.includes('buenos') || lowerMessage.includes('saludos')) {
-          return '¡Hola! 👋 Soy tu asistente financiero de EcoSmart. ¿En qué puedo ayudarte hoy?';
-        }
-
-        if (lowerMessage.includes('plan') || lowerMessage.includes('planes')) {
-          return '📊 Puedes crear y gestionar tus planes financieros desde el dashboard. Cada plan te ayuda a organizar tus ingresos, gastos y objetivos.';
-        }
-
-        if (lowerMessage.includes('gasto') || lowerMessage.includes('gastos')) {
-          return '💸 Los gastos se registran en cada plan. Puedes categorizarlos y ver estadísticas detalladas de tus finanzas.';
-        }
-
-        if (lowerMessage.includes('ingreso') || lowerMessage.includes('ingresos')) {
-          return '💰 Registra tus ingresos en los planes correspondientes. Esto te ayudará a tener un balance completo de tus finanzas.';
-        }
-
-        if (lowerMessage.includes('objetivo') || lowerMessage.includes('objetivos')) {
-          return '🎯 Los objetivos te permiten ahorrar para metas específicas. Puedes aportar dinero periódicamente y hacer seguimiento del progreso.';
-        }
-
-        if (lowerMessage.includes('estadística') || lowerMessage.includes('estadísticas')) {
-          return '📈 Las estadísticas muestran gráficos y resúmenes de tus finanzas. Incluyen desgloses por categoría y por miembro.';
-        }
-
-        if (lowerMessage.includes('ayuda') || lowerMessage.includes('help')) {
-          return '🤖 Estoy aquí para ayudarte con:\n• Crear y gestionar planes financieros\n• Registrar ingresos y gastos\n• Configurar objetivos de ahorro\n• Ver estadísticas y reportes\n• Gestionar miembros en planes grupales\n\n¿Sobre qué tema específico necesitas ayuda?';
-        }
-
-        return '🤔 No estoy seguro de cómo ayudarte con eso. ¿Puedes ser más específico sobre tu consulta financiera? También puedes explorar las diferentes secciones del dashboard.';
-      }
-
-      // Event listeners
-      sendMessage.addEventListener('click', sendChatMessage);
-      chatInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-          sendChatMessage();
-        }
-      });
-
-    });
-  </script>
+  <link rel="stylesheet" href="{% static 'dashboard/dashboard-modern.css' %}">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <!-- JavaScript -->
+  <script src="{% static 'dashboard/dashboard.js' %}"></script>
+  
 </head>
 <body>
 
-  <!-- Sidebar -->
-  <aside class="sidebar" id="sidebar">
-      <button class="toggle-btn" id="toggle-btn">☰</button>
-    <nav class="menu">
-      <a href="#" class="menu-item active"><i>🏠</i><span>Inicio</span></a>
-      <a href="#planes" class="menu-item"><i>📦</i><span>Mis Planes</span></a>
-      <a href="{% url 'crear_plan' %}" class="menu-item"><i>➕</i><span>Crear Plan</span></a>
-      <a href="{% url 'Estadisticas' %}" class="menu-item"><i>📊</i><span>Estadísticas</span></a>
-      <a href="#invitaciones" class="menu-item"><i>✉️</i><span>Invitaciones</span></a>
-      <a href="#configuracion" class="menu-item"><i>⚙️</i><span>Configuración</span></a>
-    </nav>
-    <div class="sidebar-footer">© 2025 EcoSmart</div>
-  </aside>
 
   <!-- Main -->
   <main>
+    <!-- Header -->
     <div class="header">
-      <div class="user-info">
-        <div class="user-menu">
-          <button class="user-menu-btn">
-            {% if request.user.profile.profile_picture %}
-              <img src="{{ request.user.profile.profile_picture.url }}" alt="Foto de {{ request.user.username }}" class="user-avatar">
-            {% else %}
-              <div class="user-avatar">{{ request.user.username|first|upper }}</div>
-            {% endif %}
-          </button>
-          <div class="user-dropdown">
-            <a href="{% url 'edit_profile' %}" class="dropdown-item">
-              <span class="dropdown-icon">👤</span>
-              Editar Perfil
-            </a>
-            <form method="post" action="{% url 'logout' %}">
-              {% csrf_token %}
-              <button type="submit" class="dropdown-item">
-                <span class="dropdown-icon">🚪</span>
-                Cerrar Sesión
-              </button>
-            </form>
+      <div class="header-content">
+        <div class="header-left"></div>
+        <div class="header-center">
+          <h1 class="header-logo">EcoSmart</h1>
+        </div>
+        <div class="header-right">
+          <div class="user-menu">
+            <button class="user-menu-btn">
+              {% if request.user.profile.profile_picture %}
+                <img src="{{ request.user.profile.profile_picture.url }}" alt="Foto de {{ request.user.username }}" class="user-avatar">
+              {% else %}
+                <div class="user-avatar">{{ request.user.username|first|upper }}</div>
+              {% endif %}
+            </button>
+            <div class="user-dropdown">
+              <a href="{% url 'edit_profile' %}" class="dropdown-item">
+                <span class="dropdown-icon">👤</span>
+                Editar Perfil
+              </a>
+              <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="dropdown-item">
+                  <span class="dropdown-icon">🚪</span>
+                  Cerrar Sesión
+                </button>
+              </form>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Bienvenida -->
-    <section class="welcome-section">
-      <div class="welcome-content">
-        <div class="welcome-left">
-          <div class="welcome-text">
-            <h2>¡Hola, {{ request.user.username }}!</h2>
-            <p>Bienvenido de vuelta. </p>
+    <!-- Dashboard Principal -->
+    <div class="dashboard-container">
+      <!-- Header de Bienvenida -->
+      <div class="welcome-header">
+        <div class="welcome-content">
+          <h1 class="welcome-title">¡Hola, {{ request.user.username }}!</h1>
+          <p class="welcome-subtitle">Bienvenido a EcoSmart, tu asistente financiero personal</p>
+        </div>
+      </div>
+
+      <!-- Grid de Acciones Principales -->
+      <div class="actions-grid">
+        <div class="action-card primary">
+          <div class="action-icon">
+            <i class="fas fa-plus"></i>
           </div>
-          <div class="card">
-            <p>Comienza un plan financiero para organizar tus finanzas.</p>
-            <a href="{% url 'crear_plan' %}" class="btn-action">
-              <span>Crear Plan</span>
-            </a>
+          <div class="action-content">
+            <h3>Crear Plan</h3>
+            <p>Comienza un nuevo plan financiero</p>
           </div>
-          <div class="plans-preview">
-            <h4>Mis Planes Financieros</h4>
-            <div class="plans-grid">
-              {% for suscripcion in mis_planes %}
-                <a href="{% url 'Menu_plan' suscripcion.plan.id %}" class="plan-card">
-                  {% if suscripcion.plan.imagen %}
-                    <img src="{{ suscripcion.plan.imagen.url }}" alt="{{ suscripcion.plan.nombre }}">
-                  {% else %}
-                    <div style="width:100%;height:60px;background-color:var(--border);display:flex;align-items:center;justify-content:center;border-radius:var(--radius);margin-bottom:0.5rem;">
-                      <span style="color:var(--text-light);font-weight:500;font-size:0.8rem;">Sin imagen</span>
-                    </div>
-                  {% endif %}
-                  <h5 class="plan-title">{{ suscripcion.plan.nombre }}</h5>
-                  <p class="plan-type">{{ suscripcion.plan.get_tipo_plan_display }}</p>
-                </a>
-              {% empty %}
-                <p class="empty-state">Aún no estás en ningún plan financiero.</p>
-              {% endfor %}
-            </div>
+          <a href="{% url 'crear_plan' %}" class="action-link">
+            <i class="fas fa-arrow-right"></i>
+          </a>
+        </div>
+
+        <div class="action-card secondary">
+          <div class="action-icon">
+            <i class="fas fa-folder-open"></i>
+          </div>
+          <div class="action-content">
+            <h3>Mis Planes</h3>
+            <p>Gestiona tus planes existentes</p>
+          </div>
+          <a href="{% url 'Mis_Planes' %}" class="action-link">
+            <i class="fas fa-arrow-right"></i>
+          </a>
+        </div>
+
+        <div class="action-card success">
+          <div class="action-icon">
+            <i class="fas fa-chart-line"></i>
+          </div>
+          <div class="action-content">
+            <h3>Estadísticas</h3>
+            <p>Analiza tu progreso financiero</p>
+          </div>
+          <a href="{% url 'Estadisticas' %}" class="action-link">
+            <i class="fas fa-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- Sección de Consejo -->
+      <div class="tip-section">
+        <div class="tip-content">
+          <div class="tip-icon">💡</div>
+          <div class="tip-text">
+            <h3>Consejo del día</h3>
+            <p>"El ahorro es la base de la libertad financiera. Comienza con pequeños pasos y verás grandes resultados."</p>
           </div>
         </div>
-        <div class="welcome-right">
-           <div class="placeholder-content">
-             <img src="https://img.freepik.com/vector-gratis/empleado-que-trabaja-interior-oficina-lugar-trabajo-ilustracion-vectorial-plana_1150-37453.jpg?semt=ais_incoming&w=740&q=80" alt="Imagen de ejemplo" class="placeholder-image">
-             <p class="placeholder-text">¡No te olvides de revisar tus estadisticas!</p>
-           </div>
-         </div>
       </div>
-    </section>
+    </div>
 
 
    
@@ -303,77 +123,46 @@
 
 
 </section>
-<!-- Chatbot Bubble -->
-<div id="chatbot-bubble" class="fixed bottom-6 right-6 z-50">
-  <div class="relative">
-    <button id="chatbot-toggle" class="bg-gradient-to-r from-purple-600 to-purple-800 text-white p-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-110">
-      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
-      </svg>
-    </button>
+<!-- Chatbot Flotante -->
+<div id="chatbot-widget" class="chatbot-widget">
+  <!-- Botón flotante -->
+  <button id="chatbot-toggle" class="chatbot-toggle">
+    <i class="fas fa-comments"></i>
+    <span class="chatbot-badge" id="chatbot-notification">?</span>
+  </button>
 
-    <!-- Notification Badge -->
-    <div id="chatbot-notification" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center font-bold animate-pulse">
-      ?
+  <!-- Mini Chat -->
+  <div id="chatbot-chat" class="chatbot-chat hidden">
+    <!-- Header del chat -->
+    <div class="chatbot-header">
+      <div class="chatbot-header-info">
+        <div class="chatbot-avatar">🤖</div>
+        <div class="chatbot-title">
+          <h4>EcoSmart Assistant</h4>
+          <span>En línea</span>
+        </div>
+      </div>
+      <button id="close-chatbot" class="chatbot-close">
+        <i class="fas fa-times"></i>
+      </button>
     </div>
 
-    <!-- Welcome Message -->
-    <div id="chatbot-welcome" class="absolute bottom-full right-0 mb-3 bg-white rounded-lg shadow-lg p-4 max-w-xs hidden">
-      <div class="flex items-start gap-3">
-        <div class="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center text-white text-sm">
-          🤖
-        </div>
-        <div>
-          <p class="text-gray-800 text-sm font-medium">¡Hola! Soy tu asistente financiero</p>
-          <p class="text-gray-600 text-xs mt-1">¿En qué puedo ayudarte hoy?</p>
+    <!-- Mensajes del chat -->
+    <div id="chat-messages" class="chatbot-messages">
+      <div class="chatbot-message bot">
+        <div class="message-avatar">🤖</div>
+        <div class="message-content">
+          <p>¡Hola! Soy tu asistente financiero de EcoSmart. ¿En qué puedo ayudarte hoy?</p>
         </div>
       </div>
-      <div class="absolute top-full right-6 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-white"></div>
     </div>
-  </div>
-</div>
 
-<!-- Chatbot Modal -->
-<div id="chatbot-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
-  <div class="flex items-center justify-center min-h-screen p-4">
-    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md h-[600px] flex flex-col">
-      <!-- Chatbot Header -->
-      <div class="bg-gradient-to-r from-purple-600 to-purple-800 text-white p-4 rounded-t-2xl flex items-center justify-between">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
-            🤖
-          </div>
-          <div>
-            <h3 class="font-semibold">EcoSmart Assistant</h3>
-            <p class="text-sm opacity-90">Tu asistente financiero</p>
-          </div>
-        </div>
-        <button id="close-chatbot" class="text-white hover:text-gray-200 text-xl">✕</button>
-      </div>
-
-      <!-- Chat Messages -->
-      <div id="chat-messages" class="flex-1 p-4 overflow-y-auto bg-gray-50">
-        <div class="flex gap-3 mb-4">
-          <div class="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center text-white text-sm">
-            🤖
-          </div>
-          <div class="bg-white p-3 rounded-lg shadow-sm max-w-xs">
-            <p class="text-gray-800 text-sm">¡Hola! Soy tu asistente financiero de EcoSmart. ¿En qué puedo ayudarte hoy?</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Chat Input -->
-      <div class="p-4 border-t bg-white rounded-b-2xl">
-        <div class="flex gap-2">
-          <input type="text" id="chat-input" placeholder="Escribe tu mensaje..." class="flex-1 px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
-          <button id="send-message" class="bg-purple-600 text-white p-2 rounded-full hover:bg-purple-700 transition-colors">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
-            </svg>
-          </button>
-        </div>
-      </div>
+    <!-- Input del chat -->
+    <div class="chatbot-input">
+      <input type="text" id="chat-input" placeholder="Escribe tu mensaje..." class="chatbot-input-field">
+      <button id="send-message" class="chatbot-send">
+        <i class="fas fa-paper-plane"></i>
+      </button>
     </div>
   </div>
 </div>

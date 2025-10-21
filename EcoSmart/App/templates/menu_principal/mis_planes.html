@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoSmart - Mis Planes</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'dashboard/dashboard.css' %}">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <button class="toggle-btn" id="toggle-btn">☰</button>
+        <nav class="menu">
+            <a href="{% url 'Dashboard' %}" class="menu-item"><i>🏠</i><span>Inicio</span></a>
+            <a href="{% url 'Mis_Planes' %}" class="menu-item active"><i>📦</i><span>Mis Planes</span></a>
+            <a href="{% url 'crear_plan' %}" class="menu-item"><i>➕</i><span>Crear Plan</span></a>
+            <a href="#invitaciones" class="menu-item"><i>✉️</i><span>Invitaciones</span></a>
+            <a href="#configuracion" class="menu-item"><i>⚙️</i><span>Configuración</span></a>
+        </nav>
+        <div class="sidebar-footer">© 2025 EcoSmart</div>
+    </aside>
+
+    <!-- Main -->
+    <main>
+        <div class="header">
+            <div class="user-info">
+                <div class="user-menu">
+                    <button class="user-menu-btn">
+                        {% if request.user.profile.profile_picture %}
+                            <img src="{{ request.user.profile.profile_picture.url }}" alt="Foto de {{ request.user.username }}" class="user-avatar">
+                        {% else %}
+                            <div class="user-avatar">{{ request.user.username|first|upper }}</div>
+                        {% endif %}
+                    </button>
+                    <div class="user-dropdown">
+                        <a href="{% url 'edit_profile' %}" class="dropdown-item">
+                            <span class="dropdown-icon">👤</span>
+                            Editar Perfil
+                        </a>
+                        <form method="post" action="{% url 'logout' %}">
+                            {% csrf_token %}
+                            <button type="submit" class="dropdown-item">
+                                <span class="dropdown-icon">🚪</span>
+                                Cerrar Sesión
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contenido de Mis Planes -->
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <h1 class="mb-4">📦 Mis Planes Financieros</h1>
+                    <p class="text-muted">Gestiona todos tus planes financieros desde aquí</p>
+                </div>
+            </div>
+            
+            <!-- Botón para crear nuevo plan -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <a href="{% url 'crear_plan' %}" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Crear Nuevo Plan
+                    </a>
+                </div>
+            </div>
+
+            <!-- Grid de planes -->
+            <div class="row">
+                {% if mis_planes %}
+                    {% for suscripcion in mis_planes %}
+                        <div class="col-md-4 mb-4">
+                            <div class="card h-100">
+                                {% if suscripcion.plan.imagen %}
+                                    <img src="{{ suscripcion.plan.imagen.url }}" class="card-img-top" alt="{{ suscripcion.plan.nombre }}" style="height: 200px; object-fit: cover;">
+                                {% else %}
+                                    <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                                        <i class="fas fa-chart-pie fa-3x text-muted"></i>
+                                    </div>
+                                {% endif %}
+                                
+                                <div class="card-body d-flex flex-column">
+                                    <h5 class="card-title">{{ suscripcion.plan.nombre }}</h5>
+                                    <p class="card-text text-muted">{{ suscripcion.plan.descripcion|truncatewords:20 }}</p>
+                                    
+                                    <div class="mt-auto">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <span class="badge bg-{% if suscripcion.plan.tipo_plan == 'individual' %}primary{% else %}success{% endif %}">
+                                                {{ suscripcion.plan.get_tipo_plan_display }}
+                                            </span>
+                                            <span class="badge bg-secondary">
+                                                {{ suscripcion.get_rol_display }}
+                                            </span>
+                                        </div>
+                                        
+                                        <div class="d-flex gap-2">
+                                            <a href="{% url 'Menu_plan' suscripcion.plan.id %}" class="btn btn-primary btn-sm flex-fill">
+                                                <i class="fas fa-eye"></i> Ver Plan
+                                            </a>
+                                            {% if suscripcion.rol == 'admin' %}
+                                                <a href="#" class="btn btn-outline-secondary btn-sm">
+                                                    <i class="fas fa-cog"></i>
+                                                </a>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="card-footer text-muted">
+                                    <small>
+                                        <i class="fas fa-calendar"></i> Creado: {{ suscripcion.plan.fecha_creacion|date:"d/m/Y" }}
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="col-12">
+                        <div class="text-center py-5">
+                            <i class="fas fa-folder-open fa-4x text-muted mb-4"></i>
+                            <h3 class="text-muted">No tienes planes financieros</h3>
+                            <p class="text-muted mb-4">Comienza creando tu primer plan financiero para organizar tus finanzas</p>
+                            <a href="{% url 'crear_plan' %}" class="btn btn-primary btn-lg">
+                                <i class="fas fa-plus"></i> Crear Mi Primer Plan
+                            </a>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+    </main>
+
+    <!-- JavaScript para funcionalidad del sidebar -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Toggle sidebar
+            const toggleBtn = document.getElementById('toggle-btn');
+            const sidebar = document.getElementById('sidebar');
+            const main = document.querySelector('main');
+
+            toggleBtn.addEventListener('click', function() {
+                sidebar.classList.toggle('collapsed');
+                main.classList.toggle('sidebar-collapsed');
+            });
+
+            // User dropdown toggle
+            const userMenuBtn = document.querySelector('.user-menu-btn');
+            const userDropdown = document.querySelector('.user-dropdown');
+
+            if (userMenuBtn && userDropdown) {
+                userMenuBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    userDropdown.classList.toggle('active');
+                });
+
+                // Close dropdown when clicking outside
+                document.addEventListener('click', function(e) {
+                    if (!userMenuBtn.contains(e.target) && !userDropdown.contains(e.target)) {
+                        userDropdown.classList.remove('active');
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

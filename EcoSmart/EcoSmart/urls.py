@@ -41,6 +41,7 @@ urlpatterns = [
     
     #----------------- menu principal -----------------#
     path('Inicio/',App.views.Inicio, name= 'Inicio'),
+    path('mis-planes/',App.views.Mis_Planes, name= 'Mis_Planes'),
     path('transacciones/',App.views.transacciones, name= 'transacciones'),
     path('Estadisticas/',App.views.Estadisticas, name= 'Estadisticas'),
     
