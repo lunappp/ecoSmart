@@ -11,145 +11,125 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <!-- JavaScript -->
   <script src="{% static 'dashboard/dashboard.js' %}"></script>
-  
 </head>
 <body>
 
-
-  
-    <!-- Header -->
-    <div class="header">
-      <div class="header-content">
-        <div class="header-left"></div>
-        <div class="header-center">
-          <h1 class="header-logo">EcoSmart</h1>
-        </div>
-        <div class="header-right">
-          <div class="user-menu">
-            <button class="user-menu-btn">
-              {% if request.user.profile.profile_picture %}
-                <img src="{{ request.user.profile.profile_picture.url }}" alt="Foto de {{ request.user.username }}" class="user-avatar">
-              {% else %}
-                <div class="user-avatar">{{ request.user.username|first|upper }}</div>
-              {% endif %}
-            </button>
-            <div class="user-dropdown">
-              <a href="{% url 'edit_profile' %}" class="dropdown-item">
-                <span class="dropdown-icon">👤</span>
-                Editar Perfil
-              </a>
-              <form method="post" action="{% url 'logout' %}">
-                {% csrf_token %}
-                <button type="submit" class="dropdown-item">
-                  <span class="dropdown-icon">🚪</span>
-                  Cerrar Sesión
-                </button>
-              </form>
-            </div>
+  <!-- Header -->
+  <div class="header">
+    <div class="header-content">
+      <div class="header-left"></div>
+      <div class="header-center">
+        <h1 class="header-logo">EcoSmart</h1>
+      </div>
+      <div class="header-right">
+        <nav class="header-nav">
+        </nav>
+            <a href="{% url 'edit_profile' %}" class="dropdown-item">
+              <span class="dropdown-icon">👤</span>
+              Editar Perfil
+            </a>
+            <form method="post" action="{% url 'logout' %}">
+              {% csrf_token %}
+              <button type="submit" class="dropdown-item">
+                <span class="dropdown-icon">🚪</span>
+                Cerrar Sesión
+              </button>
+            </form>
           </div>
         </div>
       </div>
-    </div>
-
-    <!-- Dashboard Principal -->
-    <div class="dashboard-container">
-      <!-- Header de Bienvenida -->
-      <div class="welcome-header">
-        <div class="welcome-content">
-          <h1 class="welcome-title">¡Hola, {{ request.user.username }}!</h1>
-          <p class="welcome-subtitle">Bienvenido a EcoSmart, tu asistente financiero personal</p>
-        </div>
-      </div>
-
-      <!-- Grid de Acciones Principales -->
-      <div class="actions-grid">
-        <div class="action-card primary">
-          <div class="action-icon">
-            <i class="fas fa-plus"></i>
-          </div>
-          <div class="action-content">
-            <h3>Crear Plan</h3>
-            <p>Comienza un nuevo plan financiero</p>
-          </div>
-          <a href="{% url 'crear_plan' %}" class="action-link">
-            <i class="fas fa-arrow-right"></i>
-          </a>
-        </div>
-
-        <div class="action-card secondary">
-          <div class="action-icon">
-            <i class="fas fa-folder-open"></i>
-          </div>
-          <div class="action-content">
-            <h3>Mis Planes</h3>
-            <p>Gestiona tus planes existentes</p>
-          </div>
-          <a href="{% url 'Mis_Planes' %}" class="action-link">
-            <i class="fas fa-arrow-right"></i>
-          </a>
-        </div>
-      </div>
-
-      <!-- Sección de Consejo -->
-      <div class="tip-section">
-        <div class="tip-content">
-          <div class="tip-icon">💡</div>
-          <div class="tip-text">
-            <h3>Consejo del día</h3>
-            <p>"El ahorro es la base de la libertad financiera. Comienza con pequeños pasos y verás grandes resultados."</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-
-   
-
-
-
-
-</section>
-<!-- Chatbot Flotante -->
-<div id="chatbot-widget" class="chatbot-widget">
-  <!-- Botón flotante -->
-  <button id="chatbot-toggle" class="chatbot-toggle">
-    <i class="fas fa-comments"></i>
-    <span class="chatbot-badge" id="chatbot-notification">?</span>
-  </button>
-
-  <!-- Mini Chat -->
-  <div id="chatbot-chat" class="chatbot-chat hidden">
-    <!-- Header del chat -->
-    <div class="chatbot-header">
-      <div class="chatbot-header-info">
-        <div class="chatbot-avatar">🤖</div>
-        <div class="chatbot-title">
-          <h4>EcoSmart Assistant</h4>
-          <span>En línea</span>
-        </div>
-      </div>
-      <button id="close-chatbot" class="chatbot-close">
-        <i class="fas fa-times"></i>
-      </button>
-    </div>
-
-    <!-- Mensajes del chat -->
-    <div id="chat-messages" class="chatbot-messages">
-      <div class="chatbot-message bot">
-        <div class="message-avatar">🤖</div>
-        <div class="message-content">
-          <p>¡Hola! Soy tu asistente financiero de EcoSmart. ¿En qué puedo ayudarte hoy?</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Input del chat -->
-    <div class="chatbot-input">
-      <input type="text" id="chat-input" placeholder="Escribe tu mensaje..." class="chatbot-input-field">
-      <button id="send-message" class="chatbot-send">
-        <i class="fas fa-paper-plane"></i>
-      </button>
     </div>
   </div>
-</div>
 
+  <!-- Dashboard Principal -->
+  <div class="dashboard-container">
+    <!-- Header de Bienvenida -->
+    <div class="welcome-header">
+      <div class="welcome-content">
+        <h1 class="welcome-title">¡Hola, {{ request.user.username }}!</h1>
+        <p class="welcome-subtitle">Bienvenido a EcoSmart, tu asistente financiero personal</p>
+      </div>
+    </div>
+
+    <!-- Grid de Acciones Principales -->
+    <div class="actions-grid">
+      <div class="action-card primary">
+        <div class="action-icon">
+          <i class="fas fa-plus"></i>
+        </div>
+        <div class="action-content">
+          <h3>Crear Plan</h3>
+          <p>Comienza un nuevo plan financiero</p>
+        </div>
+        <a href="{% url 'crear_plan' %}" class="action-link">
+          <i class="fas fa-arrow-right"></i>
+        </a>
+      </div>
+
+      <div class="action-card secondary">
+        <div class="action-icon">
+          <i class="fas fa-folder-open"></i>
+        </div>
+        <div class="action-content">
+          <h3>Mis Planes</h3>
+          <p>Gestiona tus planes existentes</p>
+        </div>
+        <a href="{% url 'Mis_Planes' %}" class="action-link">
+          <i class="fas fa-arrow-right"></i>
+        </a>
+      </div>
+    </div>
+
+    <!-- Sección de Consejo -->
+    <div class="tip-section">
+      <div class="tip-content">
+        <div class="tip-icon">💡</div>
+        <div class="tip-text">
+          <h3>Consejo del día</h3>
+          <p>"El ahorro es la base de la libertad financiera. Comienza con pequeños pasos y verás grandes resultados."</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chatbot Flotante -->
+  <div id="chatbot-widget" class="chatbot-widget">
+    <button id="chatbot-toggle" class="chatbot-toggle">
+      <i class="fas fa-comments"></i>
+      <span class="chatbot-badge" id="chatbot-notification">?</span>
+    </button>
+
+    <div id="chatbot-chat" class="chatbot-chat hidden">
+      <div class="chatbot-header">
+        <div class="chatbot-header-info">
+          <div class="chatbot-avatar">🤖</div>
+          <div class="chatbot-title">
+            <h4>EcoSmart Assistant</h4>
+            <span>En línea</span>
+          </div>
+        </div>
+        <button id="close-chatbot" class="chatbot-close">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div id="chat-messages" class="chatbot-messages">
+        <div class="chatbot-message bot">
+          <div class="message-avatar">🤖</div>
+          <div class="message-content">
+            <p>¡Hola! Soy tu asistente financiero de EcoSmart. ¿En qué puedo ayudarte hoy?</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="chatbot-input">
+        <input type="text" id="chat-input" placeholder="Escribe tu mensaje..." class="chatbot-input-field">
+        <button id="send-message" class="chatbot-send">
+          <i class="fas fa-paper-plane"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
