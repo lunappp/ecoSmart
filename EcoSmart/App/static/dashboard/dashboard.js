@@ -1,206 +1,139 @@
-// ===== DASHBOARD JAVASCRIPT =====
+// ===== DASHBOARD FUNCTIONALITY =====
 
-document.addEventListener('DOMContentLoaded', function() {
-  // Toggle sidebar
-  const toggleBtn = document.getElementById('toggle-btn');
-  const sidebar = document.getElementById('sidebar');
-  const main = document.querySelector('main');
-
-  if (toggleBtn && sidebar && main) {
-    toggleBtn.addEventListener('click', function() {
-      sidebar.classList.toggle('collapsed');
-      main.classList.toggle('sidebar-collapsed');
-    });
-  }
-
-  // Menu item active state
-  const menuItems = document.querySelectorAll('.menu-item');
-  const currentPath = window.location.pathname;
-
-  menuItems.forEach(item => {
-    const href = item.getAttribute('href');
-    if (href && (currentPath === href || (href !== '#' && currentPath.startsWith(href)))) {
-      item.classList.add('active');
-    } else {
-      item.classList.remove('active');
-    }
-  });
-
-  // User dropdown functionality
+document.addEventListener("DOMContentLoaded", () => {
+  initializeSidebar();
+  highlightActiveMenu();
   initializeUserDropdown();
-
-  // Smooth scroll for anchor links
-  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-      e.preventDefault();
-      const target = document.querySelector(this.getAttribute('href'));
-      if (target) {
-        target.scrollIntoView({
-          behavior: 'smooth'
-        });
-      }
-    });
-  });
-
-  // Chatbot functionality
+  initializeSmoothScroll();
   initializeChatbot();
 });
 
-// ===== CHATBOT FUNCTIONALITY =====
-function initializeChatbot() {
-  const chatbotToggle = document.getElementById('chatbot-toggle');
-  const chatbotChat = document.getElementById('chatbot-chat');
-  const closeChatbot = document.getElementById('close-chatbot');
-  const chatInput = document.getElementById('chat-input');
-  const sendMessage = document.getElementById('send-message');
-  const chatMessages = document.getElementById('chat-messages');
-  const chatbotNotification = document.getElementById('chatbot-notification');
+// ===== SIDEBAR TOGGLE =====
+function initializeSidebar() {
+  const toggleBtn = document.getElementById("toggle-btn");
+  const sidebar = document.getElementById("sidebar");
+  const main = document.querySelector("main");
 
-  if (!chatbotToggle || !chatbotChat) return;
-
-  // Show notification badge after 3 seconds
-  setTimeout(() => {
-    if (chatbotNotification) {
-      chatbotNotification.style.display = 'flex';
-    }
-  }, 3000);
-
-  // Toggle chatbot chat
-  chatbotToggle.addEventListener('click', () => {
-    chatbotChat.classList.toggle('hidden');
-    if (chatbotNotification) chatbotNotification.style.display = 'none';
-  });
-
-  if (closeChatbot) {
-    closeChatbot.addEventListener('click', () => {
-      chatbotChat.classList.add('hidden');
-    });
-  }
-
-  // Close chat when clicking outside
-  document.addEventListener('click', (e) => {
-    if (!chatbotToggle.contains(e.target) && !chatbotChat.contains(e.target)) {
-      chatbotChat.classList.add('hidden');
-    }
-  });
-
-  // Send message functionality
-  function sendChatMessage() {
-    if (!chatInput || !chatMessages) return;
-    
-    const message = chatInput.value.trim();
-    if (!message) return;
-
-    // Add user message
-    addMessage(message, 'user');
-    chatInput.value = '';
-
-    // Simulate bot response
-    setTimeout(() => {
-      const botResponse = getBotResponse(message);
-      addMessage(botResponse, 'bot');
-    }, 1000);
-  }
-
-  // Add message to chat
-  function addMessage(text, sender) {
-    if (!chatMessages) return;
-    
-    const messageDiv = document.createElement('div');
-    messageDiv.className = `chatbot-message ${sender}`;
-
-    if (sender === 'bot') {
-      messageDiv.innerHTML = `
-        <div class="message-avatar">🤖</div>
-        <div class="message-content">
-          <p>${text}</p>
-        </div>
-      `;
-    } else {
-      messageDiv.innerHTML = `
-        <div class="message-avatar">👤</div>
-        <div class="message-content">
-          <p>${text}</p>
-        </div>
-      `;
-    }
-
-    chatMessages.appendChild(messageDiv);
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-  }
-
-  // Bot response logic
-  function getBotResponse(message) {
-    const lowerMessage = message.toLowerCase();
-
-    if (lowerMessage.includes('hola') || lowerMessage.includes('buenos') || lowerMessage.includes('saludos')) {
-      return '¡Hola! 👋 Soy tu asistente financiero de EcoSmart. ¿En qué puedo ayudarte hoy?';
-    }
-
-    if (lowerMessage.includes('plan') || lowerMessage.includes('planes')) {
-      return '📊 Puedes crear y gestionar tus planes financieros desde el dashboard. Cada plan te ayuda a organizar tus ingresos, gastos y objetivos.';
-    }
-
-    if (lowerMessage.includes('gasto') || lowerMessage.includes('gastos')) {
-      return '💸 Los gastos se registran en cada plan. Puedes categorizarlos y ver estadísticas detalladas de tus finanzas.';
-    }
-
-    if (lowerMessage.includes('ingreso') || lowerMessage.includes('ingresos')) {
-      return '💰 Registra tus ingresos en los planes correspondientes. Esto te ayudará a tener un balance completo de tus finanzas.';
-    }
-
-    if (lowerMessage.includes('objetivo') || lowerMessage.includes('objetivos')) {
-      return '🎯 Los objetivos te permiten ahorrar para metas específicas. Puedes aportar dinero periódicamente y hacer seguimiento del progreso.';
-    }
-
-    if (lowerMessage.includes('estadística') || lowerMessage.includes('estadísticas')) {
-      return '📈 Las estadísticas muestran gráficos y resúmenes de tus finanzas. Incluyen desgloses por categoría y por miembro.';
-    }
-
-    if (lowerMessage.includes('ayuda') || lowerMessage.includes('help')) {
-      return '🤖 Estoy aquí para ayudarte con:\n• Crear y gestionar planes financieros\n• Registrar ingresos y gastos\n• Configurar objetivos de ahorro\n• Ver estadísticas y reportes\n• Gestionar miembros en planes grupales\n\n¿Sobre qué tema específico necesitas ayuda?';
-    }
-
-    return '🤔 No estoy seguro de cómo ayudarte con eso. ¿Puedes ser más específico sobre tu consulta financiera? También puedes explorar las diferentes secciones del dashboard.';
-  }
-
-  // Event listeners
-  if (sendMessage) {
-    sendMessage.addEventListener('click', sendChatMessage);
-  }
-  
-  if (chatInput) {
-    chatInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        sendChatMessage();
-      }
+  if (toggleBtn && sidebar && main) {
+    toggleBtn.addEventListener("click", () => {
+      sidebar.classList.toggle("collapsed");
+      main.classList.toggle("sidebar-collapsed");
     });
   }
 }
 
-// ===== USER DROPDOWN FUNCTIONALITY =====
+// ===== MENU ITEM ACTIVE STATE =====
+function highlightActiveMenu() {
+  const currentPath = window.location.pathname;
+  document.querySelectorAll(".menu-item").forEach((item) => {
+    const href = item.getAttribute("href");
+    item.classList.toggle(
+      "active",
+      href && (currentPath === href || currentPath.startsWith(href))
+    );
+  });
+}
+
+// ===== SMOOTH SCROLL =====
+function initializeSmoothScroll() {
+  document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+    anchor.addEventListener("click", (e) => {
+      e.preventDefault();
+      const target = document.querySelector(anchor.getAttribute("href"));
+      if (target) target.scrollIntoView({ behavior: "smooth" });
+    });
+  });
+}
+
+// ===== USER DROPDOWN =====
 function initializeUserDropdown() {
-  const userMenuBtn = document.querySelector('.user-menu-btn');
-  const userDropdown = document.querySelector('.user-dropdown');
+  const userMenuBtn = document.querySelector(".user-menu-btn");
+  const userDropdown = document.querySelector(".user-dropdown");
 
-  if (userMenuBtn && userDropdown) {
-    userMenuBtn.addEventListener('click', function(e) {
-      e.stopPropagation();
-      userDropdown.classList.toggle('active');
-    });
+  if (!userMenuBtn || !userDropdown) return;
 
-    // Close dropdown when clicking outside
-    document.addEventListener('click', function(e) {
-      if (!userMenuBtn.contains(e.target) && !userDropdown.contains(e.target)) {
-        userDropdown.classList.remove('active');
-      }
-    });
+  userMenuBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    userDropdown.classList.toggle("active");
+  });
 
-    // Close dropdown when pressing Escape
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape') {
-        userDropdown.classList.remove('active');
-      }
-    });
+  document.addEventListener("click", (e) => {
+    if (!userMenuBtn.contains(e.target) && !userDropdown.contains(e.target))
+      userDropdown.classList.remove("active");
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") userDropdown.classList.remove("active");
+  });
+}
+
+// ===== CHATBOT =====
+function initializeChatbot() {
+  const toggle = document.getElementById("chatbot-toggle");
+  const chat = document.getElementById("chatbot-chat");
+  const close = document.getElementById("close-chatbot");
+  const input = document.getElementById("chat-input");
+  const send = document.getElementById("send-message");
+  const messages = document.getElementById("chat-messages");
+  const notification = document.getElementById("chatbot-notification");
+
+  if (!toggle || !chat) return;
+
+  // Notificación automática
+  setTimeout(() => notification && (notification.style.display = "flex"), 3000);
+
+  // Abrir/cerrar chat
+  toggle.addEventListener("click", (e) => {
+    e.stopPropagation();
+    chat.classList.toggle("hidden");
+    if (notification) notification.style.display = "none";
+  });
+
+  close?.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    chat.classList.add("hidden");
+  });
+
+  document.addEventListener("click", (e) => {
+    if (!toggle.contains(e.target) && !chat.contains(e.target))
+      chat.classList.add("hidden");
+  });
+
+  // Enviar mensaje
+  function sendChatMessage() {
+    const message = input?.value.trim();
+    if (!message) return;
+    addMessage(message, "user");
+    input.value = "";
+    setTimeout(() => addMessage(getBotResponse(message), "bot"), 800);
   }
+
+  // Agregar mensajes
+  function addMessage(text, sender) {
+    const msg = document.createElement("div");
+    msg.className = `chatbot-message ${sender}`;
+    msg.innerHTML = `
+      <div class="message-avatar">${sender === "bot" ? "🤖" : "👤"}</div>
+      <div class="message-content"><p>${text}</p></div>
+    `;
+    messages?.appendChild(msg);
+    messages.scrollTop = messages.scrollHeight;
+  }
+
+  // Respuestas automáticas
+  function getBotResponse(msg) {
+    const text = msg.toLowerCase();
+    if (text.includes("hola")) return "👋 ¡Hola! Soy tu asistente financiero de EcoSmart.";
+    if (text.includes("plan")) return "📊 Puedes crear y gestionar tus planes financieros desde el dashboard.";
+    if (text.includes("gasto")) return "💸 Registra tus gastos y analiza tus estadísticas.";
+    if (text.includes("ingreso")) return "💰 Añade ingresos a tus planes para ver tu balance.";
+    if (text.includes("objetivo")) return "🎯 Define objetivos de ahorro y sigue tu progreso.";
+    if (text.includes("estadística")) return "📈 Mira los gráficos financieros en la sección de estadísticas.";
+    if (text.includes("ayuda")) return "🤖 Puedo ayudarte con planes, ingresos, gastos y objetivos. ¿Sobre qué tema necesitas ayuda?";
+    return "🤔 No entiendo del todo. ¿Podrías reformular tu pregunta?";
+  }
+
+  send?.addEventListener("click", sendChatMessage);
+  input?.addEventListener("keypress", (e) => e.key === "Enter" && sendChatMessage());
 }

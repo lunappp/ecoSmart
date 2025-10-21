@@ -2,18 +2,20 @@
 
 /* Variables CSS para consistencia */
 :root {
-  --primary-color: #3498db;
-  --secondary-color: #95a5a6;
-  --success-color: #27ae60;
-  --warning-color: #f39c12;
-  --danger-color: #e74c3c;
-  --dark-color: #2c3e50;
-  --light-color: #ecf0f1;
+  --primary-color: #a855f7;
+  --primary-light: #c084fc;
+  --primary-dark: #9333ea;
+  --secondary-color: #8b5cf6;
+  --success-color: #a78bfa;
+  --warning-color: #f59e0b;
+  --danger-color: #ef4444;
+  --dark-color: #581c87;
+  --light-color: #faf5ff;
   --white: #ffffff;
-  --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  --shadow-hover: 0 8px 25px rgba(0, 0, 0, 0.15);
+  --shadow: 0 4px 12px rgba(0,0,0,0.1);
+  --shadow-lg: 0 10px 20px rgba(0,0,0,0.15);
   --border-radius: 12px;
-  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition: 0.3s;
 }
 
 /* Contenedor principal del dashboard */
@@ -21,7 +23,7 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  background: linear-gradient(135deg, var(--light-color) 0%, #e2e8f0 100%);
   min-height: calc(100vh - 80px);
   margin-top: 70px; /* Espacio para el header fijo */
 }
@@ -56,9 +58,12 @@
 /* Grid de acciones principales */
 .actions-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 2rem;
   margin-bottom: 3rem;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* Tarjetas de acción */
@@ -179,7 +184,7 @@
 
 /* Sección de consejo */
 .tip-section {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
   border-radius: var(--border-radius);
   padding: 2rem;
   color: var(--white);
@@ -428,40 +433,72 @@
 @media (max-width: 768px) {
   .header-content {
     padding: 0 1rem;
+    height: 60px;
   }
-  
+
   .header-logo {
     font-size: 1.5rem;
   }
-  
+
   .user-avatar {
     width: 40px;
     height: 40px;
   }
-  
+
   .user-dropdown {
     min-width: 200px;
     right: -10px;
+  }
+
+  .dashboard-container {
+    margin-top: 60px;
   }
 }
 
 @media (max-width: 480px) {
   .header-content {
-    padding: 0 1rem;
+    padding: 0 0.75rem;
+    height: 55px;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
   }
-  
+
+  .header-center {
+    flex: 1;
+    text-align: center;
+  }
+
+  .header-left,
+  .header-right {
+    flex: 0 0 auto;
+  }
+
   .header-logo {
-    font-size: 1.3rem;
+    font-size: 1.2rem;
   }
-  
+
   .user-avatar {
-    width: 38px;
-    height: 38px;
+    width: 35px;
+    height: 35px;
   }
-  
+
   .user-dropdown {
-    min-width: 180px;
-    right: -20px;
+    min-width: 160px;
+    right: -15px;
+  }
+
+  .dashboard-container {
+    margin-top: 55px;
+    padding: 0.75rem;
+  }
+
+  .welcome-title {
+    font-size: 1.5rem;
+  }
+
+  .welcome-subtitle {
+    font-size: 0.9rem;
   }
 }
 
