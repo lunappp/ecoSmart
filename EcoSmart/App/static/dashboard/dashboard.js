@@ -47,18 +47,22 @@ function initializeSmoothScroll() {
 
 // ===== USER DROPDOWN =====
 function initializeUserDropdown() {
+  const userAvatar = document.querySelector(".user-avatar");
   const userMenuBtn = document.querySelector(".user-menu-btn");
   const userDropdown = document.querySelector(".user-dropdown");
 
-  if (!userMenuBtn || !userDropdown) return;
+  // Support both avatar and button clicks
+  const trigger = userAvatar || userMenuBtn;
 
-  userMenuBtn.addEventListener("click", (e) => {
+  if (!trigger || !userDropdown) return;
+
+  trigger.addEventListener("click", (e) => {
     e.stopPropagation();
     userDropdown.classList.toggle("active");
   });
 
   document.addEventListener("click", (e) => {
-    if (!userMenuBtn.contains(e.target) && !userDropdown.contains(e.target))
+    if (!trigger.contains(e.target) && !userDropdown.contains(e.target))
       userDropdown.classList.remove("active");
   });
 

@@ -8,57 +8,76 @@
     <link rel="stylesheet" href="{% static 'menu_principal/mis_planes.css' %}">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- JavaScript -->
+    <script src="{% static 'dashboard/dashboard.js' %}"></script>
 </head>
 <body>
 
-    <!-- Header -->
-    <div class="header">
-        <div class="header-content">
-            <div class="header-left"></div>
-            <div class="header-center">
-                <h1 class="header-logo">EcoSmart</h1>
-            </div>
-            <div class="header-right">
+    <main>
+        <!-- Header -->
+        <header class="navbar">
+            <div class="nav-container">
+                <div class="logo">
+                    <i class="fas fa-leaf"></i>
+                    EcoSmart
+                </div>
+
+                <nav class="nav-links">
+                  <a href="{% url 'Dashboard' %}">
+                    <i class="fas fa-tachometer-alt"></i>
+                    Dashboard
+                  </a>
+                  <a href="{% url 'Mis_Planes' %}" class="active">
+                    <i class="fas fa-folder-open"></i>
+                    Mis Planes
+                  </a>
+                  <a href="{% url 'crear_plan' %}">
+                    <i class="fas fa-plus-circle"></i>
+                    Crear Plan
+                  </a>
+                </nav>
+
                 <div class="user-menu-container">
-                    <button class="user-menu-btn">
-                        <i class="fas fa-user-circle"></i>
-                    </button>
-                    <div class="user-dropdown">
-                        <a href="{% url 'edit_profile' %}" class="dropdown-item">
-                            <span class="dropdown-icon">👤</span>
-                            Editar Perfil
-                        </a>
-                        <form method="post" action="{% url 'logout' %}">
-                            {% csrf_token %}
-                            <button type="submit" class="dropdown-item">
-                                <span class="dropdown-icon">🚪</span>
-                                Cerrar Sesión
-                            </button>
-                        </form>
+                  <div class="user-avatar">
+                    {% if request.user.profile.profile_picture %}
+                      <img src="{{ request.user.profile.profile_picture.url }}" alt="Foto de perfil" class="avatar-img">
+                    {% else %}
+                      <div class="avatar-placeholder">
+                        <i class="fas fa-user"></i>
+                      </div>
+                    {% endif %}
+                  </div>
+                  <div class="user-dropdown">
+                    <div class="user-info">
+                      <div class="user-name">{{ request.user.username }}</div>
+                      <div class="user-email">{{ request.user.email }}</div>
                     </div>
+                    <div class="dropdown-divider"></div>
+                    <a href="{% url 'edit_profile' %}" class="dropdown-item">
+                      <span class="dropdown-icon">👤</span>
+                      Editar Perfil
+                    </a>
+                    <form method="post" action="{% url 'logout' %}">
+                      {% csrf_token %}
+                      <button type="submit" class="dropdown-item">
+                        <span class="dropdown-icon">🚪</span>
+                        Cerrar Sesión
+                      </button>
+                    </form>
+                  </div>
                 </div>
             </div>
-        </div>
-    </div>
+        </header>
 
-    <main>
         <!-- Contenido de Mis Planes -->
         <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
                     <h1 class="mb-4"> Mis Planes Financieros</h1>
-                    <p class="text-muted">Gestiona todos tus planes financieros desde aquí</p>
+                    
                 </div>
             </div>
             
-            <!-- Botón para crear nuevo plan -->
-            <div class="row mb-4">
-                <div class="col-12">
-                    <a href="{% url 'crear_plan' %}" class="btn btn-primary">
-                        <i class="fas fa-plus"></i> Crear Nuevo Plan
-                    </a>
-                </div>
-            </div>
 
             <!-- Grid de planes -->
             <div class="row">

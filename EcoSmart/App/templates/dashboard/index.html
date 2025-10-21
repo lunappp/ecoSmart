@@ -15,34 +15,46 @@
 <body>
 
   <!-- Header -->
-  <div class="header">
-    <div class="header-content">
-      <div class="header-left"></div>
-      <div class="header-center">
-        <h1 class="header-logo">EcoSmart</h1>
+  <header class="navbar">
+    <div class="nav-container">
+      <div class="logo">
+        <i class="fas fa-leaf"></i>
+        EcoSmart
       </div>
-      <div class="header-right">
-        <div class="user-menu-container">
-          <button class="user-menu-btn">
-            <i class="fas fa-user-circle"></i>
-          </button>
-          <div class="user-dropdown">
-            <a href="{% url 'edit_profile' %}" class="dropdown-item">
-              <span class="dropdown-icon">👤</span>
-              Editar Perfil
-            </a>
-            <form method="post" action="{% url 'logout' %}">
-              {% csrf_token %}
-              <button type="submit" class="dropdown-item">
-                <span class="dropdown-icon">🚪</span>
-                Cerrar Sesión
-              </button>
-            </form>
+
+     
+
+      <div class="user-menu-container">
+        <div class="user-avatar">
+          {% if request.user.profile.profile_picture %}
+            <img src="{{ request.user.profile.profile_picture.url }}" alt="Foto de perfil" class="avatar-img">
+          {% else %}
+            <div class="avatar-placeholder">
+              <i class="fas fa-user"></i>
+            </div>
+          {% endif %}
+        </div>
+        <div class="user-dropdown">
+          <div class="user-info">
+            <div class="user-name">{{ request.user.username }}</div>
+            <div class="user-email">{{ request.user.email }}</div>
           </div>
+          <div class="dropdown-divider"></div>
+          <a href="{% url 'edit_profile' %}" class="dropdown-item">
+            <span class="dropdown-icon">👤</span>
+            Editar Perfil
+          </a>
+          <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit" class="dropdown-item">
+              <span class="dropdown-icon">🚪</span>
+              Cerrar Sesión
+            </button>
+          </form>
         </div>
       </div>
     </div>
-  </div>
+  </header>
 
   <!-- Dashboard Principal -->
   <div class="dashboard-container">
@@ -58,7 +70,8 @@
     <div class="actions-grid">
       <div class="action-card primary">
         <div class="action-icon">
-          <i class="fas fa-plus"></i>
+          <i class="fas fa-rocket"></i>
+          <i class="fas fa-plus card-icon-overlay"></i>
         </div>
         <div class="action-content">
           <h3>Crear Plan</h3>
@@ -71,7 +84,8 @@
 
       <div class="action-card secondary">
         <div class="action-icon">
-          <i class="fas fa-folder-open"></i>
+          <i class="fas fa-chart-line"></i>
+          <i class="fas fa-folder-open card-icon-overlay"></i>
         </div>
         <div class="action-content">
           <h3>Mis Planes</h3>
