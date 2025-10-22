@@ -41,7 +41,7 @@
                     </div>
                     <div class="dropdown-divider"></div>
                     <a href="{% url 'Mis_Planes' %}" class="dropdown-item active">
-                      <span class="dropdown-icon">📦</span>
+                      <span class="dropdown-icon">📋</span>
                       Mis Planes
                     </a>
                     <a href="{% url 'crear_plan' %}" class="dropdown-item">
@@ -75,73 +75,96 @@
             </div>
             
 
-            <!-- Grid de planes -->
-            <div class="row">
-                {% if mis_planes %}
+            <!-- Carrusel de planes -->
+            {% if mis_planes %}
+            <div class="planes-carousel-container">
+                <div class="planes-carousel">
                     {% for suscripcion in mis_planes %}
-                        <div class="col-md-4 mb-4">
-                            <div class="card h-100">
-                                {% if suscripcion.plan.imagen %}
-                                    <img src="{{ suscripcion.plan.imagen.url }}" class="card-img-top" alt="{{ suscripcion.plan.nombre }}" style="height: 200px; object-fit: cover;">
-                                {% else %}
-                                    <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
-                                        <i class="fas fa-chart-pie fa-3x text-muted"></i>
-                                    </div>
-                                {% endif %}
-                                
-                                <div class="card-body d-flex flex-column">
-                                    <h5 class="card-title">{{ suscripcion.plan.nombre }}</h5>
-                                    <p class="card-text text-muted">{{ suscripcion.plan.descripcion|truncatewords:20 }}</p>
-                                    
-                                    <div class="mt-auto">
-                                        <div class="d-flex justify-content-between align-items-center mb-2">
-                                            <span class="badge bg-{% if suscripcion.plan.tipo_plan == 'individual' %}primary{% else %}success{% endif %}">
-                                                {{ suscripcion.plan.get_tipo_plan_display }}
-                                            </span>
-                                            <span class="badge bg-secondary">
-                                                {{ suscripcion.get_rol_display }}
-                                            </span>
-                                        </div>
-                                        
-                                        <div class="d-flex gap-2">
-                                            <a href="{% url 'Menu_plan' suscripcion.plan.id %}" class="btn btn-primary btn-sm flex-fill">
-                                                <i class="fas fa-eye"></i> Ver Plan
-                                            </a>
-                                            {% if suscripcion.rol == 'admin' %}
-                                                <div class="action-buttons">
-                                                    <button class="btn-action btn-edit" title="Editar Plan">
-                                                        <i class="fas fa-edit"></i>
-                                                    </button>
-                                                    <button class="btn-action btn-delete" title="Eliminar Plan">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
-                                                </div>
-                                            {% endif %}
-                                        </div>
-                                    </div>
+                    <div class="plan-card">
+                        <div class="plan-card-header">
+                            {% if suscripcion.plan.imagen %}
+                                <img src="{{ suscripcion.plan.imagen.url }}" alt="{{ suscripcion.plan.nombre }}" class="plan-image">
+                            {% else %}
+                                <div class="plan-image-placeholder">
+                                    <i class="fas fa-chart-pie"></i>
                                 </div>
-                                
-                                <div class="card-footer text-muted">
-                                    <small>
-                                        <i class="fas fa-calendar"></i> Creado: {{ suscripcion.plan.fecha_creacion|date:"d/m/Y" }}
-                                    </small>
+                            {% endif %}
+                            <div class="plan-badges">
+                                <span class="badge tipo-plan badge-{{ suscripcion.plan.tipo_plan }}">
+                                    {% if suscripcion.plan.tipo_plan == 'individual' %}
+                                        <i class="fas fa-user"></i>
+                                    {% else %}
+                                        <i class="fas fa-users"></i>
+                                    {% endif %}
+                                    {{ suscripcion.plan.get_tipo_plan_display }}
+                                </span>
+                                <span class="badge rol-badge badge-{{ suscripcion.rol }}">
+                                    {% if suscripcion.rol == 'admin' %}
+                                        <i class="fas fa-crown"></i>
+                                    {% else %}
+                                        <i class="fas fa-user-check"></i>
+                                    {% endif %}
+                                    {{ suscripcion.get_rol_display }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="plan-card-body">
+                            <h3 class="plan-title">{{ suscripcion.plan.nombre }}</h3>
+                            <p class="plan-description">{{ suscripcion.plan.descripcion|truncatewords:30 }}</p>
+
+                            <div class="plan-meta">
+                                <div class="meta-item">
+                                    <i class="fas fa-calendar"></i>
+                                    <span>Creado: {{ suscripcion.plan.fecha_creacion|date:"d/m/Y" }}</span>
                                 </div>
                             </div>
                         </div>
-                    {% endfor %}
-                {% else %}
-                    <div class="col-12">
-                        <div class="text-center py-5">
-                            <i class="fas fa-folder-open fa-4x text-muted mb-4"></i>
-                            <h3 class="text-muted">No tienes planes financieros</h3>
-                            <p class="text-muted mb-4">Comienza creando tu primer plan financiero para organizar tus finanzas</p>
-                            <a href="{% url 'crear_plan' %}" class="btn btn-primary btn-lg">
-                                <i class="fas fa-plus"></i> Crear Mi Primer Plan
+
+                        <div class="plan-card-footer">
+                            <a href="{% url 'Menu_plan' suscripcion.plan.id %}" class="btn-plan-view">
+                                <i class="fas fa-eye"></i>
+                                Ver Plan
                             </a>
+                            {% if suscripcion.rol == 'admin' %}
+                            <div class="plan-actions">
+                                <a href="{% url 'editar_plan' suscripcion.plan.id %}" class="btn-plan-action btn-edit" title="Editar Plan">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <button class="btn-plan-action btn-delete" title="Eliminar Plan" data-plan-id="{{ suscripcion.plan.id }}" data-plan-name="{{ suscripcion.plan.nombre }}">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                            {% endif %}
                         </div>
                     </div>
-                {% endif %}
+                    {% endfor %}
+                </div>
+
+                <!-- Controles del carrusel -->
+                <button class="carousel-control carousel-prev" id="prevBtn">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="carousel-control carousel-next" id="nextBtn">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+
+                <!-- Indicadores -->
+                <div class="carousel-indicators" id="indicators"></div>
             </div>
+            {% else %}
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="fas fa-folder-open"></i>
+                </div>
+                <h3>No tienes planes financieros</h3>
+                <p>Comienza creando tu primer plan financiero para organizar tus finanzas</p>
+                <a href="{% url 'crear_plan' %}" class="btn-create-first">
+                    <i class="fas fa-plus"></i>
+                    Crear Mi Primer Plan
+                </a>
+            </div>
+            {% endif %}
         </div>
 
     </main>
@@ -173,6 +196,116 @@
                     }
                 });
             }
+        });
+    </script>
+
+    <!-- JavaScript para funcionalidad del carrusel -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const carousel = document.querySelector('.planes-carousel');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const indicatorsContainer = document.getElementById('indicators');
+
+            if (!carousel || !prevBtn || !nextBtn) return;
+
+            const cards = carousel.children;
+            const totalCards = cards.length;
+            let currentIndex = 0;
+
+            // Crear indicadores
+            for (let i = 0; i < totalCards; i++) {
+                const indicator = document.createElement('div');
+                indicator.className = 'indicator' + (i === 0 ? ' active' : '');
+                indicator.addEventListener('click', () => goToSlide(i));
+                indicatorsContainer.appendChild(indicator);
+            }
+
+            const indicators = document.querySelectorAll('.indicator');
+
+            function updateCarousel() {
+                const cardWidth = 320 + 32; // card width + gap
+                carousel.style.transform = `translateX(-${currentIndex * cardWidth}px)`;
+
+                // Actualizar indicadores
+                indicators.forEach((indicator, index) => {
+                    indicator.classList.toggle('active', index === currentIndex);
+                });
+            }
+
+            function goToSlide(index) {
+                currentIndex = Math.max(0, Math.min(index, totalCards - 1));
+                updateCarousel();
+            }
+
+            function nextSlide() {
+                if (currentIndex < totalCards - 1) {
+                    currentIndex++;
+                    updateCarousel();
+                }
+            }
+
+            function prevSlide() {
+                if (currentIndex > 0) {
+                    currentIndex--;
+                    updateCarousel();
+                }
+            }
+
+            // Event listeners
+            nextBtn.addEventListener('click', nextSlide);
+            prevBtn.addEventListener('click', prevSlide);
+
+            // Navegación con teclado
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowLeft') prevSlide();
+                if (e.key === 'ArrowRight') nextSlide();
+            });
+
+            // Actualizar estado inicial
+            updateCarousel();
+        });
+
+        // Funcionalidad para botones de editar y eliminar
+        document.addEventListener('DOMContentLoaded', function() {
+            // Botones de eliminar plan
+            const deleteButtons = document.querySelectorAll('.btn-delete');
+
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+
+                    const planId = this.getAttribute('data-plan-id');
+                    const planName = this.getAttribute('data-plan-name');
+
+                    if (confirm(`¿Estás seguro de que quieres eliminar el plan "${planName}"? Esta acción no se puede deshacer.`)) {
+                        // Crear formulario para enviar POST request
+                        const form = document.createElement('form');
+                        form.method = 'POST';
+                        form.action = `/planes/${planId}/editar/`;  // URL correcta para editar_plan
+
+                        // Agregar campo delete_plan para indicar eliminación
+                        const deleteInput = document.createElement('input');
+                        deleteInput.type = 'hidden';
+                        deleteInput.name = 'delete_plan';
+                        deleteInput.value = 'true';
+                        form.appendChild(deleteInput);
+
+                        // Agregar CSRF token
+                        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
+                        if (csrfToken) {
+                            const csrfInput = document.createElement('input');
+                            csrfInput.type = 'hidden';
+                            csrfInput.name = 'csrfmiddlewaretoken';
+                            csrfInput.value = csrfToken.value;
+                            form.appendChild(csrfInput);
+                        }
+
+                        document.body.appendChild(form);
+                        form.submit();
+                    }
+                });
+            });
         });
     </script>
 </body>
