@@ -59,23 +59,30 @@ def get_ai_response(message, plan, user):
         - Mantén las respuestas concisas y directas, sin texto innecesario
         - Limita las respuestas a 2-3 párrafos máximo
         - Evita explicaciones largas, ve al grano
+        - SIEMPRE usa listas con viñetas (-) o numeradas (1., 2., etc.) para enumerar consejos, pasos o elementos
+        - SIEMPRE divide las respuestas en párrafos cortos separados por líneas en blanco
+        - Formatea el texto de manera clara y visualmente atractiva, usando saltos de línea para separar ideas
+        - Para consejos financieros, estructura siempre en lista numerada
+        - Para explicaciones, usa párrafos separados
 
         Si el usuario pregunta sobre sus finanzas específicas, usa los datos del plan para dar consejos relevantes."""
 
         # Create chat completion
         response = client.chat.complete(
-            model="open-mistral-7b",
+            model="mistral-tiny",
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": message}
             ],
             temperature=0.7,
-            max_tokens=300
+            max_tokens=200
         )
 
         return response.choices[0].message.content
 
     except Exception as e:
+        # Log the error for debugging
+        print(f"AI Response Error: {str(e)}")
         return f"Lo siento, tuve un problema técnico: {str(e)}. Por favor, contacta al administrador."
 
 def get_plan_context(plan):
