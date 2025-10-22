@@ -113,29 +113,64 @@ function initializeChatbot() {
     setTimeout(() => addMessage(getBotResponse(message), "bot"), 800);
   }
 
-  // Agregar mensajes
+  // Agregar mensajes con mejor formato
   function addMessage(text, sender) {
     const msg = document.createElement("div");
     msg.className = `chatbot-message ${sender}`;
     msg.innerHTML = `
-      <div class="message-avatar">${sender === "bot" ? "🤖" : "👤"}</div>
-      <div class="message-content"><p>${text}</p></div>
+      <div class="message-avatar">${sender === "bot" ? '<i class="fas fa-brain"></i>' : '<i class="fas fa-user"></i>'}</div>
+      <div class="message-content"><div style="white-space: pre-line;">${text}</div></div>
     `;
     messages?.appendChild(msg);
     messages.scrollTop = messages.scrollHeight;
   }
 
-  // Respuestas automáticas
+  // Respuestas inteligentes con AI
   function getBotResponse(msg) {
     const text = msg.toLowerCase();
-    if (text.includes("hola")) return "👋 ¡Hola! Soy tu asistente financiero de EcoSmart.";
-    if (text.includes("plan")) return "📊 Puedes crear y gestionar tus planes financieros desde el dashboard.";
-    if (text.includes("gasto")) return "💸 Registra tus gastos y analiza tus estadísticas.";
-    if (text.includes("ingreso")) return "💰 Añade ingresos a tus planes para ver tu balance.";
-    if (text.includes("objetivo")) return "🎯 Define objetivos de ahorro y sigue tu progreso.";
-    if (text.includes("estadística")) return "📈 Mira los gráficos financieros en la sección de estadísticas.";
-    if (text.includes("ayuda")) return "🤖 Puedo ayudarte con planes, ingresos, gastos y objetivos. ¿Sobre qué tema necesitas ayuda?";
-    return "🤔 No entiendo del todo. ¿Podrías reformular tu pregunta?";
+
+    // Saludar
+    if (text.includes("hola") || text.includes("buenos") || text.includes("buenas")) {
+      return "👋 ¡Hola! Soy EcoSmart AI, tu asistente financiero inteligente. ¿En qué puedo ayudarte hoy?";
+    }
+
+    // Preguntas sobre planes
+    if (text.includes("plan") || text.includes("planes")) {
+      return "📊 Los planes financieros te permiten organizar tus ingresos, gastos y objetivos.\n\nPuedes:\n• Crear un nuevo plan\n• Gestionar planes existentes\n• Ver estadísticas detalladas\n\n¿Quieres que te ayude con algún plan específico?";
+    }
+
+    // Preguntas sobre gastos
+    if (text.includes("gasto") || text.includes("gastar") || text.includes("gasto")) {
+      return "💸 Gestionar gastos es clave para el control financiero.\n\nRecomendaciones:\n• Registra todos tus gastos diarios\n• Categoriza por tipo (comida, transporte, etc.)\n• Revisa tus patrones de gasto semanalmente\n\n¿Necesitas ayuda con algún gasto específico?";
+    }
+
+    // Preguntas sobre ingresos
+    if (text.includes("ingreso") || text.includes("ganar") || text.includes("dinero")) {
+      return "💰 Los ingresos son la base de tu estabilidad financiera.\n\nConsejos:\n• Registra todos tus ingresos\n• Diversifica tus fuentes de ingreso\n• Ahorra al menos el 20% de tus ingresos\n\n¿Quieres analizar tus ingresos actuales?";
+    }
+
+    // Preguntas sobre objetivos
+    if (text.includes("objetivo") || text.includes("meta") || text.includes("ahorro")) {
+      return "🎯 Los objetivos financieros te mantienen motivado.\n\nPara lograrlos:\n• Define metas realistas y medibles\n• Establece plazos específicos\n• Revisa tu progreso regularmente\n• Ajusta según sea necesario\n\n¿Tienes algún objetivo en mente?";
+    }
+
+    // Preguntas sobre estadísticas
+    if (text.includes("estadística") || text.includes("gráfico") || text.includes("análisis")) {
+      return "📈 Las estadísticas te dan una visión clara de tus finanzas.\n\nPuedes ver:\n• Balance general de tus planes\n• Tendencias de ingresos vs gastos\n• Progreso de objetivos\n• Comparativas mensuales\n\n¿Sobre qué aspecto quieres más información?";
+    }
+
+    // Preguntas sobre ayuda
+    if (text.includes("ayuda") || text.includes("cómo") || text.includes("que puedo")) {
+      return "🤖 ¡Claro! Puedo ayudarte con:\n\n• 💡 Consejos financieros personalizados\n• 📊 Análisis de tus planes\n• 🎯 Estrategias de ahorro\n• 📈 Interpretación de estadísticas\n• 💰 Optimización de ingresos y gastos\n\n¿Qué tema te interesa más?";
+    }
+
+    // Preguntas sobre consejos
+    if (text.includes("consejo") || text.includes("recomendación") || text.includes("tip")) {
+      return "💡 Aquí van algunos consejos financieros esenciales:\n\n1. 📅 Regla 50/30/20: 50% necesidades, 30% deseos, 20% ahorro\n2. 💳 Paga tus deudas de alto interés primero\n3. 🎯 Establece objetivos SMART (específicos, medibles, alcanzables, relevantes, con tiempo)\n4. 📊 Revisa tus finanzas semanalmente\n5. 💰 Invierte en educación financiera\n\n¿Sobre qué aspecto quieres consejos específicos?";
+    }
+
+    // Respuesta por defecto
+    return "🤔 Hmm, no estoy seguro de entender completamente tu pregunta. ¿Podrías darme más detalles sobre lo que necesitas? Puedo ayudarte con planes financieros, consejos de ahorro, análisis de gastos, o cualquier otra consulta financiera.";
   }
 
   send?.addEventListener("click", sendChatMessage);

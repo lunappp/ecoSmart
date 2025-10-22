@@ -10,7 +10,12 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+import os
 from pathlib import Path
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -37,11 +42,173 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'mathfilters',
     'App',
     'Planes_app',
     'chatbot'
 ]
+
+# Mistral AI Configuration
+MISTRAL_API_KEY = os.getenv('MISTRAL_API_KEY')
+
+# Economics knowledge base for AI training
+ECONOMICS_KNOWLEDGE = """
+🏦 1. Conceptos básicos de economía
+Q: ¿Qué es la economía?
+A: La economía es la ciencia que estudia cómo las personas, empresas y gobiernos utilizan los recursos limitados para satisfacer necesidades ilimitadas.
+
+Q: ¿Qué es la escasez?
+A: Es la situación en la que los recursos disponibles son insuficientes para cubrir todas las necesidades humanas.
+
+Q: ¿Qué son los bienes y servicios?
+A: Los bienes son objetos materiales que satisfacen necesidades (como ropa o comida), y los servicios son actividades que también lo hacen (como transporte o educación).
+
+Q: ¿Qué es el costo de oportunidad?
+A: Es el valor de la mejor alternativa que se pierde cuando se elige una opción.
+
+Q: ¿Qué es la oferta y la demanda?
+A: La oferta representa la cantidad de bienes que los productores están dispuestos a vender, y la demanda, la cantidad que los consumidores desean comprar.
+
+Q: ¿Qué es el mercado?
+A: Es el lugar físico o virtual donde se intercambian bienes y servicios entre compradores y vendedores.
+
+📈 2. Microeconomía
+Q: ¿Qué estudia la microeconomía?
+A: Analiza el comportamiento individual de consumidores, empresas y mercados específicos.
+
+Q: ¿Qué es la elasticidad de la demanda?
+A: Es la medida de cómo cambia la cantidad demandada de un bien ante un cambio en su precio.
+
+Q: ¿Qué es un monopolio?
+A: Es una situación donde una sola empresa domina la oferta de un producto o servicio sin competencia.
+
+Q: ¿Qué es la competencia perfecta?
+A: Es un mercado donde hay muchos compradores y vendedores, productos idénticos y libre entrada o salida de empresas.
+
+Q: ¿Qué son los costos fijos y variables?
+A: Los costos fijos no cambian con la producción (como el alquiler), y los variables sí cambian (como materias primas).
+
+💹 3. Macroeconomía
+Q: ¿Qué estudia la macroeconomía?
+A: Analiza la economía en su conjunto: crecimiento, inflación, desempleo, política fiscal y monetaria.
+
+Q: ¿Qué es el PIB?
+A: El Producto Interno Bruto mide el valor total de bienes y servicios finales producidos en un país durante un período.
+
+Q: ¿Qué es la inflación?
+A: Es el aumento sostenido y generalizado de los precios de bienes y servicios en una economía.
+
+Q: ¿Qué es la deflación?
+A: Es la disminución general de los precios en una economía.
+
+Q: ¿Qué es el desempleo?
+A: Es la situación en la que personas que buscan trabajo activamente no consiguen empleo.
+
+Q: ¿Qué es la política fiscal?
+A: Es el uso del gasto público y los impuestos por parte del gobierno para influir en la economía.
+
+Q: ¿Qué es la política monetaria?
+A: Es la regulación de la cantidad de dinero y las tasas de interés, generalmente a cargo del banco central.
+
+💰 4. Finanzas personales
+Q: ¿Qué es un presupuesto personal?
+A: Es una herramienta que permite planificar ingresos y gastos para mantener un equilibrio financiero.
+
+Q: ¿Cómo puedo empezar a ahorrar?
+A: Establecé metas claras, registrá tus gastos, eliminá los innecesarios y destiná un porcentaje fijo de tus ingresos al ahorro.
+
+Q: ¿Qué es una inversión?
+A: Es el uso de dinero para adquirir activos que puedan generar ganancias futuras.
+
+Q: ¿Qué es el interés compuesto?
+A: Es el interés que se calcula sobre el capital inicial más los intereses acumulados anteriormente.
+
+Q: ¿Qué es la inflación y cómo afecta mis ahorros?
+A: La inflación reduce el poder adquisitivo del dinero, por lo que tus ahorros valen menos con el tiempo si no se invierten.
+
+🪙 5. Dinero y banca
+Q: ¿Qué es el dinero?
+A: Es un medio de intercambio aceptado para comprar bienes y servicios y pagar deudas.
+
+Q: ¿Qué funciones cumple el dinero?
+A: Sirve como medio de intercambio, unidad de cuenta y reserva de valor.
+
+Q: ¿Qué es un banco central?
+A: Es la institución encargada de emitir moneda, controlar la inflación y regular el sistema financiero.
+
+Q: ¿Qué es una tasa de interés?
+A: Es el costo del dinero, expresado como porcentaje del monto prestado o invertido.
+
+Q: ¿Qué son las criptomonedas?
+A: Son monedas digitales descentralizadas que usan criptografía para asegurar transacciones, como Bitcoin o Ethereum.
+
+🌍 6. Comercio internacional
+Q: ¿Qué es el comercio internacional?
+A: Es el intercambio de bienes y servicios entre países.
+
+Q: ¿Qué son las exportaciones e importaciones?
+A: Exportar es vender productos al extranjero, e importar es comprarlos desde otro país.
+
+Q: ¿Qué son los aranceles?
+A: Son impuestos aplicados a productos importados para proteger la producción nacional.
+
+Q: ¿Qué es la balanza comercial?
+A: Es la diferencia entre el valor de las exportaciones y las importaciones de un país.
+
+Q: ¿Qué es la globalización económica?
+A: Es la creciente interconexión de las economías del mundo mediante el comercio, la inversión y la tecnología.
+
+📊 7. Economía argentina (puede adaptarse a otros países)
+Q: ¿Qué causa la inflación en Argentina?
+A: Factores como el exceso de emisión monetaria, déficit fiscal, aumento de costos y expectativas inflacionarias.
+
+Q: ¿Qué es el tipo de cambio?
+A: Es el valor de una moneda nacional en relación con otra, por ejemplo, cuántos pesos cuesta un dólar.
+
+Q: ¿Qué es el déficit fiscal?
+A: Es cuando los gastos del Estado superan sus ingresos.
+
+Q: ¿Qué es el riesgo país?
+A: Es un indicador que mide la probabilidad de que un país no cumpla con sus obligaciones financieras.
+
+Q: ¿Por qué sube el dólar?
+A: Puede deberse a mayor demanda de dólares, inestabilidad económica o pérdida de confianza en la moneda local.
+
+🧠 8. Economía conductual y moderna
+Q: ¿Qué es la economía conductual?
+A: Es una rama que estudia cómo las emociones y la psicología influyen en las decisiones económicas.
+
+Q: ¿Qué son los sesgos cognitivos?
+A: Son errores sistemáticos en la toma de decisiones, como el exceso de confianza o el miedo a perder.
+
+Q: ¿Qué es el "nudge" o empujón?
+A: Es una estrategia que modifica el entorno para influir en las decisiones sin imponer reglas.
+
+🏛️ 9. Instituciones y sistemas económicos
+Q: ¿Qué tipos de sistemas económicos existen?
+A: Capitalismo, socialismo, comunismo y economías mixtas.
+
+Q: ¿Qué es el capitalismo?
+A: Sistema donde los medios de producción son privados y las decisiones se toman a través del mercado.
+
+Q: ¿Qué es el socialismo?
+A: Sistema donde el Estado controla o regula los medios de producción para garantizar igualdad.
+
+Q: ¿Qué es una economía mixta?
+A: Es una combinación de mercado libre y control estatal.
+
+🧾 10. Impuestos y gasto público
+Q: ¿Qué son los impuestos?
+A: Son aportes obligatorios que los ciudadanos pagan al Estado para financiar servicios públicos.
+
+Q: ¿Qué tipos de impuestos existen?
+A: Directos (como el impuesto a la renta) e indirectos (como el IVA).
+
+Q: ¿Qué es el gasto público?
+A: Es el dinero que el Estado usa para proveer servicios como educación, salud y seguridad.
+
+Q: ¿Qué es la deuda pública?
+A: Es el dinero que el Estado debe a acreedores nacionales o extranjeros.
+"""
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

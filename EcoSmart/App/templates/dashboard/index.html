@@ -118,20 +118,22 @@
     </div>
   </div>
 
-  <!-- Chatbot Flotante -->
+  <!-- Chatbot Flotante Inteligente -->
   <div id="chatbot-widget" class="chatbot-widget">
     <button id="chatbot-toggle" class="chatbot-toggle">
-      <i class="fas fa-comments"></i>
-      <span class="chatbot-badge" id="chatbot-notification">?</span>
+      <i class="fas fa-robot"></i>
+      <span class="chatbot-badge" id="chatbot-notification">AI</span>
     </button>
 
     <div id="chatbot-chat" class="chatbot-chat">
       <div class="chatbot-header">
         <div class="chatbot-header-info">
-          <div class="chatbot-avatar">🤖</div>
+          <div class="chatbot-avatar">
+            <i class="fas fa-brain"></i>
+          </div>
           <div class="chatbot-title">
-            <h4>EcoSmart Assistant</h4>
-            <span>En línea</span>
+            <h4>EcoSmart AI</h4>
+            <span>Asistente Financiero</span>
           </div>
         </div>
         <button id="close-chatbot" class="chatbot-close">
@@ -141,15 +143,24 @@
 
       <div id="chat-messages" class="chatbot-messages">
         <div class="chatbot-message bot">
-          <div class="message-avatar">🤖</div>
+          <div class="message-avatar">
+            <i class="fas fa-brain"></i>
+          </div>
           <div class="message-content">
-            <p>¡Hola! Soy tu asistente financiero de EcoSmart. ¿En qué puedo ayudarte hoy?</p>
+            <div style="white-space: pre-line;">🤖 ¡Hola! Soy EcoSmart AI, tu asistente financiero inteligente.
+
+¿En qué puedo ayudarte hoy?
+
+• 💡 Consejos financieros personalizados
+• 📊 Análisis de planes
+• 🎯 Estrategias de ahorro
+• 📈 Interpretación de estadísticas</div>
           </div>
         </div>
       </div>
 
       <div class="chatbot-input">
-        <input type="text" id="chat-input" placeholder="Escribe tu mensaje..." class="chatbot-input-field">
+        <input type="text" id="chat-input" placeholder="Pregunta sobre finanzas..." class="chatbot-input-field">
         <button id="send-message" class="chatbot-send">
           <i class="fas fa-paper-plane"></i>
         </button>

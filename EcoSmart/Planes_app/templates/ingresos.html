@@ -92,6 +92,7 @@
       {% if plan.tipo_plan == 'grupal' %}
       <a href="{% url 'ajustes' plan_id=plan.id %}" class="menu-item"><i>👥</i><span>Miembros</span></a>
       {% endif %}
+      <a href="{% url 'chatbot' plan_id=plan.id %}" class="menu-item"><i>🤖</i><span>Chatbot</span></a>
       <a href="{% url 'Menu_plan' plan_id=plan.id %}" class="menu-item"><i>📋</i><span>Menú del Plan</span></a>
       <a href="{% url 'Dashboard' %}" class="menu-item"><i>🏠</i><span>Dashboard</span></a>
     </nav>

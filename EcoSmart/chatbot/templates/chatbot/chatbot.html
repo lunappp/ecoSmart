@@ -5,36 +5,109 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chatbot EcoSmart</title>
     {% load static %}
+    <link rel="stylesheet" href="{% static 'dashboard/dashboard-modern.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100">
-    <div class="container mx-auto p-4">
-        <h1 class="text-2xl font-bold mb-4">Chatbot EcoSmart</h1>
-        <div id="chat-window" class="border border-gray-300 rounded p-4 h-96 overflow-y-auto mb-4 bg-white">
-            {% for message in messages %}
-            <div class="mb-2">
-                <strong>Tú:</strong> {{ message.user_message }}
+<body>
+    <!-- Header -->
+    <header class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <a href="{% url 'Dashboard' %}" style="text-decoration: none; color: inherit;">
+                    <i class="fas fa-leaf"></i>
+                    EcoSmart
+                </a>
             </div>
-            <div class="mb-2">
-                <strong>Bot:</strong> {{ message.bot_response }}
-            </div>
-            {% endfor %}
         </div>
-        <form id="chat-form" method="post" action="{% url 'send_message' %}">
-            {% csrf_token %}
-            <div class="flex">
-                <input type="text" id="message-input" name="message" class="flex-1 border border-gray-300 rounded-l px-4 py-2" placeholder="Escribe tu mensaje..." required>
-                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-r">Enviar</button>
+    </header>
+
+    <!-- Main Content -->
+    <div class="dashboard-container">
+        <div class="welcome-header">
+            <div class="welcome-content">
+                <h1 class="welcome-title"><i class="fas fa-robot mr-3"></i>Chatbot EcoSmart</h1>
+                <p class="welcome-subtitle">Tu asistente financiero inteligente para el plan: {{ plan.nombre }}</p>
             </div>
-        </form>
-        <a href="{% url 'Dashboard' %}" class="mt-4 inline-block bg-gray-500 text-white px-4 py-2 rounded">Volver al Dashboard</a>
+        </div>
+
+        <div class="max-w-4xl mx-auto">
+            <!-- Chat Window -->
+            <div class="action-card" style="margin-bottom: 2rem;">
+                <div class="action-icon">
+                    <i class="fas fa-comments"></i>
+                </div>
+                <div class="action-content" style="flex: 1;">
+                    <h3>Conversación con EcoSmart AI</h3>
+                    <p>Tu asistente financiero personalizado</p>
+                </div>
+            </div>
+
+            <div id="chat-window" class="bg-white rounded-lg shadow-lg p-6 h-96 overflow-y-auto mb-6 border border-gray-200">
+                {% for message in messages %}
+                <div class="mb-4">
+                    <div class="flex items-start gap-3 mb-3">
+                        <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-user text-blue-600 text-sm"></i>
+                        </div>
+                        <div class="bg-blue-50 rounded-2xl rounded-tl-md px-4 py-3 max-w-xs lg:max-w-md">
+                            <p class="text-gray-800 text-sm">{{ message.user_message }}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3 justify-end">
+                        <div class="bg-gradient-to-r from-purple-500 to-purple-600 rounded-2xl rounded-tr-md px-4 py-3 max-w-xs lg:max-w-md">
+                            <div class="text-white text-sm whitespace-pre-line">{{ message.bot_response }}</div>
+                        </div>
+                        <div class="w-8 h-8 bg-gradient-to-r from-purple-500 to-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-robot text-white text-sm"></i>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="text-center py-8">
+                    <div class="w-16 h-16 bg-gradient-to-r from-purple-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-robot text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">¡Hola! Soy tu asistente EcoSmart</h3>
+                    <p class="text-gray-600">Pregúntame sobre finanzas, consejos económicos o cualquier duda sobre tu plan.</p>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Input Form -->
+            <div class="bg-white rounded-lg shadow-lg p-6 border border-gray-200">
+                <form id="chat-form" method="post" action="{% url 'send_message' plan.id %}">
+                    {% csrf_token %}
+                    <div class="flex gap-3">
+                        <div class="flex-1">
+                            <input type="text" id="message-input" name="message"
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
+                                   placeholder="Escribe tu mensaje aquí..." required>
+                        </div>
+                        <button type="submit"
+                                class="bg-gradient-to-r from-purple-500 to-purple-600 text-white px-6 py-3 rounded-full hover:from-purple-600 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Back Button -->
+            <div class="text-center mt-6">
+                <a href="{% url 'Menu_plan' plan.id %}"
+                   class="inline-flex items-center gap-2 bg-gray-100 text-gray-700 px-6 py-3 rounded-full hover:bg-gray-200 transition-all duration-200">
+                    <i class="fas fa-arrow-left"></i>
+                    Volver al Plan
+                </a>
+            </div>
+        </div>
     </div>
 
     <script>
     document.getElementById('chat-form').addEventListener('submit', function(e) {
         e.preventDefault();
         const message = document.getElementById('message-input').value;
-        fetch('{% url "send_message" %}', {
+        fetch('{% url "send_message" plan.id %}', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
@@ -46,8 +119,27 @@
         .then(data => {
             if (data.response) {
                 const chatWindow = document.getElementById('chat-window');
-                chatWindow.innerHTML += '<div class="mb-2"><strong>Tú:</strong> ' + message + '</div>';
-                chatWindow.innerHTML += '<div class="mb-2"><strong>Bot:</strong> ' + data.response + '</div>';
+                const newMessageHTML = `
+                    <div class="mb-4">
+                        <div class="flex items-start gap-3 mb-3">
+                            <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-user text-blue-600 text-sm"></i>
+                            </div>
+                            <div class="bg-blue-50 rounded-2xl rounded-tl-md px-4 py-3 max-w-xs lg:max-w-md">
+                                <p class="text-gray-800 text-sm">${message}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3 justify-end">
+                            <div class="bg-gradient-to-r from-purple-500 to-purple-600 rounded-2xl rounded-tr-md px-4 py-3 max-w-xs lg:max-w-md">
+                                <div class="text-white text-sm whitespace-pre-line">${data.response}</div>
+                            </div>
+                            <div class="w-8 h-8 bg-gradient-to-r from-purple-500 to-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-robot text-white text-sm"></i>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                chatWindow.insertAdjacentHTML('beforeend', newMessageHTML);
                 document.getElementById('message-input').value = '';
                 chatWindow.scrollTop = chatWindow.scrollHeight;
             }

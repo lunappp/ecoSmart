@@ -67,6 +67,19 @@
 
         <!-- Settings List -->
         <div class="divide-y divide-gray-200">
+            <!-- Chatbot Link -->
+            <div class="p-4 hover:bg-gray-50 cursor-pointer">
+                <a href="{% url 'chatbot' plan_id=plan.id %}" class="flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-600 mr-3">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                    </svg>
+                    <div>
+                        <h3 class="text-base font-medium text-gray-900">Chatbot IA</h3>
+                        <p class="text-sm text-gray-500">Consulta con nuestro asistente inteligente</p>
+                    </div>
+                </a>
+            </div>
+
             {% if es_admin %}
             <!-- Editar Plan -->
             <div class="p-4 hover:bg-gray-50 cursor-pointer" onclick="toggleSection('edit-plan')">
