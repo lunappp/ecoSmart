@@ -622,7 +622,11 @@ def historiales(request, plan_id):
         mes_seleccionado = selected_month
         anio_seleccionado = selected_year
         mes_num_seleccionado = selected_month_num
-        dia_actual = None  # Para meses pasados, mostrar todos los días con datos
+        # Para el mes actual, mostrar días hasta hoy; para meses pasados, mostrar todos los días
+        if selected_month == hoy.strftime('%Y-%m'):
+            dia_actual = hoy.day
+        else:
+            dia_actual = None
     else:
         mes_seleccionado = hoy.strftime('%Y-%m')
         anio_seleccionado = hoy.year
@@ -708,6 +712,36 @@ def historiales(request, plan_id):
 
     meses_disponibles = sorted(list(meses_disponibles), reverse=True)  # Más recientes primero
 
+    # Generar lista de meses disponibles hasta el mes actual
+    from datetime import datetime
+    hoy = timezone.now().date()
+    current_year = hoy.year
+    current_month = hoy.month
+
+    all_months_for_year = []
+    if selected_year < current_year:
+        # Si el año seleccionado es anterior, mostrar todos los meses
+        for m in range(1, 13):
+            month_str = f"{selected_year}-{m:02d}"
+            all_months_for_year.append(month_str)
+    elif selected_year == current_year:
+        # Si es el año actual, mostrar solo hasta el mes actual
+        for m in range(1, current_month + 1):
+            month_str = f"{selected_year}-{m:02d}"
+            all_months_for_year.append(month_str)
+    else:
+        # Si es un año futuro, mostrar meses desde agosto del año actual en adelante
+        if selected_year == current_year:
+            # Para el año actual, mostrar desde agosto hasta el mes actual
+            for m in range(8, current_month + 1):
+                month_str = f"{selected_year}-{m:02d}"
+                all_months_for_year.append(month_str)
+        else:
+            # Para años futuros, mostrar todos los meses desde enero
+            for m in range(1, 13):
+                month_str = f"{selected_year}-{m:02d}"
+                all_months_for_year.append(month_str)
+
     import json
     meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
     context = {
@@ -721,6 +755,7 @@ def historiales(request, plan_id):
         'selected_month': selected_month,
         'selected_year': selected_year,
         'meses_disponibles': meses_disponibles,
+        'all_months_for_year': all_months_for_year,
         'anios_disponibles': anios_disponibles,
         'hoy_str': hoy.strftime('%Y-%m'),
         'daily_labels_json': json.dumps(daily_labels),

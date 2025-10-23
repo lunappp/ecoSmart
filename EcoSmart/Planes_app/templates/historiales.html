@@ -35,7 +35,7 @@
     function changeYear(yearValue) {
         const url = new URL(window.location);
         url.searchParams.set('year', yearValue);
-        url.searchParams.delete('month'); // Reset month when changing year
+        // Keep the current month selected if it exists
         window.location.href = url.toString();
     }
 
@@ -44,8 +44,10 @@
         const url = new URL(window.location);
         if (monthValue) {
             url.searchParams.set('month', monthValue);
+            url.searchParams.delete('months'); // Remove old multiple months param
         } else {
             url.searchParams.delete('month');
+            url.searchParams.delete('months');
         }
         window.location.href = url.toString();
     }
@@ -218,14 +220,10 @@
                     <div class="flex-1">
                         <label for="monthSelector" class="block text-sm font-medium text-gray-700 mb-2">Seleccionar Mes:</label>
                         <select id="monthSelector" onchange="changeMonth(this.value)" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                            <option value="">{% now "M Y" %}</option>
-                            {% for mes in meses_disponibles %}
-                                {% if mes != hoy_str %}
-                                <option value="{{ mes }}" {% if selected_month == mes %}selected{% endif %}>
-                                    {{ mes|date:"M Y" }}
-                                </option>
-                                {% endif %}
-                            {% endfor %}
+                            <option value="">Seleccionar mes...</option>
+                            <option value="2025-08">Ago 2025</option>
+                            <option value="2025-09">Sep 2025</option>
+                            <option value="2025-10">Oct 2025</option>
                         </select>
                     </div>
                 </div>
