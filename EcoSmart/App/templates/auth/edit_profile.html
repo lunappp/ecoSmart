@@ -48,12 +48,12 @@
                                 </svg>
                             </div>
                         </label>
-                        <input type="file" name="profile_picture" id="id_profile_picture" class="hidden" accept="image/*">
                     </div>
                 </div>
 
                 <form method="post" enctype="multipart/form-data" class="space-y-4">
                     {% csrf_token %}
+                    <input type="file" name="profile_picture" id="id_profile_picture" class="hidden" accept="image/*">
 
                     {% for field in profile_form %}
                         {% if field.name != 'profile_picture' %}

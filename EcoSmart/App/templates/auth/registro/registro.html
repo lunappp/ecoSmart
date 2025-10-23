@@ -13,12 +13,30 @@
     <h2>Registrate</h2>
     <form method="POST" enctype="multipart/form-data">
       {% csrf_token %}
-      {% for campo in registerForm %}
-        <div>
-          <label for="{{ campo.id_for_label }}">{{ campo.label }}</label><br>
-          {{ campo }}<br>
-        </div>
-      {% endfor %}
+      <div>
+        <label for="{{ registerForm.username.id_for_label }}">Nombre de usuario</label><br>
+        {{ registerForm.username }}<br>
+      </div>
+      <div>
+        <label for="{{ registerForm.first_name.id_for_label }}">Nombre</label><br>
+        {{ registerForm.first_name }}<br>
+      </div>
+      <div>
+        <label for="{{ registerForm.last_name.id_for_label }}">Apellido</label><br>
+        {{ registerForm.last_name }}<br>
+      </div>
+      <div>
+        <label for="{{ registerForm.email.id_for_label }}">Email</label><br>
+        {{ registerForm.email }}<br>
+      </div>
+      <div>
+        <label for="{{ registerForm.password1.id_for_label }}">Contraseña</label><br>
+        {{ registerForm.password1 }}<br>
+      </div>
+      <div>
+        <label for="{{ registerForm.password2.id_for_label }}">Confirmar contraseña</label><br>
+        {{ registerForm.password2 }}<br>
+      </div>
 
       {% for field, error in errores.items %}
         <p class="mensajes">{{ field }}: {{ error }}</p>

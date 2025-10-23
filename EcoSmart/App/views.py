@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.models import User
 from django.contrib import messages
+from django.core.mail import send_mail
+from django.conf import settings
 
 from django.contrib.auth.decorators import login_required
 
@@ -29,6 +31,19 @@ def Register(request):
                 Profile.objects.create(user=user, profile_picture=profile_picture)
             else:
                 Profile.objects.create(user=user)
+
+            # Send verification email
+            subject = 'Bienvenido a EcoSmart - Verifica tu cuenta'
+            message = f'Hola {user.first_name},\n\nGracias por registrarte en EcoSmart. Tu cuenta ha sido creada exitosamente.\n\nPara verificar tu email, por favor confirma que este es tu correo electrónico.\n\nSaludos,\nEl equipo de EcoSmart'
+            from_email = settings.DEFAULT_FROM_EMAIL
+            recipient_list = [user.email]
+
+            try:
+                send_mail(subject, message, from_email, recipient_list)
+                messages.success(request, 'Usuario registrado exitosamente. Revisa tu email para verificar tu cuenta.')
+            except Exception as e:
+                messages.warning(request, 'Usuario registrado, pero hubo un problema enviando el email de verificación.')
+
             return redirect('Dashboard')
         else:
             errores = register_form.errors
