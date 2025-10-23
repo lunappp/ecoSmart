@@ -150,6 +150,18 @@ class TareaForm(forms.ModelForm):
             choices.insert(0, ('', 'No asignar a nadie'))
             self.fields['usuario_asignado'].choices = choices
 
+    def __init__(self, *args, **kwargs):
+        self.plan = kwargs.pop('plan', None)
+        super().__init__(*args, **kwargs)
+
+        # Si hay un plan, mostrar solo los miembros del plan como opciones para asignar
+        if self.plan:
+            miembros = Suscripcion.objects.filter(plan=self.plan).select_related('usuario')
+            choices = [(suscripcion.usuario.id, suscripcion.usuario.username) for suscripcion in miembros]
+            # Agregar opción para no asignar a nadie
+            choices.insert(0, ('', 'No asignar a nadie'))
+            self.fields['usuario_asignado'].choices = choices
+
     class Meta:
         model = Tarea
         # Excluimos 'plan' y 'fecha_guardado' (asignados en la vista/modelo)
@@ -168,7 +180,7 @@ class TareaForm(forms.ModelForm):
             'nombre': 'Título de la Tarea',
             'descripcion': 'Descripción',
             'tipo_tarea': 'Tipo',
-            'usuario_asignado': 'Asignar a',
+            'usuario_asignado': 'Asignar a (principal)',
             'fecha_a_completar': 'Fecha Límite',
             'imagen': 'Imagen de la Tarea',
         }
