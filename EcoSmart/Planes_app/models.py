@@ -29,7 +29,7 @@ class Suscripcion(models.Model):
     ROL_CHOICES = [
         ('miembro', 'Miembro'),
         ('moderador', 'Moderador'),
-        ('admin', 'Admin'),
+        ('admin', 'admin'),
     ]
 
     # id_suscripcion (INTEGER - PK) -> Django lo crea automáticamente

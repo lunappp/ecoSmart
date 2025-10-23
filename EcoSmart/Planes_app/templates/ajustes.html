@@ -145,14 +145,15 @@
                         <div class="flex items-center justify-between p-4 hover:bg-purple-50 border-b border-purple-100">
                             <div class="flex items-center">
                                 {% if suscripcion.usuario.profile.profile_picture %}
-                                    <img src="{{ suscripcion.usuario.profile.profile_picture.url }}" alt="Foto de {{ suscripcion.usuario.username }}" width="48" height="48" class="rounded-full object-cover mr-3">
+                                    <img src="{{ suscripcion.usuario.profile.profile_picture.url }}" alt="Foto de {{ suscripcion.usuario.first_name }} {{ suscripcion.usuario.last_name }}" width="48" height="48" class="rounded-full object-cover mr-3">
                                 {% else %}
                                     <div class="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center mr-3">
-                                        <span class="text-gray-600 font-bold">{{ suscripcion.usuario.username|first|upper }}</span>
+                                        <span class="text-gray-600 font-bold">{{ suscripcion.usuario.first_name|first|upper }}</span>
                                     </div>
                                 {% endif %}
                                 <div>
                                     <p class="font-medium text-gray-900">{{ suscripcion.usuario.username }}</p>
+                                    <p class="text-sm text-gray-700">{{ suscripcion.usuario.first_name }} {{ suscripcion.usuario.last_name }}</p>
                                     <p class="text-sm text-gray-500">{{ suscripcion.get_rol_display }}</p>
                                 </div>
                             </div>
