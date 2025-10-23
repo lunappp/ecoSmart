@@ -1,7 +1,5 @@
 {% extends 'base_plan.html' %}
 
-{% block title %}Estadísticas - {{ plan.nombre }}{% endblock %}
-
 {% block extra_head %}
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>">
 <script src="https://cdn.tailwindcss.com"></script>
@@ -27,23 +25,41 @@
     }
 
     *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI', system-ui,sans-serif;}
+
+    /* Responsive text sizes */
+    @media (max-width: 640px) {
+        h1 { font-size: 1.5rem !important; }
+        h2 { font-size: 1.25rem !important; }
+        .text-4xl { font-size: 1.875rem !important; }
+        .text-3xl { font-size: 1.5rem !important; }
+        .text-2xl { font-size: 1.25rem !important; }
+    }
+
+    /* Ensure charts are responsive */
+    canvas {
+        max-width: 100% !important;
+        height: auto !important;
+    }
+
 </style>
 {% endblock %}
 
-{% block content %}
-    <div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+{% block title %}Estadísticas - {{ plan.nombre }}{% endblock %}
 
-        <div class="flex justify-between items-center mb-6 border-b pb-2">
-            <h1 class="text-3xl font-extrabold text-gray-900">
+{% block content %}
+    <div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 overflow-x-hidden">
+
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 border-b pb-2 gap-4">
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-gray-900 break-words">
                 📊 Estadísticas del Plan: {{ plan.nombre }}
             </h1>
-            <a href="{% url 'historiales' plan_id=plan.id %}" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-150">
+            <a href="{% url 'historiales' plan_id=plan.id %}" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-150 text-sm sm:text-base whitespace-nowrap">
                 Ver Historiales Completos
             </a>
         </div>
     
         <!-- Resumen Financiero -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8">
             <!-- Saldo Total -->
             <div class="bg-gradient-to-r from-indigo-50 to-indigo-100 p-6 rounded-xl shadow-lg border border-indigo-200 hover:shadow-xl transition-shadow">
                 <div class="flex items-center mb-2">
@@ -77,7 +93,7 @@
         </div>
         
         <!-- Gráficos y Desglose por Categoría -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-8">
 
             <!-- Desglose de Ingresos por Tipo -->
             <div class="bg-white p-6 rounded-xl shadow-2xl">
@@ -124,7 +140,7 @@
         </div>
 
         <!-- Desglose por Miembro -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-8 mt-8">
 
             <!-- Desglose de Ingresos por Miembro -->
             <div class="bg-white p-6 rounded-xl shadow-2xl">
@@ -175,7 +191,7 @@
             <h2 class="text-2xl font-bold mb-4 text-purple-700 border-b pb-2">💱 Conversor de Monedas</h2>
             <p class="text-gray-600 mb-4">Convierte tus pesos argentinos a otras monedas del mundo.</p>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                     <label for="amount" class="block text-sm font-medium text-gray-700 mb-2">Monto en Pesos Argentinos (ARS)</label>
                     <input type="number" id="amount" placeholder="Ingresa el monto" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" min="0" step="0.01">
@@ -197,7 +213,7 @@
                 </div>
             </div>
 
-            <button id="convertBtn" class="mt-4 w-full bg-purple-600 text-white py-3 px-4 rounded-xl font-semibold hover:bg-purple-700 transition duration-150 shadow-lg">
+            <button id="convertBtn" class="mt-4 w-full bg-purple-600 text-white py-2 sm:py-3 px-4 rounded-xl font-semibold hover:bg-purple-700 transition duration-150 shadow-lg text-sm sm:text-base">
                 Convertir
             </button>
 

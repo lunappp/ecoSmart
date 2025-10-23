@@ -97,6 +97,9 @@
                         <div class="invitaciones-container">
                             {% for invitacion in invitaciones_pendientes %}
                             <div class="invitacion-card">
+                                {% if invitacion.plan.imagen %}
+                                    <img src="{{ invitacion.plan.imagen.url }}" alt="Imagen del plan {{ invitacion.plan.nombre }}" class="invitacion-imagen">
+                                {% endif %}
                                 <div class="invitacion-header">
                                     <h3>{{ invitacion.plan.nombre }}</h3>
                                     <span class="invitacion-fecha">{{ invitacion.fecha_invitacion|date:"d/m/Y H:i" }}</span>
@@ -158,6 +161,15 @@
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             padding: 1.5rem;
             border: 1px solid #e5e7eb;
+            position: relative;
+        }
+
+        .invitacion-imagen {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 1rem;
         }
 
         .invitacion-header {
