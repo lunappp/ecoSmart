@@ -30,7 +30,7 @@ urlpatterns = [
     #---------------------- Auth ----------------------#
     path('Register/',App.views.Register, name= 'Register'),
     path('Login/',App.views.Login, name= 'Login'),
-    path('logout/', LogoutView.as_view(next_page='Landing'), name='logout'),
+    path('logout/', LogoutView.as_view(next_page='/'), name='logout'),
 
     #------------------- daashboard -------------------#
     path('Dashboard/',App.views.Dashboard, name= 'Dashboard'),

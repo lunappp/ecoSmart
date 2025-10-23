@@ -27,6 +27,79 @@
     }
 
     *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI', system-ui,sans-serif;}
+
+    @media (max-width: 768px) {
+        .max-w-7xl {
+            max-width: 100% !important;
+            padding: 1rem !important;
+        }
+
+        h1 {
+            font-size: 1.75rem !important;
+        }
+
+        .lg\\:col-span-1, .lg\\:col-span-2 {
+            grid-column: span 1 !important;
+        }
+
+        .grid.grid-cols-1.lg\\:grid-cols-3 {
+            grid-template-columns: 1fr !important;
+            gap: 1.5rem !important;
+        }
+
+        .space-y-4 > * + * {
+            margin-top: 1rem !important;
+        }
+
+        .text-2xl {
+            font-size: 1.25rem !important;
+        }
+
+        .text-3xl {
+            font-size: 1.5rem !important;
+        }
+
+        .p-6 {
+            padding: 1rem !important;
+        }
+
+        .mb-6 {
+            margin-bottom: 1.5rem !important;
+        }
+
+        .max-h-96 {
+            max-height: 60vh !important;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .max-w-7xl {
+            padding: 0.5rem !important;
+        }
+
+        h1 {
+            font-size: 1.5rem !important;
+            margin-bottom: 1rem !important;
+        }
+
+        .grid.grid-cols-1.md\\:grid-cols-2 {
+            grid-template-columns: 1fr !important;
+        }
+
+        .px-3 {
+            padding-left: 0.5rem !important;
+            padding-right: 0.5rem !important;
+        }
+
+        .py-2 {
+            padding-top: 0.5rem !important;
+            padding-bottom: 0.5rem !important;
+        }
+
+        .text-sm {
+            font-size: 0.75rem !important;
+        }
+    }
 </style>
 {% endblock %}
 
@@ -88,12 +161,78 @@
             <div class="lg:col-span-2">
                 <!-- Resumen Financiero Rápido -->
                 <div class="mb-6 bg-green-50 p-5 rounded-xl shadow-inner border border-green-200">
-                    <p class="text-lg font-semibold text-gray-700">Saldo Actual del Plan: 
+                    <p class="text-lg font-semibold text-gray-700">Saldo Actual del Plan:
                         <span class="text-green-700 text-2xl ml-2 font-extrabold">${{ dinero_info.total_dinero|floatformat:2 }}</span>
                     </p>
                     <p class="text-sm text-gray-500">Total Ingresos Históricos: ${{ dinero_info.ingreso_total|floatformat:2 }}</p>
                 </div>
-                
+
+                <!-- Lista de Ingresos -->
+                <div class="bg-white p-6 rounded-xl shadow-2xl">
+                    <h2 class="text-xl font-bold mb-4 text-gray-800 border-b pb-2">Historial de Ingresos</h2>
+
+                    {% if ingresos_list %}
+                        <div class="space-y-4 max-h-96 overflow-y-auto">
+                            {% for ingreso in ingresos_list %}
+                            <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition duration-200">
+                                <div class="flex justify-between items-start">
+                                    <div class="flex-1">
+                                        <h3 class="font-semibold text-gray-900">{{ ingreso.nombre }}</h3>
+                                        <p class="text-sm text-gray-600 mt-1">{{ ingreso.descripcion|default:"Sin descripción" }}</p>
+                                        <div class="flex items-center gap-4 mt-2 text-sm text-gray-500">
+                                            <span class="flex items-center gap-1">
+                                                <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                                                {{ ingreso.get_tipo_ingreso_display }}
+                                            </span>
+                                            <span>Por: {{ ingreso.user.username }}</span>
+                                            <span>{{ ingreso.fecha_guardado|date:"d/m/Y H:i" }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-3">
+                                        <span class="text-2xl font-bold text-green-600">+${{ ingreso.cantidad|floatformat:2 }}</span>
+                                        <form method="POST" action="{% url 'eliminar_ingreso' plan_id=plan.id ingreso_id=ingreso.id %}"
+                                              onsubmit="return confirm('¿Estás seguro de que quieres eliminar este ingreso? Esta acción no se puede deshacer.');"
+                                              class="inline">
+                                            {% csrf_token %}
+                                            <button type="submit" class="inline-flex items-center gap-1 bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-lg text-sm font-medium transition duration-200 shadow-sm hover:shadow-md transform hover:-translate-y-0.5">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                                </svg>
+                                                Eliminar
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                                {% if ingreso.imagen %}
+                                <div class="mt-3">
+                                    <img src="{{ ingreso.imagen.url }}" alt="Imagen del ingreso" class="max-w-full h-32 object-cover rounded">
+                                </div>
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-8 text-gray-500">
+                            <p class="text-lg">No hay ingresos registrados aún.</p>
+                            <p class="text-sm mt-2">¡Registra tu primer ingreso usando el formulario!</p>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Estadísticas por Tipo -->
+                {% if ingresos_por_tipo %}
+                <div class="mt-6 bg-white p-6 rounded-xl shadow-2xl">
+                    <h2 class="text-xl font-bold mb-4 text-gray-800 border-b pb-2">Ingresos por Tipo</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {% for tipo in ingresos_por_tipo %}
+                        <div class="bg-green-50 p-4 rounded-lg border border-green-200">
+                            <h3 class="font-semibold text-gray-900">{{ tipo.tipo_ingreso|title }}</h3>
+                            <p class="text-2xl font-bold text-green-600 mt-1">${{ tipo.total|floatformat:2 }}</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
             </div>
         </div>
         

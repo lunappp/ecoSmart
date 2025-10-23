@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="{% static 'menu_principal/mis_planes.css' %}">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <!-- JavaScript -->
     <script src="{% static 'dashboard/dashboard.js' %}"></script>
 </head>
@@ -16,51 +18,58 @@
     <main>
         <!-- Header -->
         <header class="navbar">
-            <div class="nav-container">
-                <div class="logo">
+            <div class="nav-container flex items-center">
+                <div class="logo flex-1 ml-4">
                     <a href="{% url 'Dashboard' %}" style="text-decoration: none; color: inherit;">
                         <i class="fas fa-leaf"></i>
                         EcoSmart
                     </a>
                 </div>
 
-                <div class="user-menu-container">
-                  <div class="user-avatar">
-                    {% if request.user.profile.profile_picture %}
-                      <img src="{{ request.user.profile.profile_picture.url }}" alt="Foto de perfil" class="avatar-img">
-                    {% else %}
-                      <div class="avatar-placeholder">
-                        <i class="fas fa-user"></i>
-                      </div>
-                    {% endif %}
-                  </div>
-                  <div class="user-dropdown">
-                    <div class="user-info">
-                      <div class="user-name">{{ request.user.username }}</div>
-                      <div class="user-email">{{ request.user.email }}</div>
+                <!-- Top Navigation Menu -->
+                <nav class="flex items-center space-x-1 mr-4 overflow-x-auto">
+                    <a href="{% url 'Mis_Planes' %}" class="nav-link-top px-4 py-2 text-sm font-medium rounded-lg transition-colors bg-purple-100 text-purple-700 border border-purple-300">
+                        <i class="fas fa-list mr-2"></i>
+                        Mis Planes
+                    </a>
+
+                    <a href="{% url 'crear_plan' %}" class="nav-link-top px-4 py-2 text-sm font-medium rounded-lg transition-colors text-gray-700 hover:bg-gray-100">
+                        <i class="fas fa-plus mr-2"></i>
+                        Crear Plan
+                    </a>
+                </nav>
+
+                <!-- User Profile Dropdown -->
+                <div class="relative">
+                    <button id="user-menu-button" class="flex items-center space-x-2 text-gray-700 hover:text-gray-900 focus:outline-none">
+                        {% if request.user.profile.profile_picture %}
+                            <img class="w-8 h-8 rounded-full object-cover border-2 border-gray-300" src="{{ request.user.profile.profile_picture.url }}" alt="Profile Picture">
+                        {% else %}
+                            <div class="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center border-2 border-gray-300">
+                                <i class="fas fa-user text-gray-600"></i>
+                            </div>
+                        {% endif %}
+                        <span class="hidden md:block text-sm font-medium">{{ request.user.username }}</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+
+                    <!-- Dropdown Menu -->
+                    <div id="user-dropdown" class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50 hidden">
+                        <a href="{% url 'edit_profile' %}" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                            <i class="fas fa-cog mr-3"></i>
+                            Ajustes de Perfil
+                        </a>
+                        <div class="border-t border-gray-200"></div>
+                        <form method="POST" action="{% url 'logout' %}" class="inline">
+                            {% csrf_token %}
+                            <button type="submit" class="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 text-left">
+                                <i class="fas fa-sign-out-alt mr-3"></i>
+                                Cerrar Sesión
+                            </button>
+                        </form>
                     </div>
-                    <div class="dropdown-divider"></div>
-                    <a href="{% url 'Mis_Planes' %}" class="dropdown-item active">
-                      <span class="dropdown-icon">📋</span>
-                      Mis Planes
-                    </a>
-                    <a href="{% url 'crear_plan' %}" class="dropdown-item">
-                      <span class="dropdown-icon">➕</span>
-                      Crear Plan
-                    </a>
-                    <div class="dropdown-divider"></div>
-                    <a href="{% url 'edit_profile' %}" class="dropdown-item">
-                      <span class="dropdown-icon">👤</span>
-                      Editar Perfil
-                    </a>
-                    <form method="post" action="{% url 'logout' %}">
-                      {% csrf_token %}
-                      <button type="submit" class="dropdown-item">
-                        <span class="dropdown-icon">🚪</span>
-                        Cerrar Sesión
-                      </button>
-                    </form>
-                  </div>
                 </div>
             </div>
         </header>
@@ -171,28 +180,29 @@
 
     <!-- JavaScript para funcionalidad -->
     <script>
+        // User dropdown menu functionality
         document.addEventListener('DOMContentLoaded', function() {
-            // User dropdown toggle
-            const userMenuBtn = document.querySelector('.user-menu-btn');
-            const userDropdown = document.querySelector('.user-dropdown');
+            const userMenuButton = document.getElementById('user-menu-button');
+            const userDropdown = document.getElementById('user-dropdown');
 
-            if (userMenuBtn && userDropdown) {
-                userMenuBtn.addEventListener('click', function(e) {
+            if (userMenuButton && userDropdown) {
+                // Toggle dropdown on button click
+                userMenuButton.addEventListener('click', function(e) {
                     e.stopPropagation();
-                    userDropdown.classList.toggle('active');
+                    userDropdown.classList.toggle('hidden');
                 });
 
                 // Close dropdown when clicking outside
                 document.addEventListener('click', function(e) {
-                    if (!userMenuBtn.contains(e.target) && !userDropdown.contains(e.target)) {
-                        userDropdown.classList.remove('active');
+                    if (!userMenuButton.contains(e.target) && !userDropdown.contains(e.target)) {
+                        userDropdown.classList.add('hidden');
                     }
                 });
 
-                // Close dropdown on Escape key
+                // Close dropdown on escape key
                 document.addEventListener('keydown', function(e) {
                     if (e.key === 'Escape') {
-                        userDropdown.classList.remove('active');
+                        userDropdown.classList.add('hidden');
                     }
                 });
             }

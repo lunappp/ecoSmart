@@ -729,11 +729,76 @@ h1 {
   .card-img-top { height: 150px; }
   .card-body { padding: 1.25rem; }
   .btn-primary { width: 100%; justify-content: center; }
+
+  .planes-carousel {
+    gap: 1rem !important;
+  }
+
+  .plan-card {
+    flex: 0 0 280px !important;
+  }
+
+  .carousel-control {
+    width: 40px !important;
+    height: 40px !important;
+    font-size: 1rem !important;
+  }
+
+  .carousel-prev {
+    left: 0.5rem !important;
+  }
+
+  .carousel-next {
+    right: 0.5rem !important;
+  }
 }
 
 @media (max-width: 480px) {
   .header-content { padding: 0.75rem; }
-  .container-fluid { padding: 0.75rem; }
+  .container-fluid { padding: 0.75rem; padding-top: 80px; }
   h1 { font-size: 1.75rem; }
   .text-muted { font-size: 1rem; }
+
+  .plan-card {
+    flex: 0 0 260px !important;
+  }
+
+  .planes-carousel {
+    gap: 0.75rem !important;
+  }
+
+  .plan-card-header {
+    height: 140px !important;
+  }
+
+  .plan-card-body {
+    padding: 1rem !important;
+  }
+
+  .plan-card-footer {
+    padding: 1rem !important;
+  }
+
+  .plan-title {
+    font-size: 1rem !important;
+  }
+
+  .plan-description {
+    font-size: 0.8rem !important;
+  }
+
+  .btn-plan-view {
+    padding: 0.5rem 0.75rem !important;
+    font-size: 0.8rem !important;
+  }
+
+  .plan-actions {
+    gap: 0.5rem !important;
+  }
+
+  .btn-plan-action {
+    width: 35px !important;
+    height: 35px !important;
+    font-size: 0.9rem !important;
+  }
 }
