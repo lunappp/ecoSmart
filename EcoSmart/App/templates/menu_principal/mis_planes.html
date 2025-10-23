@@ -37,6 +37,11 @@
                         <i class="fas fa-plus mr-2"></i>
                         Crear Plan
                     </a>
+
+                    <a href="{% url 'invitaciones' %}" class="nav-link-top px-4 py-2 text-sm font-medium rounded-lg transition-colors text-gray-700 hover:bg-gray-100">
+                        <i class="fas fa-envelope mr-2"></i>
+                        Invitaciones{% if invitaciones_pendientes %} ({{ invitaciones_pendientes|length }}){% endif %}
+                    </a>
                 </nav>
 
                 <!-- User Profile Dropdown -->

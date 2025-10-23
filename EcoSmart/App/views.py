@@ -85,9 +85,11 @@ def Inicio(request):
 def Mis_Planes(request):
     # Obtener todos los planes del usuario
     suscripciones = request.user.suscripciones.all()
-    
+    invitaciones_pendientes = Invitacion.objects.filter(invitado=request.user, estado='pendiente')
+
     context = {
         'mis_planes': suscripciones,
+        'invitaciones_pendientes': invitaciones_pendientes,
     }
     return render(request, 'menu_principal/mis_planes.html', context)
 
@@ -244,6 +246,14 @@ def rechazar_invitacion(request, invitacion_id):
     invitacion.save()
     messages.info(request, 'Invitación rechazada.')
     return redirect('Dashboard')
+
+@login_required
+def invitaciones(request):
+    invitaciones_pendientes = Invitacion.objects.filter(invitado=request.user, estado='pendiente').select_related('plan', 'invitador')
+    context = {
+        'invitaciones_pendientes': invitaciones_pendientes,
+    }
+    return render(request, 'menu_principal/invitaciones.html', context)
 
 
 @login_required
