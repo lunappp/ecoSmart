@@ -1,270 +1,148 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chatbot EcoSmart</title>
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'dashboard/dashboard-modern.css' %}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        :root {
-            --primary: #a855f7;
-            --primary-light: #c084fc;
-            --primary-dark: #9333ea;
-            --secondary: #8b5cf6;
-            --success: #a78bfa;
-            --danger: #ef4444;
-            --warning: #f59e0b;
-            --background: #faf5ff;
-            --surface: #ffffff;
-            --text: #581c87;
-            --text-light: #6b7280;
-            --border: #e5e7eb;
-            --radius: 12px;
-            --shadow: 0 4px 12px rgba(0,0,0,0.1);
-            --shadow-lg: 0 10px 20px rgba(0,0,0,0.15);
-            --transition: 0.3s;
+{% extends 'base_plan.html' %}
+{% load static %}
+
+{% block title %}Chatbot EcoSmart{% endblock %}
+
+{% block extra_head %}
+<style>
+    :root {
+        --primary: #a855f7;
+        --primary-light: #c084fc;
+        --primary-dark: #9333ea;
+        --secondary: #8b5cf6;
+        --success: #a78bfa;
+        --danger: #ef4444;
+        --warning: #f59e0b;
+        --background: #faf5ff;
+        --surface: #ffffff;
+        --text: #581c87;
+        --text-light: #6b7280;
+        --border: #e5e7eb;
+        --radius: 12px;
+        --shadow: 0 4px 12px rgba(0,0,0,0.1);
+        --shadow-lg: 0 10px 20px rgba(0,0,0,0.15);
+        --transition: 0.3s;
+    }
+
+    *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI', system-ui,sans-serif;}
+
+    @media (max-width: 768px) {
+        .max-w-4xl {
+            max-width: 100% !important;
+            padding: 1rem !important;
         }
 
-        *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI', system-ui,sans-serif;}
-
-        @media (max-width: 768px) {
-            .max-w-4xl {
-                max-width: 100% !important;
-                padding: 1rem !important;
-            }
-
-            .h-96 {
-                height: 70vh !important;
-            }
-
-            .text-2xl {
-                font-size: 1.25rem !important;
-            }
-
-            .text-xl {
-                font-size: 1.125rem !important;
-            }
-
-            .p-6 {
-                padding: 1rem !important;
-            }
+        .h-96 {
+            height: 70vh !important;
         }
 
-        @media (max-width: 480px) {
-            .max-w-4xl {
-                padding: 0.5rem !important;
-            }
-
-            .h-96 {
-                height: 60vh !important;
-            }
-
-            .px-6 {
-                padding-left: 0.5rem !important;
-                padding-right: 0.5rem !important;
-            }
-
-            .py-3 {
-                padding-top: 0.5rem !important;
-                padding-bottom: 0.5rem !important;
-            }
-
-            .text-sm {
-                font-size: 0.75rem !important;
-            }
+        .text-2xl {
+            font-size: 1.25rem !important;
         }
-    </style>
-</head>
-<body>
-    <!-- Header -->
-    <header class="navbar">
-        <div class="nav-container flex items-center">
-            <div class="logo flex-1 ml-4">
-                <a href="{% url 'Dashboard' %}" style="text-decoration: none; color: inherit;">
-                    <i class="fas fa-leaf"></i>
-                    EcoSmart
-                </a>
+
+        .text-xl {
+            font-size: 1.125rem !important;
+        }
+
+        .p-6 {
+            padding: 1rem !important;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .max-w-4xl {
+            padding: 0.5rem !important;
+        }
+
+        .h-96 {
+            height: 60vh !important;
+        }
+
+        .px-6 {
+            padding-left: 0.5rem !important;
+            padding-right: 0.5rem !important;
+        }
+
+        .py-3 {
+            padding-top: 0.5rem !important;
+            padding-bottom: 0.5rem !important;
+        }
+
+        .text-sm {
+            font-size: 0.75rem !important;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="max-w-4xl mx-auto px-6">
+    <!-- Chat Window -->
+    <div class="action-card" style="margin-bottom: 2rem;">
+        <div class="action-icon">
+            <i class="fas fa-comments"></i>
+        </div>
+        <div class="action-content" style="flex: 1;">
+            <h3>Conversación con EcoSmart AI</h3>
+            <p>Tu asistente financiero personalizado</p>
+        </div>
+    </div>
+
+    <div id="chat-window" class="bg-white rounded-lg shadow-lg p-6 h-96 overflow-y-auto mb-6 border border-gray-200">
+        {% for message in messages %}
+        <div class="mb-4">
+            <div class="flex items-start gap-3 mb-3">
+                <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <i class="fas fa-user text-blue-600 text-sm"></i>
+                </div>
+                <div class="bg-blue-50 rounded-2xl rounded-tl-md px-4 py-3 max-w-xs lg:max-w-md">
+                    <p class="text-gray-800 text-sm">{{ message.user_message }}</p>
+                </div>
             </div>
-
-            <!-- Top Navigation Menu -->
-            <nav class="flex items-center space-x-1 mr-4 overflow-x-auto">
-                <a href="{% url 'ingresos' plan_id=plan.id %}" class="nav-link-top px-4 py-2 text-sm font-medium rounded-lg transition-colors {% if request.resolver_match.url_name == 'ingresos' %}bg-green-100 text-green-700 border border-green-300{% else %}text-gray-700 hover:bg-gray-100{% endif %}">
-                    <i class="fas fa-plus-circle mr-2"></i>
-                    Ingresos
-                </a>
-
-                <a href="{% url 'gastos' plan_id=plan.id %}" class="nav-link-top px-4 py-2 text-sm font-medium rounded-lg transition-colors {% if request.resolver_match.url_name == 'gastos' %}bg-red-100 text-red-700 border border-red-300{% else %}text-gray-700 hover:bg-gray-100{% endif %}">
-                    <i class="fas fa-minus-circle mr-2"></i>
-                    Gastos
-                </a>
-
-                <a href="{% url 'objetivos' plan_id=plan.id %}" class="nav-link-top px-4 py-2 text-sm font-medium rounded-lg transition-colors {% if request.resolver_match.url_name == 'objetivos' %}bg-purple-100 text-purple-700 border border-purple-300{% else %}text-gray-700 hover:bg-gray-100{% endif %}">
-                    <i class="fas fa-bullseye mr-2"></i>
-                    Objetivos
-                </a>
-
-                <a href="{% url 'tareas' plan_id=plan.id %}" class="nav-link-top px-4 py-2 text-sm font-medium rounded-lg transition-colors {% if request.resolver_match.url_name == 'tareas' %}bg-blue-100 text-blue-700 border border-blue-300{% else %}text-gray-700 hover:bg-gray-100{% endif %}">
-                    <i class="fas fa-tasks mr-2"></i>
-                    Tareas
-                </a>
-
-                <a href="{% url 'estadisticas' plan_id=plan.id %}" class="nav-link-top px-4 py-2 text-sm font-medium rounded-lg transition-colors {% if request.resolver_match.url_name == 'estadisticas' %}bg-indigo-100 text-indigo-700 border border-indigo-300{% else %}text-gray-700 hover:bg-gray-100{% endif %}">
-                    <i class="fas fa-chart-bar mr-2"></i>
-                    Estadísticas
-                </a>
-
-                <a href="{% url 'chatbot' plan_id=plan.id %}" class="nav-link-top px-4 py-2 text-sm font-medium rounded-lg transition-colors bg-teal-100 text-teal-700 border border-teal-300">
-                    <i class="fas fa-robot mr-2"></i>
-                    Chatbot AI
-                </a>
-
-                {% if plan.tipo_plan == 'grupal' %}
-                <a href="{% url 'ajustes' plan_id=plan.id %}" class="nav-link-top px-4 py-2 text-sm font-medium rounded-lg transition-colors {% if request.resolver_match.url_name == 'ajustes' %}bg-gray-100 text-gray-700 border border-gray-300{% else %}text-gray-700 hover:bg-gray-100{% endif %}">
-                    <i class="fas fa-cog mr-2"></i>
-                    Ajustes
-                </a>
-                {% endif %}
-            </nav>
-
-            <!-- User Profile Dropdown -->
-            <div class="relative">
-                <button id="user-menu-button" class="flex items-center space-x-2 text-gray-700 hover:text-gray-900 focus:outline-none">
-                    {% if user.profile.profile_picture %}
-                        <img class="w-8 h-8 rounded-full object-cover border-2 border-gray-300" src="{{ user.profile.profile_picture.url }}" alt="Profile Picture">
-                    {% else %}
-                        <div class="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center border-2 border-gray-300">
-                            <i class="fas fa-user text-gray-600"></i>
-                        </div>
-                    {% endif %}
-                    <span class="hidden md:block text-sm font-medium">{{ user.username }}</span>
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                    </svg>
-                </button>
-
-                <!-- Dropdown Menu -->
-                <div id="user-dropdown" class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50 hidden">
-                    <a href="{% url 'edit_profile' %}" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                        <i class="fas fa-cog mr-3"></i>
-                        Ajustes de Perfil
-                    </a>
-                    <div class="border-t border-gray-200"></div>
-                    <form method="POST" action="{% url 'logout' %}" class="inline">
-                        {% csrf_token %}
-                        <button type="submit" class="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 text-left">
-                            <i class="fas fa-sign-out-alt mr-3"></i>
-                            Cerrar Sesión
-                        </button>
-                    </form>
+            <div class="flex items-start gap-3 justify-end">
+                <div class="bg-gradient-to-r from-purple-500 to-purple-600 rounded-2xl rounded-tr-md px-4 py-3 max-w-xs lg:max-w-md">
+                    <div class="text-white text-sm whitespace-pre-line">{{ message.bot_response }}</div>
+                </div>
+                <div class="w-8 h-8 bg-gradient-to-r from-purple-500 to-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
+                    <i class="fas fa-robot text-white text-sm"></i>
                 </div>
             </div>
         </div>
-    </header>
-
-    <!-- Main Content Area -->
-    <main class="bg-gray-50 min-h-screen">
-            <div class="welcome-header">
-                <div class="welcome-content">
-                    <h1 class="welcome-title"><i class="fas fa-robot mr-3"></i>Chatbot EcoSmart</h1>
-                    <p class="welcome-subtitle">Tu asistente financiero inteligente para el plan: {{ plan.nombre }}</p>
-                </div>
+        {% empty %}
+        <div class="text-center py-8">
+            <div class="w-16 h-16 bg-gradient-to-r from-purple-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-robot text-white text-2xl"></i>
             </div>
-
-            <div class="max-w-4xl mx-auto px-6">
-            <!-- Chat Window -->
-            <div class="action-card" style="margin-bottom: 2rem;">
-                <div class="action-icon">
-                    <i class="fas fa-comments"></i>
-                </div>
-                <div class="action-content" style="flex: 1;">
-                    <h3>Conversación con EcoSmart AI</h3>
-                    <p>Tu asistente financiero personalizado</p>
-                </div>
-            </div>
-
-            <div id="chat-window" class="bg-white rounded-lg shadow-lg p-6 h-96 overflow-y-auto mb-6 border border-gray-200">
-                {% for message in messages %}
-                <div class="mb-4">
-                    <div class="flex items-start gap-3 mb-3">
-                        <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                            <i class="fas fa-user text-blue-600 text-sm"></i>
-                        </div>
-                        <div class="bg-blue-50 rounded-2xl rounded-tl-md px-4 py-3 max-w-xs lg:max-w-md">
-                            <p class="text-gray-800 text-sm">{{ message.user_message }}</p>
-                        </div>
-                    </div>
-                    <div class="flex items-start gap-3 justify-end">
-                        <div class="bg-gradient-to-r from-purple-500 to-purple-600 rounded-2xl rounded-tr-md px-4 py-3 max-w-xs lg:max-w-md">
-                            <div class="text-white text-sm whitespace-pre-line">{{ message.bot_response }}</div>
-                        </div>
-                        <div class="w-8 h-8 bg-gradient-to-r from-purple-500 to-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
-                            <i class="fas fa-robot text-white text-sm"></i>
-                        </div>
-                    </div>
-                </div>
-                {% empty %}
-                <div class="text-center py-8">
-                    <div class="w-16 h-16 bg-gradient-to-r from-purple-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-robot text-white text-2xl"></i>
-                    </div>
-                    <h3 class="text-lg font-semibold text-gray-800 mb-2">¡Hola! Soy tu asistente EcoSmart</h3>
-                    <p class="text-gray-600">Pregúntame sobre finanzas, consejos económicos o cualquier duda sobre tu plan.</p>
-                </div>
-                {% endfor %}
-            </div>
-
-            <!-- Input Form -->
-            <div class="bg-white rounded-lg shadow-lg p-6 border border-gray-200">
-                <form id="chat-form" method="post" action="{% url 'send_message' plan.id %}">
-                    {% csrf_token %}
-                    <div class="flex gap-3">
-                        <div class="flex-1">
-                            <input type="text" id="message-input" name="message"
-                                   class="w-full px-4 py-3 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
-                                   placeholder="Escribe tu mensaje aquí..." required>
-                        </div>
-                        <button type="submit"
-                                class="bg-gradient-to-r from-purple-500 to-purple-600 text-white px-6 py-3 rounded-full hover:from-purple-600 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105">
-                            <i class="fas fa-paper-plane"></i>
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </main>
+            <h3 class="text-lg font-semibold text-gray-800 mb-2">¡Hola! Soy tu asistente EcoSmart</h3>
+            <p class="text-gray-600">Pregúntame sobre finanzas, consejos económicos o cualquier duda sobre tu plan.</p>
+        </div>
+        {% endfor %}
     </div>
 
-    <script>
-        // User dropdown menu functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            const userMenuButton = document.getElementById('user-menu-button');
-            const userDropdown = document.getElementById('user-dropdown');
+    <!-- Input Form -->
+    <div class="bg-white rounded-lg shadow-lg p-6 border border-gray-200">
+        <form id="chat-form" method="post" action="{% url 'send_message' plan.id %}">
+            {% csrf_token %}
+            <div class="flex gap-3">
+                <div class="flex-1">
+                    <input type="text" id="message-input" name="message"
+                           class="w-full px-4 py-3 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
+                           placeholder="Escribe tu mensaje aquí..." required>
+                </div>
+                <button type="submit"
+                        class="bg-gradient-to-r from-purple-500 to-purple-600 text-white px-6 py-3 rounded-full hover:from-purple-600 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
 
-            if (userMenuButton && userDropdown) {
-                // Toggle dropdown on button click
-                userMenuButton.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    userDropdown.classList.toggle('hidden');
-                });
+{% endblock %}
 
-                // Close dropdown when clicking outside
-                document.addEventListener('click', function(e) {
-                    if (!userMenuButton.contains(e.target) && !userDropdown.contains(e.target)) {
-                        userDropdown.classList.add('hidden');
-                    }
-                });
-
-                // Close dropdown on escape key
-                document.addEventListener('keydown', function(e) {
-                    if (e.key === 'Escape') {
-                        userDropdown.classList.add('hidden');
-                    }
-                });
-            }
-        });
-
+{% block extra_scripts %}
+<script>
     document.getElementById('chat-form').addEventListener('submit', function(e) {
         e.preventDefault();
         const message = document.getElementById('message-input').value;
@@ -306,6 +184,5 @@
             }
         });
     });
-    </script>
-</body>
-</html>
+</script>
+{% endblock %}

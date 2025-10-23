@@ -1,115 +1,75 @@
+{% extends 'base_plan.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Historiales - {{ plan.nombre }}</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📋</text></svg>">
-    <script src="https://cdn.tailwindcss.com"></script>
+
+{% block title %}Historiales - {{ plan.nombre }}{% endblock %}
+
+{% block extra_head %}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
 
-    <script>
-        // Función para cambiar tabs
-        function openTab(tabName, button) {
-            // Ocultar todos los contenidos de tabs
-            const tabContents = document.querySelectorAll('.tab-content');
-            tabContents.forEach(content => content.classList.remove('active'));
+{% block content %}
+<script>
+    // Función para cambiar tabs
+    function openTab(tabName, button) {
+        // Ocultar todos los contenidos de tabs
+        const tabContents = document.querySelectorAll('.tab-content');
+        tabContents.forEach(content => content.classList.remove('active'));
 
-            // Remover clase active de todos los botones
-            const tabButtons = document.querySelectorAll('.tab-button');
-            tabButtons.forEach(btn => btn.classList.remove('active'));
+        // Remover clase active de todos los botones
+        const tabButtons = document.querySelectorAll('.tab-button');
+        tabButtons.forEach(btn => btn.classList.remove('active'));
 
-            // Mostrar el contenido seleccionado
-            document.getElementById(tabName).classList.add('active');
+        // Mostrar el contenido seleccionado
+        document.getElementById(tabName).classList.add('active');
 
-            // Activar el botón seleccionado
-            button.classList.add('active');
+        // Activar el botón seleccionado
+        button.classList.add('active');
 
-            // Renderizar gráfico si es la pestaña de gráfico
-            if (tabName === 'grafico') {
-                renderChart();
-            }
+        // Renderizar gráfico si es la pestaña de gráfico
+        if (tabName === 'grafico') {
+            renderChart();
         }
+    }
 
-        // Función para cambiar de año
-        function changeYear(yearValue) {
-            const url = new URL(window.location);
-            url.searchParams.set('year', yearValue);
-            url.searchParams.delete('month'); // Reset month when changing year
-            window.location.href = url.toString();
+    // Función para cambiar de año
+    function changeYear(yearValue) {
+        const url = new URL(window.location);
+        url.searchParams.set('year', yearValue);
+        url.searchParams.delete('month'); // Reset month when changing year
+        window.location.href = url.toString();
+    }
+
+    // Función para cambiar de mes
+    function changeMonth(monthValue) {
+        const url = new URL(window.location);
+        if (monthValue) {
+            url.searchParams.set('month', monthValue);
+        } else {
+            url.searchParams.delete('month');
         }
+        window.location.href = url.toString();
+    }
 
-        // Función para cambiar de mes
-        function changeMonth(monthValue) {
-            const url = new URL(window.location);
-            if (monthValue) {
-                url.searchParams.set('month', monthValue);
-            } else {
-                url.searchParams.delete('month');
-            }
-            window.location.href = url.toString();
-        }
+    // Función para renderizar los gráficos
+    function renderChart() {
+        // Gráfico diario (solo si hay datos)
+        const dailyLabels = JSON.parse('{{ daily_labels_json|escapejs }}');
+        if (dailyLabels.length > 0) {
+            const dailyCtx = document.getElementById('dailyChart').getContext('2d');
+            const dailyData = JSON.parse('{{ daily_data_json|escapejs }}');
 
-        // Función para renderizar los gráficos
-        function renderChart() {
-            // Gráfico diario (solo si hay datos)
-            const dailyLabels = JSON.parse('{{ daily_labels_json|escapejs }}');
-            if (dailyLabels.length > 0) {
-                const dailyCtx = document.getElementById('dailyChart').getContext('2d');
-                const dailyData = JSON.parse('{{ daily_data_json|escapejs }}');
-
-                new Chart(dailyCtx, {
-                    type: 'line',
-                    data: {
-                        labels: dailyLabels,
-                        datasets: [{
-                            label: 'Balance Diario ($)',
-                            data: dailyData,
-                            borderColor: 'rgb(54, 162, 235)',
-                            backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                            tension: 0.1,
-                            pointRadius: 4,
-                            pointHoverRadius: 6
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        plugins: {
-                            legend: {
-                                position: 'top',
-                            }
-                        },
-                        scales: {
-                            x: {
-                                title: {
-                                    display: true,
-                                    text: 'Día del Mes'
-                                }
-                            },
-                            y: {
-                                beginAtZero: true
-                            }
-                        }
-                    }
-                });
-            }
-
-            // Gráfico mensual
-            const monthlyCtx = document.getElementById('monthlyChart').getContext('2d');
-            const monthlyLabels = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
-            const monthlyData = JSON.parse('{{ monthly_data_json|escapejs }}');
-
-            new Chart(monthlyCtx, {
-                type: 'bar',
+            new Chart(dailyCtx, {
+                type: 'line',
                 data: {
-                    labels: monthlyLabels,
+                    labels: dailyLabels,
                     datasets: [{
-                        label: 'Dinero Ganado/Perdido ($)',
-                        data: monthlyData,
-                        backgroundColor: monthlyData.map(value => value >= 0 ? 'rgba(75, 192, 192, 0.6)' : 'rgba(255, 99, 132, 0.6)'),
-                        borderColor: monthlyData.map(value => value >= 0 ? 'rgb(75, 192, 192)' : 'rgb(255, 99, 132)'),
-                        borderWidth: 1
+                        label: 'Balance Diario ($)',
+                        data: dailyData,
+                        borderColor: 'rgb(54, 162, 235)',
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        tension: 0.1,
+                        pointRadius: 4,
+                        pointHoverRadius: 6
                     }]
                 },
                 options: {
@@ -120,6 +80,12 @@
                         }
                     },
                     scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Día del Mes'
+                            }
+                        },
                         y: {
                             beginAtZero: true
                         }
@@ -128,19 +94,50 @@
             });
         }
 
-        // Renderizar gráficos al cargar la página si la pestaña de gráficos está activa
-        document.addEventListener('DOMContentLoaded', function() {
-            if (document.getElementById('grafico').classList.contains('active')) {
-                renderChart();
+        // Gráfico mensual
+        const monthlyCtx = document.getElementById('monthlyChart').getContext('2d');
+        const monthlyLabels = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+        const monthlyData = JSON.parse('{{ monthly_data_json|escapejs }}');
+
+        new Chart(monthlyCtx, {
+            type: 'bar',
+            data: {
+                labels: monthlyLabels,
+                datasets: [{
+                    label: 'Dinero Ganado/Perdido ($)',
+                    data: monthlyData,
+                    backgroundColor: monthlyData.map(value => value >= 0 ? 'rgba(75, 192, 192, 0.6)' : 'rgba(255, 99, 132, 0.6)'),
+                    borderColor: monthlyData.map(value => value >= 0 ? 'rgb(75, 192, 192)' : 'rgb(255, 99, 132)'),
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
             }
         });
-    </script>
-</head>
-<body class="bg-gray-100 p-8">
-    <div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
-        <h1 class="text-3xl font-extrabold text-gray-900 mb-6 border-b pb-2">
-            📋 Historiales del Plan: {{ plan.nombre }}
-        </h1>
+    }
+
+    // Renderizar gráficos al cargar la página si la pestaña de gráficos está activa
+    document.addEventListener('DOMContentLoaded', function() {
+        if (document.getElementById('grafico').classList.contains('active')) {
+            renderChart();
+        }
+    });
+</script>
+<div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+    <h1 class="text-3xl font-extrabold text-gray-900 mb-6 border-b pb-2">
+        📋 Historiales del Plan: {{ plan.nombre }}
+    </h1>
 
         <!-- Tabs -->
         <div class="bg-white p-6 rounded-xl shadow-2xl">
@@ -319,6 +316,4 @@
             display: block;
         }
     </style>
-
-</body>
-</html>
+{% endblock %}

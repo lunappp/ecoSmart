@@ -37,40 +37,40 @@
             }
 
             .navbar {
-                padding: 0.5rem 1rem;
+                padding: 0.25rem 1rem;
             }
 
             .nav-container {
-                padding: 0.5rem 0.75rem;
+                padding: 0.25rem 0.75rem;
             }
 
             .logo {
-                font-size: 1.25rem;
+                font-size: 1rem;
             }
         }
 
         @media (max-width: 480px) {
             .navbar {
-                padding: 0.25rem 0.5rem;
+                padding: 0.125rem 0.5rem;
             }
 
             .nav-container {
-                padding: 0.25rem 0.5rem;
+                padding: 0.125rem 0.5rem;
             }
 
             .logo {
-                font-size: 1.1rem;
+                font-size: 0.9rem;
             }
 
             .user-avatar {
-                width: 32px;
-                height: 32px;
+                width: 24px;
+                height: 24px;
             }
 
             .avatar-placeholder {
-                width: 32px;
-                height: 32px;
-                font-size: 1rem;
+                width: 24px;
+                height: 24px;
+                font-size: 0.75rem;
             }
         }
     </style>
@@ -78,7 +78,7 @@
 </head>
 <body>
     <!-- Header -->
-    <header class="navbar">
+    <header class="navbar py-2">
         <div class="nav-container flex items-center">
             <div class="logo flex-1 ml-4">
                 <a href="{% url 'Dashboard' %}" style="text-decoration: none; color: inherit;">
@@ -89,39 +89,44 @@
 
             <!-- Top Navigation Menu -->
             <nav class="flex items-center space-x-1 mr-4 overflow-x-auto">
-                <a href="{% url 'ingresos' plan_id=plan.id %}" class="nav-link-top px-4 py-2 text-sm font-medium rounded-lg transition-colors {% if request.resolver_match.url_name == 'ingresos' %}bg-green-100 text-green-700 border border-green-300{% else %}text-gray-700 hover:bg-gray-100{% endif %}">
-                    <i class="fas fa-plus-circle mr-2"></i>
+                <a href="{% url 'ingresos' plan_id=plan.id %}" class="nav-link-top px-3 py-1.5 text-xs font-medium rounded-lg transition-colors {% if request.resolver_match.url_name == 'ingresos' %}bg-green-100 text-green-700 border border-green-300{% else %}text-gray-700 hover:bg-gray-100{% endif %}">
+                    <i class="fas fa-plus-circle mr-1"></i>
                     Ingresos
                 </a>
 
-                <a href="{% url 'gastos' plan_id=plan.id %}" class="nav-link-top px-4 py-2 text-sm font-medium rounded-lg transition-colors {% if request.resolver_match.url_name == 'gastos' %}bg-red-100 text-red-700 border border-red-300{% else %}text-gray-700 hover:bg-gray-100{% endif %}">
-                    <i class="fas fa-minus-circle mr-2"></i>
+                <a href="{% url 'gastos' plan_id=plan.id %}" class="nav-link-top px-3 py-1.5 text-xs font-medium rounded-lg transition-colors {% if request.resolver_match.url_name == 'gastos' %}bg-red-100 text-red-700 border border-red-300{% else %}text-gray-700 hover:bg-gray-100{% endif %}">
+                    <i class="fas fa-minus-circle mr-1"></i>
                     Gastos
                 </a>
 
-                <a href="{% url 'objetivos' plan_id=plan.id %}" class="nav-link-top px-4 py-2 text-sm font-medium rounded-lg transition-colors {% if request.resolver_match.url_name == 'objetivos' %}bg-purple-100 text-purple-700 border border-purple-300{% else %}text-gray-700 hover:bg-gray-100{% endif %}">
-                    <i class="fas fa-bullseye mr-2"></i>
+                <a href="{% url 'objetivos' plan_id=plan.id %}" class="nav-link-top px-3 py-1.5 text-xs font-medium rounded-lg transition-colors {% if request.resolver_match.url_name == 'objetivos' %}bg-purple-100 text-purple-700 border border-purple-300{% else %}text-gray-700 hover:bg-gray-100{% endif %}">
+                    <i class="fas fa-bullseye mr-1"></i>
                     Objetivos
                 </a>
 
-                <a href="{% url 'tareas' plan_id=plan.id %}" class="nav-link-top px-4 py-2 text-sm font-medium rounded-lg transition-colors {% if request.resolver_match.url_name == 'tareas' %}bg-blue-100 text-blue-700 border border-blue-300{% else %}text-gray-700 hover:bg-gray-100{% endif %}">
-                    <i class="fas fa-tasks mr-2"></i>
+                <a href="{% url 'tareas' plan_id=plan.id %}" class="nav-link-top px-3 py-1.5 text-xs font-medium rounded-lg transition-colors {% if request.resolver_match.url_name == 'tareas' %}bg-blue-100 text-blue-700 border border-blue-300{% else %}text-gray-700 hover:bg-gray-100{% endif %}">
+                    <i class="fas fa-tasks mr-1"></i>
                     Tareas
                 </a>
 
-                <a href="{% url 'estadisticas' plan_id=plan.id %}" class="nav-link-top px-4 py-2 text-sm font-medium rounded-lg transition-colors {% if request.resolver_match.url_name == 'estadisticas' %}bg-indigo-100 text-indigo-700 border border-indigo-300{% else %}text-gray-700 hover:bg-gray-100{% endif %}">
-                    <i class="fas fa-chart-bar mr-2"></i>
+                <a href="{% url 'estadisticas' plan_id=plan.id %}" class="nav-link-top px-3 py-1.5 text-xs font-medium rounded-lg transition-colors {% if request.resolver_match.url_name == 'estadisticas' %}bg-indigo-100 text-indigo-700 border border-indigo-300{% else %}text-gray-700 hover:bg-gray-100{% endif %}">
+                    <i class="fas fa-chart-bar mr-1"></i>
                     Estadísticas
                 </a>
 
-                <a href="{% url 'chatbot' plan_id=plan.id %}" class="nav-link-top px-4 py-2 text-sm font-medium rounded-lg transition-colors {% if request.resolver_match.url_name == 'chatbot' %}bg-teal-100 text-teal-700 border border-teal-300{% else %}text-gray-700 hover:bg-gray-100{% endif %}">
-                    <i class="fas fa-robot mr-2"></i>
+                <a href="{% url 'historiales' plan_id=plan.id %}" class="nav-link-top px-3 py-1.5 text-xs font-medium rounded-lg transition-colors {% if request.resolver_match.url_name == 'historiales' %}bg-orange-100 text-orange-700 border border-orange-300{% else %}text-gray-700 hover:bg-gray-100{% endif %}">
+                    <i class="fas fa-history mr-1"></i>
+                    Historiales
+                </a>
+
+                <a href="{% url 'chatbot' plan_id=plan.id %}" class="nav-link-top px-3 py-1.5 text-xs font-medium rounded-lg transition-colors {% if request.resolver_match.url_name == 'chatbot' %}bg-teal-100 text-teal-700 border border-teal-300{% else %}text-gray-700 hover:bg-gray-100{% endif %}">
+                    <i class="fas fa-robot mr-1"></i>
                     Chatbot AI
                 </a>
 
                 {% if plan.tipo_plan == 'grupal' %}
-                <a href="{% url 'ajustes' plan_id=plan.id %}" class="nav-link-top px-4 py-2 text-sm font-medium rounded-lg transition-colors {% if request.resolver_match.url_name == 'ajustes' %}bg-gray-100 text-gray-700 border border-gray-300{% else %}text-gray-700 hover:bg-gray-100{% endif %}">
-                    <i class="fas fa-cog mr-2"></i>
+                <a href="{% url 'ajustes' plan_id=plan.id %}" class="nav-link-top px-3 py-1.5 text-xs font-medium rounded-lg transition-colors {% if request.resolver_match.url_name == 'ajustes' %}bg-gray-100 text-gray-700 border border-gray-300{% else %}text-gray-700 hover:bg-gray-100{% endif %}">
+                    <i class="fas fa-cog mr-1"></i>
                     Ajustes
                 </a>
                 {% endif %}
@@ -131,14 +136,14 @@
             <div class="relative">
                 <button id="user-menu-button" class="flex items-center space-x-2 text-gray-700 hover:text-gray-900 focus:outline-none">
                     {% if user.profile.profile_picture %}
-                        <img class="w-8 h-8 rounded-full object-cover border-2 border-gray-300" src="{{ user.profile.profile_picture.url }}" alt="Profile Picture">
+                        <img class="w-6 h-6 rounded-full object-cover border-2 border-gray-300" src="{{ user.profile.profile_picture.url }}" alt="Profile Picture">
                     {% else %}
-                        <div class="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center border-2 border-gray-300">
-                            <i class="fas fa-user text-gray-600"></i>
+                        <div class="w-6 h-6 rounded-full bg-gray-300 flex items-center justify-center border-2 border-gray-300">
+                            <i class="fas fa-user text-xs text-gray-600"></i>
                         </div>
                     {% endif %}
-                    <span class="hidden md:block text-sm font-medium">{{ user.username }}</span>
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <span class="hidden md:block text-xs font-medium">{{ user.username }}</span>
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                     </svg>
                 </button>

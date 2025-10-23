@@ -12,48 +12,76 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <!-- Sidebar -->
-    <aside class="sidebar" id="sidebar">
-        <button class="toggle-btn" id="toggle-btn">a</button>
-        <nav class="menu">
-            <a href="{% url 'Dashboard' %}" class="menu-item"><i>🏠</i><span>Inicio</span></a>
-            <a href="#planes" class="menu-item"><i>📦</i><span>Mis Planes</span></a>
-            <a href="{% url 'crear_plan' %}" class="menu-item"><i>➕</i><span>Crear Plan</span></a>
-            <a href="{% url 'Estadisticas' %}" class="menu-item active"><i>📊</i><span>Estadísticas</span></a>
-            <a href="#invitaciones" class="menu-item"><i>✉️</i><span>Invitaciones</span></a>
-            <a href="#configuracion" class="menu-item"><i>⚙️</i><span>Configuración</span></a>
-        </nav>
-        <div class="sidebar-footer">© 2025 EcoSmart</div>
-    </aside>
 
     <!-- Main -->
     <main>
-        <div class="header">
-            <div class="user-info">
-                <div class="user-menu">
-                    <button class="user-menu-btn">
+        <!-- Header -->
+        <header class="navbar">
+            <div class="nav-container flex items-center">
+                <div class="logo flex-1 ml-4">
+                    <a href="{% url 'Dashboard' %}" style="text-decoration: none; color: inherit;">
+                        <i class="fas fa-leaf"></i>
+                        EcoSmart
+                    </a>
+                </div>
+
+                <!-- Top Navigation Menu -->
+                <nav class="flex items-center space-x-1 mr-4 overflow-x-auto">
+                    <a href="{% url 'Mis_Planes' %}" class="nav-link-top px-4 py-2 text-sm font-medium rounded-lg transition-colors text-gray-700 hover:bg-gray-100">
+                        <i class="fas fa-list mr-2"></i>
+                        Mis Planes
+                    </a>
+
+                    <a href="{% url 'crear_plan' %}" class="nav-link-top px-4 py-2 text-sm font-medium rounded-lg transition-colors text-gray-700 hover:bg-gray-100">
+                        <i class="fas fa-plus mr-2"></i>
+                        Crear Plan
+                    </a>
+
+                    <a href="{% url 'Estadisticas' %}" class="nav-link-top px-4 py-2 text-sm font-medium rounded-lg transition-colors bg-purple-100 text-purple-700 border border-purple-300">
+                        <i class="fas fa-chart-bar mr-2"></i>
+                        Estadísticas
+                    </a>
+
+                    <a href="{% url 'transacciones' %}" class="nav-link-top px-4 py-2 text-sm font-medium rounded-lg transition-colors text-gray-700 hover:bg-gray-100">
+                        <i class="fas fa-history mr-2"></i>
+                        Historiales
+                    </a>
+                </nav>
+
+                <!-- User Profile Dropdown -->
+                <div class="relative">
+                    <button id="user-menu-button" class="flex items-center space-x-2 text-gray-700 hover:text-gray-900 focus:outline-none">
                         {% if request.user.profile.profile_picture %}
-                            <img src="{{ request.user.profile.profile_picture.url }}" alt="Foto de {{ request.user.username }}" class="user-avatar">
+                            <img class="w-8 h-8 rounded-full object-cover border-2 border-gray-300" src="{{ request.user.profile.profile_picture.url }}" alt="Profile Picture">
                         {% else %}
-                            <div class="user-avatar">{{ request.user.username|first|upper }}</div>
+                            <div class="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center border-2 border-gray-300">
+                                <i class="fas fa-user text-gray-600"></i>
+                            </div>
                         {% endif %}
+                        <span class="hidden md:block text-sm font-medium">{{ request.user.username }}</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
                     </button>
-                    <div class="user-dropdown">
-                        <a href="{% url 'edit_profile' %}" class="dropdown-item">
-                            <span class="dropdown-icon">👤</span>
-                            Editar Perfil
+
+                    <!-- Dropdown Menu -->
+                    <div id="user-dropdown" class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50 hidden">
+                        <a href="{% url 'edit_profile' %}" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                            <i class="fas fa-cog mr-3"></i>
+                            Ajustes de Perfil
                         </a>
-                        <form method="post" action="{% url 'logout' %}">
+                        <div class="border-t border-gray-200"></div>
+                        <form method="POST" action="{% url 'logout' %}" class="inline">
                             {% csrf_token %}
-                            <button type="submit" class="dropdown-item">
-                                <span class="dropdown-icon">🚪</span>
+                            <button type="submit" class="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 text-left">
+                                <i class="fas fa-sign-out-alt mr-3"></i>
                                 Cerrar Sesión
                             </button>
                         </form>
                     </div>
                 </div>
             </div>
-        </div>
+        </header>
 
         <!-- Contenido de Estadísticas -->
 <div class="container-fluid">
@@ -132,57 +160,6 @@
         </div>
     </div>
 
-    <!-- Tabla de Transacciones Recientes -->
-    <div class="row mt-4">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <h5>📋 Transacciones Recientes</h5>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Fecha</th>
-                                    <th>Descripción</th>
-                                    <th>Tipo</th>
-                                    <th>Monto</th>
-                                    <th>Plan</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% if transacciones_recientes %}
-                                    {% for transaccion in transacciones_recientes %}
-                                        <tr>
-                                            <td>{{ transaccion.fecha|date:"d/m/Y" }}</td>
-                                            <td>{{ transaccion.descripcion }}</td>
-                                            <td>
-                                                <span class="badge {% if transaccion.tipo == 'Ingreso' %}bg-success{% else %}bg-danger{% endif %}">
-                                                    {{ transaccion.tipo }}
-                                                </span>
-                                            </td>
-                                            <td class="{% if transaccion.tipo == 'Ingreso' %}text-success{% else %}text-danger{% endif %}">
-                                                ${{ transaccion.monto|floatformat:2 }}
-                                            </td>
-                                            <td>{{ transaccion.plan }}</td>
-                                        </tr>
-                                    {% endfor %}
-                                {% else %}
-                                    <tr>
-                                        <td colspan="5" class="text-center text-muted">
-                                            <i class="fas fa-inbox fa-2x mb-2"></i>
-                                            <p>No hay transacciones registradas</p>
-                                        </td>
-                                    </tr>
-                                {% endif %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
 
 <style>
@@ -291,25 +268,35 @@ new Chart(resumenCtx, {
             const sidebar = document.getElementById('sidebar');
             const main = document.querySelector('main');
 
-            toggleBtn.addEventListener('click', function() {
-                sidebar.classList.toggle('collapsed');
-                main.classList.toggle('sidebar-collapsed');
-            });
+            if (toggleBtn && sidebar && main) {
+                toggleBtn.addEventListener('click', function() {
+                    sidebar.classList.toggle('collapsed');
+                    main.classList.toggle('sidebar-collapsed');
+                });
+            }
 
-            // User dropdown toggle
-            const userMenuBtn = document.querySelector('.user-menu-btn');
-            const userDropdown = document.querySelector('.user-dropdown');
+            // User dropdown menu functionality
+            const userMenuButton = document.getElementById('user-menu-button');
+            const userDropdown = document.getElementById('user-dropdown');
 
-            if (userMenuBtn && userDropdown) {
-                userMenuBtn.addEventListener('click', function(e) {
+            if (userMenuButton && userDropdown) {
+                // Toggle dropdown on button click
+                userMenuButton.addEventListener('click', function(e) {
                     e.stopPropagation();
-                    userDropdown.classList.toggle('active');
+                    userDropdown.classList.toggle('hidden');
                 });
 
                 // Close dropdown when clicking outside
                 document.addEventListener('click', function(e) {
-                    if (!userMenuBtn.contains(e.target) && !userDropdown.contains(e.target)) {
-                        userDropdown.classList.remove('active');
+                    if (!userMenuButton.contains(e.target) && !userDropdown.contains(e.target)) {
+                        userDropdown.classList.add('hidden');
+                    }
+                });
+
+                // Close dropdown on escape key
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape') {
+                        userDropdown.classList.add('hidden');
                     }
                 });
             }
