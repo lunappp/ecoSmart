@@ -26,11 +26,11 @@
         {% endif %}
 
         <!-- Plan Photo Display -->
-        <div class="flex justify-center py-10">
+        <div class="flex justify-center py-10 mt-12">
             {% if plan.imagen %}
-                <img src="{{ plan.imagen.url }}" alt="Imagen del plan" class="w-40 h-40 rounded-full object-cover border-4 border-purple-200 shadow-lg">
+                <img src="{{ plan.imagen.url }}" alt="Imagen del plan" class="w-48 h-48 rounded-full object-cover border-4 border-purple-200 shadow-lg">
             {% else %}
-                <div class="w-40 h-40 rounded-full bg-gray-300 border-4 border-purple-200 shadow-lg flex items-center justify-center">
+                <div class="w-48 h-48 rounded-full bg-gray-300 border-4 border-purple-200 shadow-lg flex items-center justify-center">
                     <span class="text-gray-600 font-bold text-4xl">{{ plan.nombre|first|upper }}</span>
                 </div>
             {% endif %}
@@ -38,18 +38,6 @@
 
         <!-- Settings List -->
         <div class="divide-y divide-purple-200">
-            <!-- Chatbot Link -->
-            <div class="p-4 hover:bg-purple-50 cursor-pointer">
-                <a href="{% url 'chatbot' plan_id=plan.id %}" class="flex items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-600 mr-3">
-                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-                    </svg>
-                    <div>
-                        <h3 class="text-base font-medium text-gray-900">Chatbot IA</h3>
-                        <p class="text-sm text-gray-500">Consulta con nuestro asistente inteligente</p>
-                    </div>
-                </a>
-            </div>
 
             {% if es_admin %}
             <!-- Editar Plan -->

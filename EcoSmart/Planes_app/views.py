@@ -1058,11 +1058,34 @@ def tareas(request, plan_id):
         tarea.estado_calculado = obtener_estado_tarea(tarea) # Usamos el estado calculado
         tareas_con_estado.append(tarea)
 
+    # 3. Obtener miembros del plan para el filtro (todos los usuarios que son miembros)
+    plan_members = []
+    # Agregar el creador siempre
+    plan_members.append({
+        'usuario': plan.creador,
+        'rol': 'admin'
+    })
+    # Agregar otros miembros de las suscripciones
+    subscriptions = Suscripcion.objects.filter(plan=plan).select_related('usuario')
+    for sub in subscriptions:
+        if sub.usuario != plan.creador:  # Evitar duplicados
+            plan_members.append({
+                'usuario': sub.usuario,
+                'rol': sub.rol
+            })
+    # Ordenar por username
+    plan_members = sorted(plan_members, key=lambda x: x['usuario'].username)
+
+    # 4. Obtener tareas del usuario actual para "Mis tareas"
+    user_tasks = [tarea for tarea in tareas_con_estado if tarea.usuario_asignado == request.user]
+
     context = {
         'plan': plan,
         'tareas_con_estado': tareas_con_estado,
         'tarea_form': TareaForm(plan=plan),
         'es_admin': es_admin,
+        'plan_members': plan_members,
+        'user_tasks': user_tasks,
     }
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         return render(request, 'tareas_partial.html', context)
